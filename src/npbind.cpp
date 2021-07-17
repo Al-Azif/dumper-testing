@@ -23,19 +23,19 @@ namespace npbind {
 std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: ignore
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream npbind_input(path, std::ios::in | std::ios::binary);
   if (!npbind_input || !npbind_input.good()) {
     npbind_input.close();
-    fatal_error("Cannot open file: " + std::string(path));
+    FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
   // Check file magic (Read in whole header)
@@ -43,13 +43,13 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   npbind_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
   if (!npbind_input.good()) {
     npbind_input.close();
-    fatal_error("Error reading header!");
+    FATAL_ERROR("Error reading header!");
   }
   if (__builtin_bswap32(header.magic) != NPBIND_MAGIC) {
     npbind_input.close();
     std::stringstream ss;
     ss << "[npbind::read] File magic does not match npbind.dat! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << NPBIND_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header.magic);
-    fatal_error(ss.str());
+    FATAL_ERROR(ss.str());
   }
 
   // Read in body(s)
@@ -59,7 +59,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
     npbind_input.read((char *)&temp_entry, __builtin_bswap64(header.entry_size)); // Flawfinder: ignore
     if (!npbind_input.good()) {
       npbind_input.close();
-      fatal_error("Error reading entires!");
+      FATAL_ERROR("Error reading entires!");
     }
     entries.push_back(temp_entry);
   }
@@ -70,7 +70,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   npbind_input.read((char *)&digest, sizeof(digest));    // Flawfinder: ignore
   if (!npbind_input.good()) {
     npbind_input.close();
-    fatal_error("Error reading digest!");
+    FATAL_ERROR("Error reading digest!");
   }
   npbind_input.close();
 
@@ -102,7 +102,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
 #endif // __ORBIS__
 
   if (std::memcmp(calculated_digest, digest, sizeof(digest)) != 0) {
-    fatal_error("Digests do not match! Aborting...");
+    FATAL_ERROR("Digests do not match! Aborting...");
   }
 
   return entries;

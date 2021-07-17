@@ -34,7 +34,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
       pfs_input.read((char *)&ent, sizeof(ent)); // Flawfinder: ignore
       if (!pfs_input.good()) {
         pfs_input.close();
-        fatal_error("Error reading entry!");
+        FATAL_ERROR("Error reading entry!");
       }
 
       if (ent.type == 0) {
@@ -48,7 +48,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
         pfs_input.read((char *)&name, ent.namelen); // Flawfinder: ignore
         if (!pfs_input.good()) {
           pfs_input.close();
-          fatal_error("Error reading entry name!");
+          FATAL_ERROR("Error reading entry name!");
         }
       }
 
@@ -64,7 +64,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
           if (!output_file || !output_file.good()) {
             pfs_input.close();
             output_file.close();
-            fatal_error("Cannot open file: " + std::string(new_output_path));
+            FATAL_ERROR("Cannot open file: " + std::string(new_output_path));
           }
 
           unsigned char buffer[PFS_DUMP_BUFFER];
@@ -80,7 +80,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
             if (!pfs_input.good()) {
               pfs_input.close();
               output_file.close();
-              fatal_error("Error reading entry data!");
+              FATAL_ERROR("Error reading entry data!");
             }
             ss.write(reinterpret_cast<const char *>(&buffer), sizeof(buffer));
             output_file << ss.rdbuf();
@@ -95,7 +95,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
           if (!pfs_input.good()) {
             pfs_input.close();
             output_file.close();
-            fatal_error("Error reading entry data!");
+            FATAL_ERROR("Error reading entry data!");
           }
           ss.write(reinterpret_cast<const char *>(&buffer), inodes[ent.ino].size - dump_counter);
           output_file << ss.rdbuf();
@@ -110,7 +110,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
         if (!calculate_only) {
           if (!std::filesystem::is_directory(new_output_path) && !std::filesystem::create_directory(new_output_path)) {
             pfs_input.close();
-            fatal_error("Could not create output directory");
+            FATAL_ERROR("Could not create output directory");
           }
         }
         __parse_directory(ent.ino, level + 1, new_output_path, calculate_only);
@@ -133,39 +133,39 @@ void extract(const std::string &pfs_path, const std::string &output_path) {
   // Make sure output directory path exists or can be created
   if (!std::filesystem::is_directory(output_path) && !std::filesystem::create_directories(output_path)) {
     pfs_input.close();
-    fatal_error("Unable to open/create output directory");
+    FATAL_ERROR("Unable to open/create output directory");
   }
 
   // Check for empty or pure whitespace path
   if (pfs_path.empty() || std::all_of(pfs_path.begin(), pfs_path.end(), [](char c) { return std::isspace(c); })) {
     pfs_input.close();
-    fatal_error("Empty input path argument!");
+    FATAL_ERROR("Empty input path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(pfs_path)) {
     pfs_input.close();
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   pfs_input.open(pfs_path, std::ios::in | std::ios::binary);
   if (!pfs_input || !pfs_input.good()) {
     pfs_input.close();
-    fatal_error("Cannot open file: " + std::string(pfs_path));
+    FATAL_ERROR("Cannot open file: " + std::string(pfs_path));
   }
 
   // Check file magic (Read in whole header)
   pfs_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
   if (!pfs_input.good()) {
     pfs_input.close();
-    fatal_error("Error reading header!");
+    FATAL_ERROR("Error reading header!");
   }
   if (__builtin_bswap64(header.magic) != PFS_MAGIC) {
     pfs_input.close();
     std::stringstream ss;
     ss << "[pfs::extract] File magic does not match pfs_image.dat! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(16) << std::hex << PFS_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(16) << std::hex << __builtin_bswap64(header.magic);
-    fatal_error(ss.str());
+    FATAL_ERROR(ss.str());
   }
 
   // Read in inodes
@@ -176,7 +176,7 @@ void extract(const std::string &pfs_path, const std::string &output_path) {
       pfs_input.read((char *)&temp_inodes, sizeof(di_d32)); // Flawfinder: ignore
       if (!pfs_input.good()) {
         pfs_input.close();
-        fatal_error("Error reading inodes!");
+        FATAL_ERROR("Error reading inodes!");
       }
       inodes.push_back(temp_inodes);
     }

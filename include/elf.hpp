@@ -80,6 +80,7 @@ uint64_t get_fw_version(const std::string &path);
 std::vector<unsigned char> get_digest(const std::string &path);
 std::vector<unsigned char> get_auth_info(const std::string &path);
 bool is_valid_decrypt(const std::string &original, const std::string &decrypted);
+void zero_section_header(const std::string &path);
 void decrypt(const std::string &input_path, const std::string &output_path);
 } // namespace elf
 

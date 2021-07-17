@@ -27,25 +27,25 @@ namespace elf {
 uint64_t get_sce_header_offset(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream self_input(path, std::ios::in | std::ios::binary);
   if (!self_input || !self_input.good()) {
     self_input.close();
-    fatal_error("Cannot open file: " + std::string(path));
+    FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
   // Check to make sure file is a SELF
   if (!is_self(path)) {
     self_input.close();
-    fatal_error("Input file is not a SELF!");
+    FATAL_ERROR("Input file is not a SELF!");
   }
 
   // TODO: USE THIS IN THE PAYLOAD SDK FOR FW DETECTION!
@@ -54,7 +54,7 @@ uint64_t get_sce_header_offset(const std::string &path) {
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
-    fatal_error("Error reading SELF header!");
+    FATAL_ERROR("Error reading SELF header!");
   }
 
   // Calculate ELF header offset from the number of SELF segments
@@ -64,7 +64,7 @@ uint64_t get_sce_header_offset(const std::string &path) {
   self_input.read((char *)&elf_header, sizeof(elf_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
-    fatal_error("Error reading ELF header!");
+    FATAL_ERROR("Error reading ELF header!");
   }
   self_input.close();
 
@@ -82,25 +82,25 @@ uint64_t get_sce_header_offset(const std::string &path) {
 SceHeader get_sce_header(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream self_input(path, std::ios::in | std::ios::binary);
   if (!self_input || !self_input.good()) {
     self_input.close();
-    fatal_error("Cannot open file: " + std::string(path));
+    FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
   // Check to make sure file is a SELF
   if (!is_self(path)) {
     self_input.close();
-    fatal_error("Input file is not a SELF!");
+    FATAL_ERROR("Input file is not a SELF!");
   }
 
   // Calculate SCE header offset from number of ELF entries
@@ -111,7 +111,7 @@ SceHeader get_sce_header(const std::string &path) {
   self_input.read((char *)&sce_header, sizeof(sce_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
-    fatal_error("Error reading SCE header!");
+    FATAL_ERROR("Error reading SCE header!");
   }
 
   return sce_header;
@@ -120,25 +120,25 @@ SceHeader get_sce_header(const std::string &path) {
 SceHeaderNpdrm get_sce_header_npdrm(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream self_input(path, std::ios::in | std::ios::binary);
   if (!self_input || !self_input.good()) {
     self_input.close();
-    fatal_error("Cannot open file: " + std::string(path));
+    FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
   // Check to make sure file is a SELF
   if (!is_self(path)) {
     self_input.close();
-    fatal_error("Input file is not a SELF!");
+    FATAL_ERROR("Input file is not a SELF!");
   }
 
   // Calculate SCE header offset from number of ELF entries
@@ -149,7 +149,7 @@ SceHeaderNpdrm get_sce_header_npdrm(const std::string &path) {
   self_input.read((char *)&sce_header, sizeof(sce_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
-    fatal_error("Error reading SCE header!");
+    FATAL_ERROR("Error reading SCE header!");
   }
 
   return sce_header;
@@ -158,19 +158,19 @@ SceHeaderNpdrm get_sce_header_npdrm(const std::string &path) {
 bool is_elf(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream elf_input(path, std::ios::in | std::ios::binary);
   if (!elf_input || !elf_input.good()) {
     elf_input.close();
-    fatal_error("Cannot open file: " + std::string(path));
+    FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
   // Check to make sure file is at least as big as a SELF header
@@ -184,7 +184,7 @@ bool is_elf(const std::string &path) {
   elf_input.read((char *)&elf_header, sizeof(Elf64_Ehdr)); // Flawfinder: ignore
   if (!elf_input.good()) {
     elf_input.close();
-    fatal_error("Error reading ELF header!");
+    FATAL_ERROR("Error reading ELF header!");
   }
   elf_input.close();
 
@@ -199,19 +199,19 @@ bool is_elf(const std::string &path) {
 bool is_self(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream self_input(path, std::ios::in | std::ios::binary);
   if (!self_input || !self_input.good()) {
     self_input.close();
-    fatal_error("Cannot open file: " + std::string(path));
+    FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
   // Check to make sure file is at least as big as a SELF header
@@ -225,7 +225,7 @@ bool is_self(const std::string &path) {
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
-    fatal_error("Error reading header!");
+    FATAL_ERROR("Error reading header!");
   }
   self_input.close();
 
@@ -240,12 +240,12 @@ bool is_self(const std::string &path) {
 bool is_npdrm(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   if (is_self(path)) {
@@ -261,17 +261,17 @@ bool is_npdrm(const std::string &path) {
 std::string get_ptype(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
-    fatal_error("Input path is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   uint64_t program_type;
@@ -310,7 +310,7 @@ std::string get_ptype(const std::string &path) {
     output = "secure_kernel";
     break;
   default:
-    fatal_error("Unknown ptype!");
+    FATAL_ERROR("Unknown ptype!");
     break;
   }
 
@@ -321,17 +321,17 @@ std::string get_ptype(const std::string &path) {
 uint64_t get_paid(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
-    fatal_error("Input path is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   if (is_npdrm(path)) {
@@ -346,17 +346,17 @@ uint64_t get_paid(const std::string &path) {
 uint64_t get_app_version(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
-    fatal_error("Input path is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   if (is_npdrm(path)) {
@@ -371,17 +371,17 @@ uint64_t get_app_version(const std::string &path) {
 uint64_t get_fw_version(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
-    fatal_error("Input path is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   if (is_npdrm(path)) {
@@ -396,17 +396,17 @@ uint64_t get_fw_version(const std::string &path) {
 std::vector<unsigned char> get_digest(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
-    fatal_error("Input path is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   std::vector<unsigned char> digest;
@@ -429,34 +429,34 @@ std::vector<unsigned char> get_digest(const std::string &path) {
 std::vector<unsigned char> get_auth_info(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
-    fatal_error("Input path is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream self_input(path, std::ios::in | std::ios::binary);
   if (!self_input || !self_input.good()) {
     self_input.close();
-    fatal_error("Cannot open file: " + std::string(path));
+    FATAL_ERROR("Cannot open file: " + std::string(path));
   }
   self_input.close();
 
@@ -487,48 +487,48 @@ std::vector<unsigned char> get_auth_info(const std::string &path) {
 bool is_valid_decrypt(const std::string &original_path, const std::string &decrypted_path) {
   // Check for empty or pure whitespace path
   if (original_path.empty() || std::all_of(original_path.begin(), original_path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(original_path)) {
-    fatal_error("Original file does not exist or is not a file!");
+    FATAL_ERROR("Original file does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream original_self(original_path, std::ios::in | std::ios::binary);
   if (!original_self || !original_self.good()) {
     original_self.close();
-    fatal_error("Cannot open file: " + std::string(original_path));
+    FATAL_ERROR("Cannot open file: " + std::string(original_path));
   }
   original_self.close();
 
   // Check if file is a SELF
   if (!is_self(original_path)) {
-    fatal_error("Original file is not a SELF!");
+    FATAL_ERROR("Original file is not a SELF!");
   }
 
   // Check for empty or pure whitespace path
   if (decrypted_path.empty() || std::all_of(decrypted_path.begin(), decrypted_path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(decrypted_path)) {
-    fatal_error("Decrypted path does not exist or is not a file!");
+    FATAL_ERROR("Decrypted path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream decrypted_elf(decrypted_path, std::ios::in | std::ios::binary);
   if (!decrypted_elf || !decrypted_elf.good()) {
     decrypted_elf.close();
-    fatal_error("Cannot open file: " + std::string(decrypted_path));
+    FATAL_ERROR("Cannot open file: " + std::string(decrypted_path));
   }
 
   // Check if file is an ELF
   if (!is_elf(decrypted_path)) {
     decrypted_elf.close();
-    fatal_error("Decrypted file is not a ELF!");
+    FATAL_ERROR("Decrypted file is not a ELF!");
   }
 
   // Read digest
@@ -572,37 +572,41 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
   return true;
 }
 
+void zero_section_header(const std::string &path) {
+  // TODO ??
+}
+
 // The following code inspired from:
 // - https://github.com/AlexAltea/orbital
 // - https://github.com/xvortex/ps4-dumper-vtx
 void decrypt(const std::string &input, const std::string &output) {
   // Check for empty or pure whitespace path
   if (input.empty() || std::all_of(input.begin(), input.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(input)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream self_input(input, std::ios::in | std::ios::binary);
   if (!self_input || !self_input.good()) {
     self_input.close();
-    fatal_error("Cannot open file: " + std::string(input));
+    FATAL_ERROR("Cannot open file: " + std::string(input));
   }
 
   // Check if file is already decrypted
   if (!is_elf(input) && !is_self(input)) {
     self_input.close();
-    fatal_error("Input file is not a (S)ELF!");
+    FATAL_ERROR("Input file is not a (S)ELF!");
   }
 
   // Check for empty or pure whitespace path
   if (output.empty() || std::all_of(output.begin(), output.end(), [](char c) { return std::isspace(c); })) {
     self_input.close();
-    fatal_error("Empty output path argument!");
+    FATAL_ERROR("Empty output path argument!");
   }
 
   std::filesystem::path output_path(output);
@@ -610,7 +614,7 @@ void decrypt(const std::string &input, const std::string &output) {
   // Exists, but is not a file
   if (std::filesystem::exists(output_path) && !std::filesystem::is_regular_file(output_path)) {
     self_input.close();
-    fatal_error("Output object exists but is not a file!");
+    FATAL_ERROR("Output object exists but is not a file!");
   }
 
   // Open path
@@ -618,7 +622,7 @@ void decrypt(const std::string &input, const std::string &output) {
   if (!output_file || !output_file.good()) {
     self_input.close();
     output_file.close();
-    fatal_error("Cannot open file: " + std::string(output_path));
+    FATAL_ERROR("Cannot open file: " + std::string(output_path));
   }
 
   // File is already decrypted, just copy the file to the output location
@@ -635,7 +639,7 @@ void decrypt(const std::string &input, const std::string &output) {
   if (!self_input.good()) {
     self_input.close();
     output_file.close();
-    fatal_error("Error reading SELF header!");
+    FATAL_ERROR("Error reading SELF header!");
   }
 
   // Calculate ELF header offset from the number of SELF segments
@@ -646,7 +650,7 @@ void decrypt(const std::string &input, const std::string &output) {
   if (!self_input.good()) {
     self_input.close();
     output_file.close();
-    fatal_error("Error reading ELF header!");
+    FATAL_ERROR("Error reading ELF header!");
   }
 
   // TODO: This is done in other dumpers but is it necessary? If it's not done then the digest in SceHeader/SceHeaderNpdrm should match the decrypted ELF
@@ -668,7 +672,7 @@ void decrypt(const std::string &input, const std::string &output) {
     if (!self_input.good()) {
       self_input.close();
       output_file.close();
-      fatal_error("Error reading prog header!");
+      FATAL_ERROR("Error reading prog header!");
     }
     if ((prog_header.p_type == PT_LOAD || prog_header.p_type == PT_NID || prog_header.p_type == PT_DYNAMIC) && (elf_size < prog_header.p_offset + prog_header.p_filesz)) {
       elf_size = prog_header.p_offset + prog_header.p_filesz;
@@ -682,7 +686,7 @@ void decrypt(const std::string &input, const std::string &output) {
   if (!self_input.good()) {
     self_input.close();
     output_file.close();
-    fatal_error("Error reading SELF data!");
+    FATAL_ERROR("Error reading SELF data!");
   }
 
   // Copy input file to self_data
@@ -704,7 +708,7 @@ void decrypt(const std::string &input, const std::string &output) {
   int fd = open(input.c_str(), O_RDONLY, 0);
   if (fd < 0) {
     output_file.close();
-    fatal_error("Cannot open file: " + std::string(input));
+    FATAL_ERROR("Cannot open file: " + std::string(input));
   }
 
   // Loop: Copy program headers and then segments via mmap

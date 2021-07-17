@@ -102,24 +102,24 @@ std::string get_entry_name_by_type(uint32_t type) {
 void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
   // Make sure output directory path exists or can be created
   if (!std::filesystem::is_directory(output_path) && !std::filesystem::create_directories(output_path)) {
-    fatal_error("Unable to open/create output directory");
+    FATAL_ERROR("Unable to open/create output directory");
   }
 
   // Check for empty or pure whitespace path
   if (pkg_path.empty() || std::all_of(pkg_path.begin(), pkg_path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty input path argument!");
+    FATAL_ERROR("Empty input path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(pkg_path)) {
-    fatal_error("Input path does not exist or is not a file!");
+    FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream pkg_input(pkg_path, std::ios::in | std::ios::binary);
   if (!pkg_input || !pkg_input.good()) {
     pkg_input.close();
-    fatal_error("Cannot open file: " + std::string(pkg_path));
+    FATAL_ERROR("Cannot open file: " + std::string(pkg_path));
   }
 
   // Check file magic (Read in whole header)
@@ -127,13 +127,13 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
   pkg_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
   if (!pkg_input.good()) {
     pkg_input.close();
-    fatal_error("Error reading header!");
+    FATAL_ERROR("Error reading header!");
   }
   if (__builtin_bswap32(header.magic) != PKG_MAGIC) {
     pkg_input.close();
     std::stringstream ss;
     ss << "[pkg::extract_sc0] File magic does not match a PKG! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << PKG_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header.magic);
-    fatal_error(ss.str());
+    FATAL_ERROR(ss.str());
   }
 
   // Read PKG entry table entries
@@ -144,14 +144,14 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
     pkg_input.read((char *)&temp_entry, sizeof(temp_entry)); // Flawfinder: ignore
     if (!pkg_input.good()) {
       pkg_input.close();
-      fatal_error("Error reading entry table!");
+      FATAL_ERROR("Error reading entry table!");
     }
     entries.push_back(temp_entry);
   }
 
   if (!std::filesystem::is_directory(output_path) && !std::filesystem::create_directory(output_path)) {
     pkg_input.close();
-    fatal_error("Could not create output directory");
+    FATAL_ERROR("Could not create output directory");
   }
 
   // Extract sc0 entries
@@ -166,7 +166,7 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
       pkg_input.read((char *)&temp_file, __builtin_bswap32(entry.size)); // Flawfinder: ignore
       if (!pkg_input.good()) {
         pkg_input.close();
-        fatal_error("Error reading entry data!");
+        FATAL_ERROR("Error reading entry data!");
       }
 
       // Open path
@@ -174,7 +174,7 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
       if (!output_file || !output_file.good()) {
         pkg_input.close();
         output_file.close();
-        fatal_error("Cannot open file: " + std::string(temp_output_path));
+        FATAL_ERROR("Cannot open file: " + std::string(temp_output_path));
       }
 
       // Write to file

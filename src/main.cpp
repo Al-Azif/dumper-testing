@@ -1,6 +1,7 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
+#include "common.hpp"
 #include "dump.hpp"
 
 #include <iostream>

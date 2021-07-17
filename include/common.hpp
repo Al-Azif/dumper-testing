@@ -1,6 +1,7 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
+#include <filesystem>
 #include <sstream>
 #include <stdexcept>
 
@@ -8,7 +9,16 @@
 #define PAGE_SIZE 0x4000
 #endif
 
-#define fatal_error(error_message)                                                                                                \
-  std::stringstream compiled_error;                                                                                               \
-  compiled_error << "Error in \"" << __FILE__ << "\" on line " << __LINE__ << ", in " << __FUNCTION__ << "(): " << error_message; \
-  throw std::runtime_error(compiled_error.str());
+#define FATAL_ERROR(error_message)                                                                                                                        \
+  {                                                                                                                                                       \
+    std::stringstream compiled_msg;                                                                                                                       \
+    compiled_msg << "Error: " << error_message << " at " << std::filesystem::path(__FILE__).filename() << ":" << __LINE__ << ":(" << __FUNCTION__ << ")"; \
+    throw std::runtime_error(compiled_msg.str());                                                                                                         \
+  };
+
+#define DEBUG_LOG(log_message)                                                                                                                          \
+  {                                                                                                                                                     \
+    std::stringstream compiled_msg;                                                                                                                     \
+    compiled_msg << "Debug: " << log_message << " at " << std::filesystem::path(__FILE__).filename() << ":" << __LINE__ << ":(" << __FUNCTION__ << ")"; \
+    std::cout << compiled_msg.str() << std::endl;                                                                                                       \
+  };

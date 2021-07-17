@@ -20,7 +20,7 @@ namespace gp4 {
 void recursive_directory(const std::string &path, pugi::xml_node &node) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   for (auto &&p : std::filesystem::directory_iterator(path)) {
@@ -45,19 +45,19 @@ void recursive_directory(const std::string &path, pugi::xml_node &node) {
 pugi::xml_document make_volume(const std::string &content_id, const std::string &volume_type, std::string c_date = "", std::string c_time = "") {
   // Check input
   if (!std::regex_match(content_id, std::regex("^\\D{2}\\d{4}-\\D{4}\\d{5}_\\d{2}-\\w{16}$"))) {
-    fatal_error("Malformed content ID");
+    FATAL_ERROR("Malformed content ID");
   }
 
   if (!c_date.empty() && !std::regex_match(c_date, std::regex("^\\d{4}-\\d{2}-\\d{2}$"))) {
-    fatal_error("Malformed c_date");
+    FATAL_ERROR("Malformed c_date");
   }
 
   if (!c_time.empty() && !std::regex_match(c_time, std::regex("^\\d{6}$"))) {
-    fatal_error("Malformed c_time");
+    FATAL_ERROR("Malformed c_time");
   }
 
   if (volume_type != "pkg_ps4_app" && volume_type != "pkg_ps4_patch" && volume_type != "pkg_ps4_remaster" && volume_type != "pkg_ps4_theme" && volume_type != "additional-content-data" && volume_type != "additional-content-no-data") {
-    fatal_error("Unknown volume type");
+    FATAL_ERROR("Unknown volume type");
   }
 
   // Generate XML
@@ -145,7 +145,7 @@ pugi::xml_document make_playgo(const std::string &playgo_xml) {
 pugi::xml_document make_files(const std::string &path, std::vector<std::string> &elf_files) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty path argument!");
+    FATAL_ERROR("Empty path argument!");
   }
 
   // Generate XML
@@ -221,21 +221,21 @@ pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_do
 void write(const pugi::xml_document &xml, const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    fatal_error("Empty output path argument!");
+    FATAL_ERROR("Empty output path argument!");
   }
 
   std::filesystem::path output_path(path);
 
   // Exists, but is not a file
   if (std::filesystem::exists(output_path) && !std::filesystem::is_regular_file(output_path)) {
-    fatal_error("Output object exists but is not a file!");
+    FATAL_ERROR("Output object exists but is not a file!");
   }
 
   // Open path
   std::ofstream output_file(output_path, std::ios::out | std::ios::trunc | std::ios::binary);
   if (!output_file || !output_file.good()) {
     output_file.close();
-    fatal_error("Cannot open file: " + std::string(output_path));
+    FATAL_ERROR("Cannot open file: " + std::string(output_path));
   }
 
   xml.save(output_file);
@@ -245,14 +245,14 @@ void write(const pugi::xml_document &xml, const std::string &path) {
 
 void generate(const std::string &sfo_path, const std::string &output_path, const std::string &gp4_path, std::vector<std::string> &self_files, const std::string &type) {
   if (type != "base" && type != "patch" && type != "remaster" && type != "theme" && type != "theme-unlock" && type != "additional-content-data" && type != "additional-content-no-data") {
-    fatal_error("Unknown asset type");
+    FATAL_ERROR("Unknown asset type");
   }
 
   sfo sfo_obj(sfo_path);
   std::vector<std::string> sfo_keys = sfo_obj.get_keys();
 
   if (!std::count(sfo_keys.begin(), sfo_keys.end(), std::string("CONTENT_ID"))) {
-    fatal_error("param.sfo does not contain `CONTENT_ID`!");
+    FATAL_ERROR("param.sfo does not contain `CONTENT_ID`!");
   }
 
   std::vector<std::string> pubtool_keys;

@@ -20,17 +20,17 @@
 namespace dump {
 void __dump(const std::string &usb_device, const std::string &title_id, const std::string &type) {
   if (type != "base" && type != "patch" && type != "remaster" && type != "theme" && type != "theme-unlock" && type != "additional-content-data" && type != "additional-content-no-data") {
-    fatal_error("Unknown asset type");
+    FATAL_ERROR("Unknown asset type");
   }
 
   // TID vs CID and type checks
   if (type == "base" || type == "patch" || type == "remaster") {
     if (!std::regex_match(title_id, std::regex("^\\D{4}\\d{5}$"))) {
-      fatal_error("Malformed title ID");
+      FATAL_ERROR("Malformed title ID");
     }
   } else {
     if (!std::regex_match(title_id, std::regex("^\\D{2}\\d{4}-\\D{4}\\d{5}_\\d{2}-\\w{16}$"))) {
-      fatal_error("Malformed content ID");
+      FATAL_ERROR("Malformed content ID");
     }
   }
 
@@ -47,35 +47,35 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
 
   // Make sure the base path is a directory or can be created
   if (!std::filesystem::is_directory(output_path) && !std::filesystem::create_directories(output_path)) {
-    fatal_error("Unable to create output directory");
+    FATAL_ERROR("Unable to create output directory");
   }
 
   // Check for .dumping semaphore
   std::filesystem::path dumping_semaphore(usb_device);
   dumping_semaphore /= output_directory + ".dumping";
   if (std::filesystem::exists(dumping_semaphore)) {
-    fatal_error("This dump is currently dumping or closed unexpectedly! Please delete existing dump to enable dumping.");
+    FATAL_ERROR("This dump is currently dumping or closed unexpectedly! Please delete existing dump to enable dumping.");
   }
 
   // Check for .complete semaphore
   std::filesystem::path complete_semaphore(usb_device);
   complete_semaphore /= output_directory + ".complete";
   if (std::filesystem::exists(complete_semaphore)) {
-    fatal_error("This dump has already been completed! Please delete existing dump to enable dumping.");
+    FATAL_ERROR("This dump has already been completed! Please delete existing dump to enable dumping.");
   }
 
   // Create .dumping semaphore
   std::ofstream dumping_sem_touch(dumping_semaphore);
   dumping_sem_touch.close();
   if (std::filesystem::exists(dumping_semaphore)) {
-    fatal_error("Unable to create dumping semaphore!");
+    FATAL_ERROR("Unable to create dumping semaphore!");
   }
 
   // Create "sce_sys" directory in the output directory
   std::filesystem::path sce_sys_path(output_path);
   sce_sys_path /= "sce_sys";
   if (!std::filesystem::is_directory(sce_sys_path) && !std::filesystem::create_directories(sce_sys_path)) {
-    fatal_error("Unable to create `sce_sys` directory");
+    FATAL_ERROR("Unable to create `sce_sys` directory");
   }
 
   if (type == "theme-unlock" || type == "additional-content-no-data") {
@@ -93,7 +93,7 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
 
       // Copy param.sfo
       if (!std::filesystem::copy_file(install_source, install_destination, std::filesystem::copy_options::overwrite_existing)) {
-        fatal_error("Unable to copy" + std::string(install_source) + " to " + std::string(install_destination));
+        FATAL_ERROR("Unable to copy" + std::string(install_source) + " to " + std::string(install_destination));
       }
 
       std::filesystem::path param_source("/system_data/priv/appmeta/addcont/I00000002");
@@ -101,7 +101,7 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
       param_source /= "param.sfo";
 
       if (!std::filesystem::copy_file(param_source, param_destination, std::filesystem::copy_options::overwrite_existing)) {
-        fatal_error("Unable to copy" + std::string(param_source) + " to " + std::string(param_destination));
+        FATAL_ERROR("Unable to copy" + std::string(param_source) + " to " + std::string(param_destination));
       }
     } else {
       // TODO: Find and copy... or create... "param.sfo" for "additional-content-no-data" at param_destination
@@ -164,7 +164,7 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
         dst /= "trophy" + std::string(zerofill, '0') + std::string(entry.trophy_number.data) + ".trp";
 
         if (!std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing)) {
-          fatal_error("Unable to copy" + std::string(src) + " to " + std::string(dst));
+          FATAL_ERROR("Unable to copy" + std::string(src) + " to " + std::string(dst));
         }
       }
     }
@@ -213,27 +213,31 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
     std::filesystem::path fself_path(decrypted_path);
     fself_path.replace_extension(".fself");
 
-    // Get proper Program Authority ID, App Version, and Auth Info
+    // Get proper Program Authority ID, App Version, Firmware Version, and Auth Info
     uint64_t program_authority_id = elf::get_paid(encrypted_path);
     std::string ptype = "fake"; // elf::get_ptype(encrypted_path);
     uint64_t app_version = elf::get_app_version(encrypted_path);
-    // uint64_t fw_version = elf::get_fw_version(encrypted_path); // Unused
+    uint64_t fw_version = elf::get_fw_version(encrypted_path);
     std::vector<unsigned char> auth_info = elf::get_auth_info(encrypted_path);
 
     elf::decrypt(encrypted_path, decrypted_path);
-    fself::make_fself(decrypted_path, fself_path, program_authority_id, ptype, app_version, 0, auth_info);
+    if (!elf::is_valid_decrypt(encrypted_path, decrypted_path)) {
+      FATAL_ERROR("Invalid ELF decryption!")
+    }
+    elf::zero_section_header(decrypted_path); // TODO: Zero section headers?
+    fself::make_fself(decrypted_path, fself_path, program_authority_id, ptype, app_version, fw_version, auth_info);
   }
 
   // Delete .dumping semaphore
   if (!std::filesystem::remove(dumping_semaphore)) {
-    fatal_error("Unable to delete dumping semaphore");
+    FATAL_ERROR("Unable to delete dumping semaphore");
   }
 
   // Create .complete semaphore
   std::ofstream complete_sem_touch(complete_semaphore);
   complete_sem_touch.close();
   if (std::filesystem::exists(complete_semaphore)) {
-    fatal_error("Unable to create completion semaphore!");
+    FATAL_ERROR("Unable to create completion semaphore!");
   }
 }
 
