@@ -1,6 +1,9 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
+#ifndef COMMON_HPP_
+#define COMMON_HPP_
+
 #include <filesystem>
 #include <sstream>
 #include <stdexcept>
@@ -22,3 +25,5 @@
     compiled_msg << "Debug: " << log_message << " at " << std::filesystem::path(__FILE__).filename() << ":" << __LINE__ << ":(" << __FUNCTION__ << ")"; \
     std::cout << compiled_msg.str() << std::endl;                                                                                                       \
   };
+
+#endif // COMMON_HPP_
