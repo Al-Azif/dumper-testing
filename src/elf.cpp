@@ -180,7 +180,7 @@ bool is_elf(const std::string &path) {
   elf_input.read((char *)&elf_header, sizeof(Elf64_Ehdr)); // Flawfinder: ignore
   if (!elf_input.good()) {
     elf_input.close();
-    FATAL_ERROR("Error reading ELF header!");
+    return false;
   }
   elf_input.close();
 
