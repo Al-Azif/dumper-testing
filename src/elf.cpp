@@ -3,8 +3,8 @@
 
 #include "elf.hpp"
 #include "common.hpp"
+#include "elf_64.hpp"
 #include "elf_common.hpp"
-#include "elf_structs.hpp"
 
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -48,7 +48,6 @@ uint64_t get_sce_header_offset(const std::string &path) {
     FATAL_ERROR("Input file is not a SELF!");
   }
 
-  // TODO: USE THIS IN THE PAYLOAD SDK FOR FW DETECTION!
   // Read SELF header
   SelfHeader self_header;
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
@@ -66,6 +65,9 @@ uint64_t get_sce_header_offset(const std::string &path) {
     self_input.close();
     FATAL_ERROR("Error reading ELF header!");
   }
+
+  // TODO: Check ELF magic
+
   self_input.close();
 
   // Calculate SCE header offset from number of ELF entries
@@ -173,12 +175,6 @@ bool is_elf(const std::string &path) {
     FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
-  // Check to make sure file is at least as big as a SELF header
-  if (std::filesystem::file_size(path) < sizeof(Elf64_Ehdr)) {
-    elf_input.close();
-    return false;
-  }
-
   // Read ELF header
   SelfHeader elf_header;
   elf_input.read((char *)&elf_header, sizeof(Elf64_Ehdr)); // Flawfinder: ignore
@@ -214,18 +210,12 @@ bool is_self(const std::string &path) {
     FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
-  // Check to make sure file is at least as big as a SELF header
-  if (std::filesystem::file_size(path) < sizeof(SelfHeader)) {
-    self_input.close();
-    return false;
-  }
-
   // Read SELF header
   SelfHeader self_header;
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
-    FATAL_ERROR("Error reading header!");
+    FATAL_ERROR("Error reading SELF header!");
   }
   self_input.close();
 
