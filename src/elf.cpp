@@ -215,7 +215,7 @@ bool is_self(const std::string &path) {
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
-    FATAL_ERROR("Error reading SELF header!");
+    return false;
   }
   self_input.close();
 

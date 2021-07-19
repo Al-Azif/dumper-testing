@@ -81,7 +81,7 @@ TEST(elfTests, sceHeaderOffset) {
     elf::get_sce_header_offset("./tests/files/elf/sceHeaderOffset/no_permission.self");
     FAIL() << "Could \"open\" file without permissions";
   } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Cannot open file: ./tests/files/elf/sceHeaderOffsets/no_permission.self at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Cannot open file: \\./tests/files/elf/sceHeaderOffset/no_permission\\.self at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
       FAIL() << "Cannot open file";
     }
   }
@@ -193,10 +193,28 @@ TEST(elfTests, isElf) {
   }
 
   try {
+    elf::is_elf("./tests/files/elf/isElf/does_not_exist.elf");
+    FAIL() << "Opened non-existant file";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
+      FAIL() << "Input path does not exist";
+    }
+  }
+
+  try {
+    elf::is_elf("./tests/files/elf/isElf/not_a_file.elf");
+    FAIL() << "Opened non-file object as file";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
+      FAIL() << "Input path is not a file";
+    }
+  }
+
+  try {
     elf::is_elf("./tests/files/elf/isElf/no_permission.elf");
     FAIL() << "Could \"open\" file without permissions";
   } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Cannot open file: ./tests/files/elf/isElf/no_permission.elf at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Cannot open file: \\./tests/files/elf/isElf/no_permission\\.elf at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
       FAIL() << "Cannot open file";
     }
   }
@@ -208,7 +226,91 @@ TEST(elfTests, isElf) {
 }
 
 TEST(elfTests, isSelf) {
-  // TODO
+  try {
+    elf::is_self("");
+    FAIL() << "Accepted empty argument";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
+      FAIL() << "Empty path argument (Empty)";
+    }
+  }
+
+  try {
+    elf::is_self(" ");
+    FAIL() << "Accepted whitespace argument";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
+      FAIL() << "Empty path argument (Single space)";
+    }
+  }
+
+  try {
+    elf::is_self("  ");
+    FAIL() << "Accepted whitespace argument";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
+      FAIL() << "Empty path argument (Double space)";
+    }
+  }
+
+  try {
+    elf::is_self(" ");
+    FAIL() << "Accepted whitespace argument";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
+      FAIL() << "Empty path argument (Single tab)";
+    }
+  }
+
+  try {
+    elf::is_self("   ");
+    FAIL() << "Accepted whitespace argument";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
+      FAIL() << "Empty path argument (Double tab)";
+    }
+  }
+
+  try {
+    elf::is_self(nullptr);
+    FAIL() << "Accepted nullptr argument";
+  } catch (std::logic_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
+      FAIL() << "Empty path argument (nullptr)";
+    }
+  }
+
+  try {
+    elf::is_self("./tests/files/elf/isSelf/does_not_exist.self");
+    FAIL() << "Opened non-existant file";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
+      FAIL() << "Input path does not exist";
+    }
+  }
+
+  try {
+    elf::is_self("./tests/files/elf/isSelf/not_a_file.self");
+    FAIL() << "Opened non-file object as file";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
+      FAIL() << "Input path is not a file";
+    }
+  }
+
+  try {
+    elf::is_self("./tests/files/elf/isSelf/no_permission.self");
+    FAIL() << "Could \"open\" file without permissions";
+  } catch (std::runtime_error const &err) {
+    if (!std::regex_match(err.what(), std::regex("^Error: Cannot open file: \\./tests/files/elf/isSelf/no_permission\\.self at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
+      FAIL() << "Cannot open file";
+    }
+  }
+
+  EXPECT_FALSE(elf::is_self("./tests/files/elf/isSelf/broken_self_size.self"));
+  EXPECT_FALSE(elf::is_self("./tests/files/elf/isSelf/broken_self_magic.self"));
+
+  EXPECT_TRUE(elf::is_self("./tests/files/elf/isSelf/is_self.self"));
 }
 
 TEST(elfTests, isNpdrm) {
