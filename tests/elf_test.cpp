@@ -281,14 +281,31 @@ TEST(elfTests, getDigest) {
   // File is not a self
   EXCEPT_EXCEPTION_REGEX(elf::get_digest("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Passed a file that was not a SELF");
 
-  /*
-    TODO
-  */
+  // TODO
 }
 
 TEST(elfTests, getAuthInfo) {
-  // TODO
-  // Unlikely to be able to test this properly
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                 // nullptr
+
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Opened non-existant file");
+
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Opened non-file object as file");
+
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Could \"open\" file without permissions");
+
+  // File is not a self
+  EXCEPT_EXCEPTION_REGEX(elf::get_auth_info("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Passed a file that was not a SELF");
+
+  // Unable to test this further
 }
 
 TEST(elfTests, isValidDecrypt) {

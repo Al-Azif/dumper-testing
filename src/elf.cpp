@@ -461,22 +461,7 @@ std::vector<unsigned char> get_auth_info(const std::string &path) {
     FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
-  // Check if the file is a SELF, if not it *should* no have a SCE header
-  if (!is_self(path)) {
-    FATAL_ERROR("Input path is not a SELF!");
-  }
-
-  // Check for empty or pure whitespace path
-  if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
-    FATAL_ERROR("Empty path argument!");
-  }
-
-  // Check if file exists and is file
-  if (!std::filesystem::is_regular_file(path)) {
-    FATAL_ERROR("Input path does not exist or is not a file!");
-  }
-
-  // Open path
+  // Open path (To check permissions)
   std::ifstream self_input(path, std::ios::in | std::ios::binary);
   if (!self_input || !self_input.good()) {
     self_input.close();
@@ -484,24 +469,27 @@ std::vector<unsigned char> get_auth_info(const std::string &path) {
   }
   self_input.close();
 
-  if (is_self(path)) {
-    // TODO:
-    // This may be better as a Mira fuctions to expose the required kernel functions as getting the auth_info is done in kernel
-    // int kern_get_self_auth_info(struct thread* td, const char* path, int pathseg, char* info);
-    // int self_kget_auth_info(struct thread *td, struct path_kmethod_uap_t *uap) {
-    //   char auth_info[0x88];
-    //   memset(auth_info, 0, sizeof(auth_info));
-    //
-    //   const char *path = uap->path;
-    //   int res = kern_get_self_auth_info(td, path, (int)UIO_SYSSPACE, auth_info);
-    //   if (res == 0) {
-    //     khexdump("AUTH_INFO", auth_info, 0x88);
-    //     kdprintf("END_AUTH_INFO\n");
-    //   } else {
-    //     kdprintf("Failed to get AUTH_INFO\n");
-    //   }
-    // }
+  // Check if the file is a SELF
+  if (!is_self(path)) {
+    FATAL_ERROR("Input path is not a SELF!");
   }
+
+  // TODO:
+  // This may be better as a Mira fuctions to expose the required kernel functions as getting the auth_info is done in kernel
+  // int kern_get_self_auth_info(struct thread* td, const char* path, int pathseg, char* info);
+  // int self_kget_auth_info(struct thread *td, struct path_kmethod_uap_t *uap) {
+  //   char auth_info[0x88];
+  //   memset(auth_info, 0, sizeof(auth_info));
+  //
+  //   const char *path = uap->path;
+  //   int res = kern_get_self_auth_info(td, path, (int)UIO_SYSSPACE, auth_info);
+  //   if (res == 0) {
+  //     khexdump("AUTH_INFO", auth_info, 0x88);
+  //     kdprintf("END_AUTH_INFO\n");
+  //   } else {
+  //     kdprintf("Failed to get AUTH_INFO\n");
+  //   }
+  // }
 
   std::vector<unsigned char> blah;
 
