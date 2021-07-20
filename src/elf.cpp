@@ -266,11 +266,9 @@ std::string get_ptype(const std::string &path) {
 
   uint64_t program_type;
   if (is_npdrm(path)) {
-    SceHeaderNpdrm sce_header = get_sce_header_npdrm(path);
-    program_type = sce_header.program_type;
+    program_type = get_sce_header_npdrm(path).program_type;
   } else {
-    SceHeader sce_header = get_sce_header(path);
-    program_type = sce_header.program_type;
+    program_type = get_sce_header(path).program_type;
   }
 
   std::string output;
@@ -325,12 +323,10 @@ uint64_t get_paid(const std::string &path) {
   }
 
   if (is_npdrm(path)) {
-    SceHeaderNpdrm sce_header = get_sce_header_npdrm(path);
-    return sce_header.program_authority_id;
+    return get_sce_header_npdrm(path).program_authority_id;
   }
 
-  SceHeader sce_header = get_sce_header(path);
-  return sce_header.program_authority_id;
+  return get_sce_header(path).program_authority_id;
 }
 
 uint64_t get_app_version(const std::string &path) {
@@ -350,12 +346,10 @@ uint64_t get_app_version(const std::string &path) {
   }
 
   if (is_npdrm(path)) {
-    SceHeaderNpdrm sce_header = get_sce_header_npdrm(path);
-    return sce_header.app_version;
+    return get_sce_header_npdrm(path).app_version;
   }
 
-  SceHeader sce_header = get_sce_header(path);
-  return sce_header.app_version;
+  return get_sce_header(path).app_version;
 }
 
 uint64_t get_fw_version(const std::string &path) {
@@ -375,12 +369,10 @@ uint64_t get_fw_version(const std::string &path) {
   }
 
   if (is_npdrm(path)) {
-    SceHeaderNpdrm sce_header = get_sce_header_npdrm(path);
-    return sce_header.fw_version;
+    return get_sce_header_npdrm(path).fw_version;
   }
 
-  SceHeader sce_header = get_sce_header(path);
-  return sce_header.fw_version;
+  return get_sce_header(path).fw_version;
 }
 
 std::vector<unsigned char> get_digest(const std::string &path) {
@@ -394,7 +386,7 @@ std::vector<unsigned char> get_digest(const std::string &path) {
     FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
-  // Check if the file is a SELF, if not it *should* no have a SCE header
+  // Check if the file is a SELF. If it's not, it *should* not have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
   }
