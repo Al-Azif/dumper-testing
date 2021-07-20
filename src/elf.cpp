@@ -240,11 +240,36 @@ bool is_npdrm(const std::string &path) {
     FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
-  if (is_self(path)) {
-    SceHeader sce_header = get_sce_header(path); // Will under-read NPDRM SCE headers but it will read as far as needed
-    if (sce_header.program_type == 0x4) {
-      return true;
-    }
+  // Open path
+  std::ifstream self_input(path, std::ios::in | std::ios::binary);
+  if (!self_input || !self_input.good()) {
+    self_input.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+
+  // Check if the file is a SELF
+  if (!is_self(path)) {
+    self_input.close();
+    FATAL_ERROR("Input path is not a SELF!");
+  }
+
+  // Read SELF header
+  SelfHeader self_header;
+  self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
+  if (!self_input.good()) {
+    // Should never reach here... remove?
+    self_input.close();
+    FATAL_ERROR("Error reading SELF header!");
+  }
+
+  uint64_t program_type = self_header.program_type;
+  while (program_type >= 0x10) {
+    program_type -= 0x10;
+  }
+
+  // TODO: Is it just npdrm_exec that are considered NPDRM or is npdrm_dynlib as well? What about fake?
+  if (program_type == 0x4) {
+    return true;
   }
 
   return false;
