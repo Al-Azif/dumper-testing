@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-// Checks the expression to throw aspecific exception message matching a regex string
+// Checks the expression to throw a specific exception message matching a regex string
 // If the test doesn't thow an exception the test fails and "pass" is printed
 #define EXCEPT_EXCEPTION_REGEX(expression, exception_type, exception_string, pass) \
   {                                                                                \
@@ -137,31 +137,30 @@ TEST(elfTests, getPtype) {
   // File is not a self
   EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Passed a file that was not a SELF");
 
-  /*
+  // TODO
   // Non-NPDRM header
-  EXPECT_EQ("fake", elf::get_ptype("./tests/files/elf/getPtype_fake.self"));
-  EXPECT_EQ("npdrm_exec", elf::get_ptype("./tests/files/elf/getPtype_npdrm_exec.self"));
-  EXPECT_EQ("npdrm_dynlib", elf::get_ptype("./tests/files/elf/getPtype_npdrm_dynlib.self"));
-  EXPECT_EQ("system_exec", elf::get_ptype("./tests/files/elf/getPtype_system_exec.self"));
-  EXPECT_EQ("system_dynlib", elf::get_ptype("./tests/files/elf/getPtype_system_dynlib.self"));
-  EXPECT_EQ("host_kernel", elf::get_ptype("./tests/files/elf/getPtype_host_kernel.self"));
-  EXPECT_EQ("secure_module", elf::get_ptype("./tests/files/elf/getPtype_secure_module.self"));
-  EXPECT_EQ("secure_kernel", elf::get_ptype("./tests/files/elf/getPtype_secure_kernel.self"));
+  // EXPECT_EQ("fake", elf::get_ptype("./tests/files/elf/getPtype_fake.self"));
+  // EXPECT_EQ("npdrm_exec", elf::get_ptype("./tests/files/elf/getPtype_npdrm_exec.self"));
+  // EXPECT_EQ("npdrm_dynlib", elf::get_ptype("./tests/files/elf/getPtype_npdrm_dynlib.self"));
+  // EXPECT_EQ("system_exec", elf::get_ptype("./tests/files/elf/getPtype_system_exec.self"));
+  // EXPECT_EQ("system_dynlib", elf::get_ptype("./tests/files/elf/getPtype_system_dynlib.self"));
+  // EXPECT_EQ("host_kernel", elf::get_ptype("./tests/files/elf/getPtype_host_kernel.self"));
+  // EXPECT_EQ("secure_module", elf::get_ptype("./tests/files/elf/getPtype_secure_module.self"));
+  // EXPECT_EQ("secure_kernel", elf::get_ptype("./tests/files/elf/getPtype_secure_kernel.self"));
 
-  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/getPtype_unknown.self"), std::runtime_error, "^Error: Unknown ptype! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Returned an unknown ptype");
+  // EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/getPtype_unknown.self"), std::runtime_error, "^Error: Unknown ptype! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Returned an unknown ptype");
 
   // NPDRM Header
-  EXPECT_EQ("fake", elf::get_ptype("./tests/files/elf/getPtype_fake_(npdrm_header).self"));
-  EXPECT_EQ("npdrm_exec", elf::get_ptype("./tests/files/elf/getPtype_npdrm_exec_(npdrm_header).self"));
-  EXPECT_EQ("npdrm_dynlib", elf::get_ptype("./tests/files/elf/getPtype_npdrm_dynlib_(npdrm_header).self"));
-  EXPECT_EQ("system_exec", elf::get_ptype("./tests/files/elf/getPtype_system_exec_(npdrm_header).self"));
-  EXPECT_EQ("system_dynlib", elf::get_ptype("./tests/files/elf/getPtype_system_dynlib_(npdrm_header).self"));
-  EXPECT_EQ("host_kernel", elf::get_ptype("./tests/files/elf/getPtype_host_kernel_(npdrm_header).self"));
-  EXPECT_EQ("secure_module", elf::get_ptype("./tests/files/elf/getPtype_secure_module_(npdrm_header).self"));
-  EXPECT_EQ("secure_kernel", elf::get_ptype("./tests/files/elf/getPtype_secure_kernel_(npdrm_header).self"));
+  // EXPECT_EQ("fake", elf::get_ptype("./tests/files/elf/getPtype_fake_(npdrm_header).self"));
+  // EXPECT_EQ("npdrm_exec", elf::get_ptype("./tests/files/elf/getPtype_npdrm_exec_(npdrm_header).self"));
+  // EXPECT_EQ("npdrm_dynlib", elf::get_ptype("./tests/files/elf/getPtype_npdrm_dynlib_(npdrm_header).self"));
+  // EXPECT_EQ("system_exec", elf::get_ptype("./tests/files/elf/getPtype_system_exec_(npdrm_header).self"));
+  // EXPECT_EQ("system_dynlib", elf::get_ptype("./tests/files/elf/getPtype_system_dynlib_(npdrm_header).self"));
+  // EXPECT_EQ("host_kernel", elf::get_ptype("./tests/files/elf/getPtype_host_kernel_(npdrm_header).self"));
+  // EXPECT_EQ("secure_module", elf::get_ptype("./tests/files/elf/getPtype_secure_module_(npdrm_header).self"));
+  // EXPECT_EQ("secure_kernel", elf::get_ptype("./tests/files/elf/getPtype_secure_kernel_(npdrm_header).self"));
 
-  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/getPtype_unknown_(npdrm_header).self"), std::runtime_error, "^Error: Unknown ptype! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Returned an unknown ptype");
-  */
+  // EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/getPtype_unknown_(npdrm_header).self"), std::runtime_error, "^Error: Unknown ptype! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Returned an unknown ptype");
 }
 
 TEST(elfTests, getPaid) {
@@ -185,15 +184,13 @@ TEST(elfTests, getPaid) {
   // File is not a self
   EXCEPT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Passed a file that was not a SELF");
 
-  /*
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid/paid_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid/paid_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/sceSection_0000000000000000.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid/paid_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid/paid_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
-  */
+  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/sceSection_0000000000000000_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
 }
 
 TEST(elfTests, getAppVersion) {
@@ -217,15 +214,13 @@ TEST(elfTests, getAppVersion) {
   // File is not a self
   EXCEPT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Passed a file that was not a SELF");
 
-  /*
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid/paid_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid/paid_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/sceSection_0000000000000000.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid/paid_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid/paid_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
-  */
+  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/sceSection_0000000000000000_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
 }
 
 TEST(elfTests, getFwVersion) {
@@ -249,15 +244,13 @@ TEST(elfTests, getFwVersion) {
   // File is not a self
   EXCEPT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Passed a file that was not a SELF");
 
-  /*
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/getFwVersion/fw_version_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/getFwVersion/fw_version_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/sceSection_0000000000000000.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/getFwVersion/fw_version_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/getFwVersion/fw_version_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
-  */
+  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/sceSection_0000000000000000_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
 }
 
 TEST(elfTests, getDigest) {
