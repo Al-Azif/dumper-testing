@@ -4,125 +4,48 @@
 
 #include <gtest/gtest.h>
 
+// Checks the expression to throw aspecific exception message matching a regex string
+// If the test doesn't thow an exception the test fails and "pass" is printed
+#define EXCEPT_EXCEPTION_REGEX(expression, exception_type, exception_string, pass) \
+  {                                                                                \
+    try {                                                                          \
+      expression;                                                                  \
+      FAIL() << pass;                                                              \
+    } catch (exception_type const &err) {                                          \
+      if (!std::regex_match(err.what(), std::regex(exception_string))) {           \
+        FAIL() << "Unexpected exception";                                          \
+      }                                                                            \
+    }                                                                              \
+  }
+
 TEST(elfTests, sceHeaderOffset) {
-  try {
-    elf::get_sce_header_offset("");
-    FAIL() << "Accepted empty argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Empty path argument (Empty)";
-    }
-  }
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                         // nullptr
 
-  try {
-    elf::get_sce_header_offset(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Empty path argument (Single space)";
-    }
-  }
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Opened non-existant file");
 
-  try {
-    elf::get_sce_header_offset("  ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Empty path argument (Double space)";
-    }
-  }
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Opened non-file object as file");
 
-  try {
-    elf::get_sce_header_offset(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Empty path argument (Single tab)";
-    }
-  }
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Could \"open\" file without permissions");
 
-  try {
-    elf::get_sce_header_offset("   ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Empty path argument (Double tab)";
-    }
-  }
+  // File is not a self
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Passed a file that was not a SELF");
 
-  try {
-    elf::get_sce_header_offset(nullptr);
-    FAIL() << "Accepted nullptr argument";
-  } catch (std::logic_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
-      FAIL() << "Empty path argument (nullptr)";
-    }
-  }
+  // This code will not pass because elf::is_self() within the function will fail before it can get to this check
+  // EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenSelfSize.self"), std::runtime_error, "^Error: Error reading SELF header! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted broken SELF header (Size)");
 
-  try {
-    elf::get_sce_header_offset("./tests/files/elf/doesNotExist.ext");
-    FAIL() << "Opened non-existant file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Input path does not exist";
-    }
-  }
-
-  try {
-    elf::get_sce_header_offset("./tests/files/elf/notAFile.ext");
-    FAIL() << "Opened non-file object as file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Input path is not a file";
-    }
-  }
-
-  try {
-    elf::get_sce_header_offset("./tests/files/elf/noPermission.ext");
-    FAIL() << "Could \"open\" file without permissions";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Cannot open file";
-    }
-  }
-
-  try {
-    elf::get_sce_header_offset("./tests/files/elf/brokenSelfMagic.self");
-    FAIL() << "Accepted bad SELF magic";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input file is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Input file is not a SELF (Magic)";
-    }
-  }
-
-  // This code will not pass because elf::is_self() will fail before it can get to this check
-  // try {
-  //   elf::get_sce_header_offset("./tests/files/elf/brokenSelfSize.self");
-  //   FAIL() << "Accepted broken SELF header (Size)";
-  // } catch (std::runtime_error const &err) {
-  //   if (!std::regex_match(err.what(), std::regex("^Error: Error reading SELF header! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-  //     FAIL() << "Error reading SELF header (Size)";
-  //   }
-  // }
+  EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenElfSize.self"), std::runtime_error, "^Error: Error reading ELF header! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted broken ELF header (Size)");
 
   // TODO: Must add ELF magic check to elf::get_sce_header_offset() ctrl + f "TODO" in src/elf.cpp
-  // try {
-  //   elf::get_sce_header_offset("./tests/files/elf/brokenElfMagic.self");
-  //   FAIL() << "Accepted bad ELF magic";
-  // } catch (std::runtime_error const &err) {
-  //   if (!std::regex_match(err.what(), std::regex("^Error: Error reading ELF magic! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-  //     FAIL() << "Error reading ELF magic";
-  //   }
-  // }
-
-  try {
-    elf::get_sce_header_offset("./tests/files/elf/brokenElfSize.self");
-    FAIL() << "Accepted broken ELF header (Size)";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Error reading ELF header! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$"))) {
-      FAIL() << "Error reading ELF header (Size)";
-    }
-  }
+  // EXCEPT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenElfMagic.self"), std::runtime_error, "^Error: Error reading ELF magic! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted broken ELF magic");
 
   // Valid tests
   EXPECT_EQ(0xC0, elf::get_sce_header_offset("./tests/files/elf/sceHeaderOffset_0xC0.self"));
@@ -138,178 +61,54 @@ TEST(elfTests, getSceHeaderNpdrm) {
 }
 
 TEST(elfTests, isElf) {
-  try {
-    elf::is_elf("");
-    FAIL() << "Accepted empty argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
-      FAIL() << "Empty path argument (Empty)";
-    }
-  }
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                          // nullptr
 
-  try {
-    elf::is_elf(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
-      FAIL() << "Empty path argument (Single space)";
-    }
-  }
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Opened non-existant file");
 
-  try {
-    elf::is_elf("  ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
-      FAIL() << "Empty path argument (Double space)";
-    }
-  }
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Opened non-file object as file");
 
-  try {
-    elf::is_elf(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
-      FAIL() << "Empty path argument (Single tab)";
-    }
-  }
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::is_elf("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Could \"open\" file without permissions");
 
-  try {
-    elf::is_elf("   ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
-      FAIL() << "Empty path argument (Double tab)";
-    }
-  }
-
-  try {
-    elf::is_elf(nullptr);
-    FAIL() << "Accepted nullptr argument";
-  } catch (std::logic_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
-      FAIL() << "Empty path argument (nullptr)";
-    }
-  }
-
-  try {
-    elf::is_elf("./tests/files/elf/doesNotExist.ext");
-    FAIL() << "Opened non-existant file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
-      FAIL() << "Input path does not exist";
-    }
-  }
-
-  try {
-    elf::is_elf("./tests/files/elf/notAFile.ext");
-    FAIL() << "Opened non-file object as file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
-      FAIL() << "Input path is not a file";
-    }
-  }
-
-  try {
-    elf::is_elf("./tests/files/elf/noPermission.ext");
-    FAIL() << "Could \"open\" file without permissions";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_elf\\)$"))) {
-      FAIL() << "Cannot open file";
-    }
-  }
-
+  // False
   EXPECT_FALSE(elf::is_elf("./tests/files/elf/brokenElfSize.elf"));
   EXPECT_FALSE(elf::is_elf("./tests/files/elf/brokenElfMagic.elf"));
 
+  // True
   EXPECT_TRUE(elf::is_elf("./tests/files/elf/isValidElf.elf"));
 }
 
 TEST(elfTests, isSelf) {
-  try {
-    elf::is_self("");
-    FAIL() << "Accepted empty argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
-      FAIL() << "Empty path argument (Empty)";
-    }
-  }
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::is_self(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::is_self(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::is_self("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::is_self("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::is_self("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::is_self(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                           // nullptr
 
-  try {
-    elf::is_self(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
-      FAIL() << "Empty path argument (Single space)";
-    }
-  }
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::is_self("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Opened non-existant file");
 
-  try {
-    elf::is_self("  ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
-      FAIL() << "Empty path argument (Double space)";
-    }
-  }
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::is_self("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Opened non-file object as file");
 
-  try {
-    elf::is_self(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
-      FAIL() << "Empty path argument (Single tab)";
-    }
-  }
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::is_self("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Could \"open\" file without permissions");
 
-  try {
-    elf::is_self("   ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
-      FAIL() << "Empty path argument (Double tab)";
-    }
-  }
-
-  try {
-    elf::is_self(nullptr);
-    FAIL() << "Accepted nullptr argument";
-  } catch (std::logic_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
-      FAIL() << "Empty path argument (nullptr)";
-    }
-  }
-
-  try {
-    elf::is_self("./tests/files/elf/doesNotExist.ext");
-    FAIL() << "Opened non-existant file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
-      FAIL() << "Input path does not exist";
-    }
-  }
-
-  try {
-    elf::is_self("./tests/files/elf/notAFile.ext");
-    FAIL() << "Opened non-file object as file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
-      FAIL() << "Input path is not a file";
-    }
-  }
-
-  try {
-    elf::is_self("./tests/files/elf/noPermission.ext");
-    FAIL() << "Could \"open\" file without permissions";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_self\\)$"))) {
-      FAIL() << "Cannot open file";
-    }
-  }
-
+  // False
   EXPECT_FALSE(elf::is_self("./tests/files/elf/brokenSelfSize.self"));
   EXPECT_FALSE(elf::is_self("./tests/files/elf/brokenSelfMagic.self"));
 
+  // True
   EXPECT_TRUE(elf::is_self("./tests/files/elf/isValidSelf.self"));
 }
 
@@ -318,86 +117,25 @@ TEST(elfTests, isNpdrm) {
 }
 
 TEST(elfTests, getPtype) {
-  try {
-    elf::get_ptype("");
-    FAIL() << "Accepted empty argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Empty path argument (Empty)";
-    }
-  }
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                             // nullptr
 
-  try {
-    elf::get_ptype(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Empty path argument (Single space)";
-    }
-  }
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Opened non-existant file");
 
-  try {
-    elf::get_ptype("  ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Empty path argument (Double space)";
-    }
-  }
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Opened non-file object as file");
 
-  try {
-    elf::get_ptype(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Empty path argument (Single tab)";
-    }
-  }
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Could \"open\" file without permissions");
 
-  try {
-    elf::get_ptype("   ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Empty path argument (Double tab)";
-    }
-  }
-
-  try {
-    elf::get_ptype(nullptr);
-    FAIL() << "Accepted nullptr argument";
-  } catch (std::logic_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
-      FAIL() << "Empty path argument (nullptr)";
-    }
-  }
-
-  try {
-    elf::get_ptype("./tests/files/elf/doesNotExist.ext");
-    FAIL() << "Opened non-existant file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Input path does not exist";
-    }
-  }
-
-  try {
-    elf::get_ptype("./tests/files/elf/notAFile.ext");
-    FAIL() << "Opened non-file object as file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Input path is not a file";
-    }
-  }
-
-  try {
-    elf::get_ptype("./tests/files/elf/brokenSelfMagic.self");
-    FAIL() << "Passed a file that was not a SELF";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << err.what();
-    }
-  }
+  // File is not a self
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Passed a file that was not a SELF");
 
   /*
   // Non-NPDRM header
@@ -410,14 +148,7 @@ TEST(elfTests, getPtype) {
   EXPECT_EQ("secure_module", elf::get_ptype("./tests/files/elf/getPtype_secure_module.self"));
   EXPECT_EQ("secure_kernel", elf::get_ptype("./tests/files/elf/getPtype_secure_kernel.self"));
 
-  try {
-    elf::get_ptype("./tests/files/elf/getPtype_unknown.self");
-    FAIL() << "Returned an unknown ptype";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Unknown ptype! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Unknown ptype";
-    }
-  }
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/getPtype_unknown.self"), std::runtime_error, "^Error: Unknown ptype! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Returned an unknown ptype");
 
   // NPDRM Header
   EXPECT_EQ("fake", elf::get_ptype("./tests/files/elf/getPtype_fake_(npdrm_header).self"));
@@ -429,98 +160,30 @@ TEST(elfTests, getPtype) {
   EXPECT_EQ("secure_module", elf::get_ptype("./tests/files/elf/getPtype_secure_module_(npdrm_header).self"));
   EXPECT_EQ("secure_kernel", elf::get_ptype("./tests/files/elf/getPtype_secure_kernel_(npdrm_header).self"));
 
-  try {
-    elf::get_ptype("./tests/files/elf/getPtype_unknown_(npdrm_header).self");
-    FAIL() << "Returned an unknown ptype";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Unknown ptype! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$"))) {
-      FAIL() << "Unknown ptype";
-    }
-  }
+  EXCEPT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/getPtype_unknown_(npdrm_header).self"), std::runtime_error, "^Error: Unknown ptype! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Returned an unknown ptype");
   */
 }
 
 TEST(elfTests, getPaid) {
-  try {
-    elf::get_paid("");
-    FAIL() << "Accepted empty argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Empty)";
-    }
-  }
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                            // nullptr
 
-  try {
-    elf::get_paid(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Single space)";
-    }
-  }
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Opened non-existant file");
 
-  try {
-    elf::get_paid("  ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Double space)";
-    }
-  }
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Opened non-file object as file");
 
-  try {
-    elf::get_paid(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Single tab)";
-    }
-  }
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Could \"open\" file without permissions");
 
-  try {
-    elf::get_paid("   ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Double tab)";
-    }
-  }
-
-  try {
-    elf::get_paid(nullptr);
-    FAIL() << "Accepted nullptr argument";
-  } catch (std::logic_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
-      FAIL() << "Empty path argument (nullptr)";
-    }
-  }
-
-  try {
-    elf::get_paid("./tests/files/elf/doesNotExist.ext");
-    FAIL() << "Opened non-existant file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Input path does not exist";
-    }
-  }
-
-  try {
-    elf::get_paid("./tests/files/elf/notAFile.ext");
-    FAIL() << "Opened non-file object as file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Input path is not a file";
-    }
-  }
-
-  try {
-    elf::get_paid("./tests/files/elf/brokenSelfMagic.self");
-    FAIL() << "Passed a file that was not a SELF";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Input path is not a SELF";
-    }
-  }
+  // File is not a self
+  EXCEPT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Passed a file that was not a SELF");
 
   /*
   // Non-NPDRM header
@@ -534,86 +197,25 @@ TEST(elfTests, getPaid) {
 }
 
 TEST(elfTests, getAppVersion) {
-  try {
-    elf::get_paid("");
-    FAIL() << "Accepted empty argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Empty)";
-    }
-  }
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                   // nullptr
 
-  try {
-    elf::get_paid(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Single space)";
-    }
-  }
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Opened non-existant file");
 
-  try {
-    elf::get_paid("  ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Double space)";
-    }
-  }
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Opened non-file object as file");
 
-  try {
-    elf::get_paid(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Single tab)";
-    }
-  }
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Could \"open\" file without permissions");
 
-  try {
-    elf::get_paid("   ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Empty path argument (Double tab)";
-    }
-  }
-
-  try {
-    elf::get_paid(nullptr);
-    FAIL() << "Accepted nullptr argument";
-  } catch (std::logic_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
-      FAIL() << "Empty path argument (nullptr)";
-    }
-  }
-
-  try {
-    elf::get_paid("./tests/files/elf/doesNotExist.ext");
-    FAIL() << "Opened non-existant file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Input path does not exist";
-    }
-  }
-
-  try {
-    elf::get_paid("./tests/files/elf/notAFile.ext");
-    FAIL() << "Opened non-file object as file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Input path is not a file";
-    }
-  }
-
-  try {
-    elf::get_paid("./tests/files/elf/brokenSelfMagic.self");
-    FAIL() << "Passed a file that was not a SELF";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$"))) {
-      FAIL() << "Input path is not a SELF";
-    }
-  }
+  // File is not a self
+  EXCEPT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Passed a file that was not a SELF");
 
   /*
   // Non-NPDRM header
@@ -627,86 +229,25 @@ TEST(elfTests, getAppVersion) {
 }
 
 TEST(elfTests, getFwVersion) {
-  try {
-    elf::get_fw_version("");
-    FAIL() << "Accepted empty argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$"))) {
-      FAIL() << "Empty path argument (Empty)";
-    }
-  }
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                  // nullptr
 
-  try {
-    elf::get_fw_version(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$"))) {
-      FAIL() << "Empty path argument (Single space)";
-    }
-  }
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Opened non-existant file");
 
-  try {
-    elf::get_fw_version("  ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$"))) {
-      FAIL() << "Empty path argument (Double space)";
-    }
-  }
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Opened non-file object as file");
 
-  try {
-    elf::get_fw_version(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$"))) {
-      FAIL() << "Empty path argument (Single tab)";
-    }
-  }
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Could \"open\" file without permissions");
 
-  try {
-    elf::get_fw_version("   ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$"))) {
-      FAIL() << "Empty path argument (Double tab)";
-    }
-  }
-
-  try {
-    elf::get_fw_version(nullptr);
-    FAIL() << "Accepted nullptr argument";
-  } catch (std::logic_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
-      FAIL() << "Empty path argument (nullptr)";
-    }
-  }
-
-  try {
-    elf::get_fw_version("./tests/files/elf/doesNotExist.ext");
-    FAIL() << "Opened non-existant file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$"))) {
-      FAIL() << "Input path does not exist";
-    }
-  }
-
-  try {
-    elf::get_fw_version("./tests/files/elf/notAFile.ext");
-    FAIL() << "Opened non-file object as file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$"))) {
-      FAIL() << "Input path is not a file";
-    }
-  }
-
-  try {
-    elf::get_fw_version("./tests/files/elf/brokenSelfMagic.self");
-    FAIL() << "Passed a file that was not a SELF";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$"))) {
-      FAIL() << "Input path is not a SELF";
-    }
-  }
+  // File is not a self
+  EXCEPT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Passed a file that was not a SELF");
 
   /*
   // Non-NPDRM header
@@ -720,86 +261,25 @@ TEST(elfTests, getFwVersion) {
 }
 
 TEST(elfTests, getDigest) {
-  try {
-    elf::get_digest("");
-    FAIL() << "Accepted empty argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$"))) {
-      FAIL() << "Empty path argument (Empty)";
-    }
-  }
+  // Empty input arguments
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted empty argument");          // Empty
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument");    // Single space
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument");   // Double space
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument");   // Single tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument"); // Double tab
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                              // nullptr
 
-  try {
-    elf::get_digest(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$"))) {
-      FAIL() << "Empty path argument (Single space)";
-    }
-  }
+  // Non-existant file
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Opened non-existant file");
 
-  try {
-    elf::get_digest("  ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$"))) {
-      FAIL() << "Empty path argument (Double space)";
-    }
-  }
+  // Open non-file object
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Opened non-file object as file");
 
-  try {
-    elf::get_digest(" ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$"))) {
-      FAIL() << "Empty path argument (Single tab)";
-    }
-  }
+  // Open file without permission to access
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Could \"open\" file without permissions");
 
-  try {
-    elf::get_digest("   ");
-    FAIL() << "Accepted whitespace argument";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$"))) {
-      FAIL() << "Empty path argument (Double tab)";
-    }
-  }
-
-  try {
-    elf::get_digest(nullptr);
-    FAIL() << "Accepted nullptr argument";
-  } catch (std::logic_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^basic_string::_M_construct null not valid$"))) {
-      FAIL() << "Empty path argument (nullptr)";
-    }
-  }
-
-  try {
-    elf::get_digest("./tests/files/elf/doesNotExist.ext");
-    FAIL() << "Opened non-existant file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$"))) {
-      FAIL() << "Input path does not exist";
-    }
-  }
-
-  try {
-    elf::get_digest("./tests/files/elf/notAFile.ext");
-    FAIL() << "Opened non-file object as file";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$"))) {
-      FAIL() << "Input path is not a file";
-    }
-  }
-
-  try {
-    elf::get_digest("./tests/files/elf/brokenSelfMagic.self");
-    FAIL() << "Passed a file that was not a SELF";
-  } catch (std::runtime_error const &err) {
-    if (!std::regex_match(err.what(), std::regex("^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$"))) {
-      FAIL() << "Input path is not a SELF";
-    }
-  }
+  // File is not a self
+  EXCEPT_EXCEPTION_REGEX(elf::get_digest("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Passed a file that was not a SELF");
 
   /*
     TODO

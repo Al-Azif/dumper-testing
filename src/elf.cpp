@@ -45,19 +45,22 @@ uint64_t get_sce_header_offset(const std::string &path) {
   // Check to make sure file is a SELF
   if (!is_self(path)) {
     self_input.close();
-    FATAL_ERROR("Input file is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   // Read SELF header
   SelfHeader self_header;
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
+    // Should never reach here... remove?
     self_input.close();
     FATAL_ERROR("Error reading SELF header!");
   }
 
   // Calculate ELF header offset from the number of SELF segments
   uint64_t elf_header_offset = sizeof(self_header) + self_header.num_of_segments * sizeof(SelfEntry);
+
+  // Read ELF header
   Elf64_Ehdr elf_header;
   self_input.seekg(elf_header_offset, self_input.beg);
   self_input.read((char *)&elf_header, sizeof(elf_header)); // Flawfinder: ignore
@@ -65,10 +68,9 @@ uint64_t get_sce_header_offset(const std::string &path) {
     self_input.close();
     FATAL_ERROR("Error reading ELF header!");
   }
+  self_input.close();
 
   // TODO: Check ELF magic
-
-  self_input.close();
 
   // Calculate SCE header offset from number of ELF entries
   uint64_t sce_header_offset = elf_header_offset + elf_header.e_ehsize + elf_header.e_phnum * elf_header.e_phentsize;
@@ -259,6 +261,14 @@ std::string get_ptype(const std::string &path) {
     FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
+  // Open path (To check permissions)
+  std::ifstream self_input(path, std::ios::in | std::ios::binary);
+  if (!self_input || !self_input.good()) {
+    self_input.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+  self_input.close();
+
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
@@ -317,6 +327,14 @@ uint64_t get_paid(const std::string &path) {
     FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
+  // Open path (To check permissions)
+  std::ifstream self_input(path, std::ios::in | std::ios::binary);
+  if (!self_input || !self_input.good()) {
+    self_input.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+  self_input.close();
+
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
@@ -339,6 +357,14 @@ uint64_t get_app_version(const std::string &path) {
   if (!std::filesystem::is_regular_file(path)) {
     FATAL_ERROR("Input path does not exist or is not a file!");
   }
+
+  // Open path (To check permissions)
+  std::ifstream self_input(path, std::ios::in | std::ios::binary);
+  if (!self_input || !self_input.good()) {
+    self_input.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+  self_input.close();
 
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
@@ -363,6 +389,14 @@ uint64_t get_fw_version(const std::string &path) {
     FATAL_ERROR("Input path does not exist or is not a file!");
   }
 
+  // Open path (To check permissions)
+  std::ifstream self_input(path, std::ios::in | std::ios::binary);
+  if (!self_input || !self_input.good()) {
+    self_input.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+  self_input.close();
+
   // Check if the file is a SELF, if not it *should* no have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
@@ -385,6 +419,14 @@ std::vector<unsigned char> get_digest(const std::string &path) {
   if (!std::filesystem::is_regular_file(path)) {
     FATAL_ERROR("Input path does not exist or is not a file!");
   }
+
+  // Open path (To check permissions)
+  std::ifstream self_input(path, std::ios::in | std::ios::binary);
+  if (!self_input || !self_input.good()) {
+    self_input.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+  self_input.close();
 
   // Check if the file is a SELF. If it's not, it *should* not have a SCE header
   if (!is_self(path)) {
