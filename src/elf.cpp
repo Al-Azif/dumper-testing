@@ -70,7 +70,17 @@ uint64_t get_sce_header_offset(const std::string &path) {
   }
   self_input.close();
 
-  // TODO: Check ELF magic
+  // Check ELF magic
+  // Can this be less bad/robust?
+  unsigned char elf_magic[4];
+  elf_magic[0] = (ELF_MAGIC >> 24) & 0xFF;
+  elf_magic[1] = (ELF_MAGIC >> 16) & 0xFF;
+  elf_magic[2] = (ELF_MAGIC >> 8) & 0xFF;
+  elf_magic[3] = (ELF_MAGIC >> 0) & 0xFF;
+
+  if (std::memcmp(elf_header.e_ident, elf_magic, 4) != 0) {
+    FATAL_ERROR("Error reading ELF magic!");
+  }
 
   // Calculate SCE header offset from number of ELF entries
   uint64_t sce_header_offset = elf_header_offset + elf_header.e_ehsize + elf_header.e_phnum * elf_header.e_phentsize;

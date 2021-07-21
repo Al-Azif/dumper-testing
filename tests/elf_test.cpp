@@ -45,8 +45,7 @@ TEST(elfTests, sceHeaderOffset) {
   // Check ELF header size
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenElfSize.self"), std::runtime_error, "^Error: Error reading ELF header! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted broken ELF header (Size)");
 
-  // TODO: Must add ELF magic check to elf::get_sce_header_offset() ctrl + f "TODO" in src/elf.cpp
-  // EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenElfMagic.self"), std::runtime_error, "^Error: Error reading ELF magic! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted broken ELF magic");
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenElfMagic.self"), std::runtime_error, "^Error: Error reading ELF magic! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted broken ELF magic");
 
   // Valid tests
   EXPECT_EQ(0xC0, elf::get_sce_header_offset("./tests/files/elf/sceHeaderOffset_0xC0.self"));
