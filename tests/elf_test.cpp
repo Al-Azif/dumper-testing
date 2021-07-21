@@ -23,8 +23,8 @@ TEST(elfTests, sceHeaderOffset) {
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                         // nullptr
 
   // Non-existant file
@@ -58,8 +58,8 @@ TEST(elfTests, getSceHeader) {
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                  // nullptr
 
   // Non-existant file
@@ -83,8 +83,8 @@ TEST(elfTests, getSceHeaderNpdrm) {
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                        // nullptr
 
   // Non-existant file
@@ -108,8 +108,8 @@ TEST(elfTests, isElf) {
   EXPECT_EXCEPTION_REGEX(elf::is_elf(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::is_elf(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::is_elf("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::is_elf("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::is_elf("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::is_elf("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::is_elf("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_elf\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::is_elf(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                          // nullptr
 
   // Non-existant file
@@ -134,8 +134,8 @@ TEST(elfTests, isSelf) {
   EXPECT_EXCEPTION_REGEX(elf::is_self(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::is_self(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::is_self("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::is_self("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::is_self("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::is_self("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::is_self("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_self\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::is_self(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                           // nullptr
 
   // Non-existant file
@@ -160,8 +160,8 @@ TEST(elfTests, isNpdrm) {
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::is_npdrm("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::is_npdrm("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::is_npdrm("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::is_npdrm("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                            // nullptr
 
   // Non-existant file
@@ -196,8 +196,8 @@ TEST(elfTests, getPtype) {
   EXPECT_EXCEPTION_REGEX(elf::get_ptype(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_ptype(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_ptype("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_ptype("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_ptype("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_ptype("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_ptype("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_ptype(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                             // nullptr
 
   // Non-existant file
@@ -231,8 +231,8 @@ TEST(elfTests, getPaid) {
   EXPECT_EXCEPTION_REGEX(elf::get_paid(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_paid(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_paid("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_paid("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_paid("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_paid("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_paid("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_paid(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                            // nullptr
 
   // Non-existant file
@@ -261,8 +261,8 @@ TEST(elfTests, getAppVersion) {
   EXPECT_EXCEPTION_REGEX(elf::get_app_version(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_app_version(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_app_version("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_app_version("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_app_version("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_app_version("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_app_version("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_app_version(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                   // nullptr
 
   // Non-existant file
@@ -291,8 +291,8 @@ TEST(elfTests, getFwVersion) {
   EXPECT_EXCEPTION_REGEX(elf::get_fw_version(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_fw_version(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_fw_version("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_fw_version("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_fw_version("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_fw_version("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_fw_version("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_fw_version(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                  // nullptr
 
   // Non-existant file
@@ -321,8 +321,8 @@ TEST(elfTests, getDigest) {
   EXPECT_EXCEPTION_REGEX(elf::get_digest(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_digest(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_digest("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_digest("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_digest("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_digest("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_digest("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_digest(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                              // nullptr
 
   // Non-existant file
@@ -355,8 +355,8 @@ TEST(elfTests, getAuthInfo) {
   EXPECT_EXCEPTION_REGEX(elf::get_auth_info(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted empty argument");          // Empty
   EXPECT_EXCEPTION_REGEX(elf::get_auth_info(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument");    // Single space
   EXPECT_EXCEPTION_REGEX(elf::get_auth_info("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(elf::get_auth_info("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(elf::get_auth_info("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_auth_info("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_auth_info("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Accepted whitespace argument"); // Double tab
   EXPECT_EXCEPTION_REGEX(elf::get_auth_info(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                 // nullptr
 
   // Non-existant file
@@ -375,11 +375,75 @@ TEST(elfTests, getAuthInfo) {
 }
 
 TEST(elfTests, isValidDecrypt) {
-  // TODO
-  std::vector<unsigned char> digest_1 = {}; // Minimum ELF Header
-  std::vector<unsigned char> digest_2 = {}; // Page size - 1
-  std::vector<unsigned char> digest_3 = {}; // Page size
-  std::vector<unsigned char> digest_4 = {}; // Page size + 1
+  // Original, Empty input arguments
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Empty original path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt(" ", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Empty original path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("  ", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Empty original path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("\t", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Empty original path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("\t\t", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Empty original path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt(nullptr, "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                             // nullptr
+
+  // Original, Non-existant file
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/doesNotExist.ext", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Input original path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Opened non-existant file");
+
+  // Original, Open non-file object
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/notAFile.ext", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Input original path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Opened non-file object as file");
+
+  // Original, Open file without permission to access
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/noPermission.ext", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Cannot open original file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Could \"open\" file without permissions");
+
+  // Original, File is not a self
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/brokenSelfMagic.self", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Input original path is not a SELF! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Passed a file that was not a SELF");
+
+  // Decrypted, Empty input arguments
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", ""), std::runtime_error, "^Error: Empty decrypted path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", " "), std::runtime_error, "^Error: Empty decrypted path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "  "), std::runtime_error, "^Error: Empty decrypted path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "\t"), std::runtime_error, "^Error: Empty decrypted path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "\t\t"), std::runtime_error, "^Error: Empty decrypted path argument! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                              // nullptr
+
+  // Decrypted, Non-existant file
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input decrypted path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Opened non-existant file");
+
+  // Decrypted, Open non-file object
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input decrypted path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Opened non-file object as file");
+
+  // Decrypted, Open file without permission to access
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open decrypted file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Could \"open\" file without permissions");
+
+  // Decrypted, File is not a self
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input decrypted path is not an ELF! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Passed a file that was not a SELF");
+
+  // Digests to test against
+  // isValidDecryptDecrypted_1: Minimum ELF Header
+  // isValidDecryptDecrypted_2: Page size - 1
+  // isValidDecryptDecrypted_3: Page size
+  // isValidDecryptDecrypted_4: Page size + 1
+
+  // False, Non-NPDRM Header
+  EXPECT_FALSE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/isValidDecryptDecrypted_4.elf"));
+  EXPECT_FALSE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_2.self", "./tests/files/elf/isValidDecryptDecrypted_3.elf"));
+  EXPECT_FALSE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_3.self", "./tests/files/elf/isValidDecryptDecrypted_2.elf"));
+  EXPECT_FALSE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_4.self", "./tests/files/elf/isValidDecryptDecrypted_1.elf"));
+
+  // False, NPDRM Header
+  EXPECT_FALSE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1_(npdrm_header).self", "./tests/files/elf/isValidDecryptDecrypted_4.elf"));
+  EXPECT_FALSE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_2_(npdrm_header).self", "./tests/files/elf/isValidDecryptDecrypted_3.elf"));
+  EXPECT_FALSE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_3_(npdrm_header).self", "./tests/files/elf/isValidDecryptDecrypted_2.elf"));
+  EXPECT_FALSE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_4_(npdrm_header).self", "./tests/files/elf/isValidDecryptDecrypted_1.elf"));
+
+  // True, Non-NPDRM Header
+  EXPECT_TRUE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/isValidDecryptDecrypted_1.elf"));
+  EXPECT_TRUE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_2.self", "./tests/files/elf/isValidDecryptDecrypted_2.elf"));
+  EXPECT_TRUE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_3.self", "./tests/files/elf/isValidDecryptDecrypted_3.elf"));
+  EXPECT_TRUE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_4.self", "./tests/files/elf/isValidDecryptDecrypted_4.elf"));
+
+  // True, NPDRM Header
+  EXPECT_TRUE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1_(npdrm_header).self", "./tests/files/elf/isValidDecryptDecrypted_1.elf"));
+  EXPECT_TRUE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_2_(npdrm_header).self", "./tests/files/elf/isValidDecryptDecrypted_2.elf"));
+  EXPECT_TRUE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_3_(npdrm_header).self", "./tests/files/elf/isValidDecryptDecrypted_3.elf"));
+  EXPECT_TRUE(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_4_(npdrm_header).self", "./tests/files/elf/isValidDecryptDecrypted_4.elf"));
 }
 
 TEST(elfTests, zeroSectionHeader) {

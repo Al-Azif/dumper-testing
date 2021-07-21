@@ -524,48 +524,48 @@ std::vector<unsigned char> get_auth_info(const std::string &path) {
 bool is_valid_decrypt(const std::string &original_path, const std::string &decrypted_path) {
   // Check for empty or pure whitespace path
   if (original_path.empty() || std::all_of(original_path.begin(), original_path.end(), [](char c) { return std::isspace(c); })) {
-    FATAL_ERROR("Empty path argument!");
+    FATAL_ERROR("Empty original path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(original_path)) {
-    FATAL_ERROR("Original file does not exist or is not a file!");
+    FATAL_ERROR("Input original path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream original_self(original_path, std::ios::in | std::ios::binary);
   if (!original_self || !original_self.good()) {
     original_self.close();
-    FATAL_ERROR("Cannot open file: " + std::string(original_path));
+    FATAL_ERROR("Cannot open original file: " + std::string(original_path));
   }
   original_self.close();
 
   // Check if file is a SELF
   if (!is_self(original_path)) {
-    FATAL_ERROR("Original file is not a SELF!");
+    FATAL_ERROR("Input original path is not a SELF!");
   }
 
   // Check for empty or pure whitespace path
   if (decrypted_path.empty() || std::all_of(decrypted_path.begin(), decrypted_path.end(), [](char c) { return std::isspace(c); })) {
-    FATAL_ERROR("Empty path argument!");
+    FATAL_ERROR("Empty decrypted path argument!");
   }
 
   // Check if file exists and is file
   if (!std::filesystem::is_regular_file(decrypted_path)) {
-    FATAL_ERROR("Decrypted path does not exist or is not a file!");
+    FATAL_ERROR("Input decrypted path does not exist or is not a file!");
   }
 
   // Open path
   std::ifstream decrypted_elf(decrypted_path, std::ios::in | std::ios::binary);
   if (!decrypted_elf || !decrypted_elf.good()) {
     decrypted_elf.close();
-    FATAL_ERROR("Cannot open file: " + std::string(decrypted_path));
+    FATAL_ERROR("Cannot open decrypted file: " + std::string(decrypted_path));
   }
 
   // Check if file is an ELF
   if (!is_elf(decrypted_path)) {
     decrypted_elf.close();
-    FATAL_ERROR("Decrypted file is not a ELF!");
+    FATAL_ERROR("Input decrypted path is not an ELF!");
   }
 
   // Read digest
