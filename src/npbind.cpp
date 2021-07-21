@@ -60,7 +60,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
     npbind_input.read((char *)&temp_entry, __builtin_bswap64(header.entry_size)); // Flawfinder: ignore
     if (!npbind_input.good()) {
       npbind_input.close();
-      FATAL_ERROR("Error reading entires!");
+      FATAL_ERROR("Error reading entries!");
     }
     entries.push_back(temp_entry);
   }

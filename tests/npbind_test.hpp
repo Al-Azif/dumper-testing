@@ -31,11 +31,26 @@ TEST(npbindTest, read) {
   EXPECT_EXCEPTION_REGEX(npbind::read("./tests/files/npbind/brokenNpbindEntriesSize.dat"), std::runtime_error, "^Error: Error reading entries! at \"npbind\\.cpp\":\\d*:\\(read\\)$", "Could not read entries");
 
   // Non-matching digests
-  EXPECT_EXCEPTION_REGEX(npbind::read("./tests/files/npbind/brokenNpbindEntriesSize.dat"), std::runtime_error, "^Error: Digests do not match! Aborting... at \"npbind\\.cpp\":\\d*:\\(read\\)$", "Passed non matching digests");
+  EXPECT_EXCEPTION_REGEX(npbind::read("./tests/files/npbind/brokenNpbindDigest.dat"), std::runtime_error, "^Error: Digests do not match! Aborting... at \"npbind\\.cpp\":\\d*:\\(read\\)$", "Passed non matching digests");
 
-  // TODO: Success
-  // No Entries
-  // 1 Entry
-  // 2 Entries
-  // 3 Entries
+  // Success
+  if (npbind::read("./tests/files/npbind/validNoEntry.dat").size() != 0) {
+    FAIL() << "No entry file failed";
+  }
+
+  if (npbind::read("./tests/files/npbind/validNoEntry_alt.dat").size() != 0) { // Includes entry size in file header
+    FAIL() << "No entry (alternative) file failed";
+  }
+
+  if (npbind::read("./tests/files/npbind/validOneEntry.dat").size() != 1) {
+    FAIL() << "One entry entry file failed";
+  }
+
+  if (npbind::read("./tests/files/npbind/validTwoEntries.dat").size() != 2) {
+    FAIL() << "Two entry entry file failed";
+  }
+
+  if (npbind::read("./tests/files/npbind/validThreeEntries.dat").size() != 3) {
+    FAIL() << "Three entry entry file failed";
+  }
 }
