@@ -1,4 +1,11 @@
+// Copyright (c) 2021 Al Azif
+// License: GPLv3
+
+#ifndef NPBIND_TEST_HPP_
+#define NPBIND_TEST_HPP_
+
 #include <gtest/gtest.h>
+
 #include "testing.hpp"
 
 #include "npbind.hpp"
@@ -54,3 +61,5 @@ TEST(npbindTest, read) {
     FAIL() << "Three entry entry file failed";
   }
 }
+
+#endif // NPBIND_TEST_HPP_

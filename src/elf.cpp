@@ -669,7 +669,7 @@ void zero_section_header(const std::string &path) {
   }
 
   output_file.seekp(0, output_file.beg);
-  output_file.write((char*)&elf_header, sizeof(elf_header));
+  output_file.write((char *)&elf_header, sizeof(elf_header));
   output_file.close();
 }
 

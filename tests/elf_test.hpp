@@ -1,4 +1,11 @@
+// Copyright (c) 2021 Al Azif
+// License: GPLv3
+
+#ifndef ELF_TEST_HPP_
+#define ELF_TEST_HPP_
+
 #include <gtest/gtest.h>
+
 #include "testing.hpp"
 
 #include "elf.hpp"
@@ -437,7 +444,7 @@ TEST(elfTests, zeroSectionHeader) {
   EXPECT_EXCEPTION_REGEX(elf::zero_section_header("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Accepted whitespace argument");   // Double space
   EXPECT_EXCEPTION_REGEX(elf::zero_section_header("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Accepted whitespace argument");   // Single tab
   EXPECT_EXCEPTION_REGEX(elf::zero_section_header("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Accepted whitespace argument"); // Double tab
-  EXPECT_EXCEPTION_REGEX(elf::zero_section_header(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                             // nullptr
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                       // nullptr
 
   // Non-existant file
   EXPECT_EXCEPTION_REGEX(elf::zero_section_header("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Opened non-existant file");
@@ -462,7 +469,7 @@ TEST(elfTests, decrypt) {
   EXPECT_EXCEPTION_REGEX(elf::decrypt("  ", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Empty input path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");   // Double space
   EXPECT_EXCEPTION_REGEX(elf::decrypt("\t", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Empty input path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");   // Single tab
   EXPECT_EXCEPTION_REGEX(elf::decrypt("\t\t", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Empty input path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument"); // Double tab
-  EXPECT_EXCEPTION_REGEX(elf::decrypt(nullptr, "./tests/files/elf/decryptedOutput.elf"), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                              // nullptr
+  EXPECT_EXCEPTION_REGEX(elf::decrypt(nullptr, "./tests/files/elf/decryptedOutput.elf"), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                 // nullptr
 
   // Input, Non-existant file
   EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/doesNotExist.ext", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Opened non-existant file");
@@ -482,7 +489,7 @@ TEST(elfTests, decrypt) {
   EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "  "), std::runtime_error, "^Error: Empty output path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");   // Double space
   EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "\t"), std::runtime_error, "^Error: Empty output path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");   // Single tab
   EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "\t\t"), std::runtime_error, "^Error: Empty output path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument"); // Double tab
-  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                              // nullptr
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                  // nullptr
 
   // Output, Open non-file object
   EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Output path exists, but is not a file! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Opened non-file object as file");
@@ -503,3 +510,5 @@ TEST(elfTests, decrypt) {
 
   // Unable to test this further
 }
+
+#endif // ELF_TEST_HPP_

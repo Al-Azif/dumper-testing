@@ -1,3 +1,9 @@
+// Copyright (c) 2021 Al Azif
+// License: GPLv3
+
+#ifndef TESTING_HPP_
+#define TESTING_HPP_
+
 #include <regex>
 
 // Checks the expression to throw a specific exception message matching a regex string
@@ -13,3 +19,5 @@
       }                                                                            \
     }                                                                              \
   }
+
+#endif // TESTING_HPP_
