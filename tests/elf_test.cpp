@@ -42,6 +42,7 @@ TEST(elfTests, sceHeaderOffset) {
   // This code will not pass because elf::is_self() within the function will fail before it can get to this check
   // EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenSelfSize.self"), std::runtime_error, "^Error: Error reading SELF header! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted broken SELF header (Size)");
 
+  // Check ELF header size
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenElfSize.self"), std::runtime_error, "^Error: Error reading ELF header! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Accepted broken ELF header (Size)");
 
   // TODO: Must add ELF magic check to elf::get_sce_header_offset() ctrl + f "TODO" in src/elf.cpp
@@ -53,11 +54,53 @@ TEST(elfTests, sceHeaderOffset) {
 }
 
 TEST(elfTests, getSceHeader) {
-  // TODO
+  // Empty input arguments
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                  // nullptr
+
+  // Non-existant file
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Opened non-existant file");
+
+  // Open non-file object
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Opened non-file object as file");
+
+  // Open file without permission to access
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Could \"open\" file without permissions");
+
+  // File is not a self
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Passed a file that was not a SELF");
+
+  // Check SCE header size
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header("./tests/files/elf/brokenSceHeader.self"), std::runtime_error, "^Error: Error reading SCE header! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Accepted broken SCE Header (Size)");
 }
 
 TEST(elfTests, getSceHeaderNpdrm) {
-  // TODO
+  // Empty input arguments
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                        // nullptr
+
+  // Non-existant file
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Opened non-existant file");
+
+  // Open non-file object
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Opened non-file object as file");
+
+  // Open file without permission to access
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Could \"open\" file without permissions");
+
+  // File is not a self
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Passed a file that was not a SELF");
+
+  // Check SCE header size
+  EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("./tests/files/elf/brokenSceHeaderNpdrm.self"), std::runtime_error, "^Error: Error reading SCE header! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Accepted broken SCE Header (Size)");
 }
 
 TEST(elfTests, isElf) {
@@ -205,12 +248,12 @@ TEST(elfTests, getPaid) {
   EXPECT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid_0s.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid_Fs.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid_0s_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid_Fs_(npdrm_header).self"));
 }
 
 TEST(elfTests, getAppVersion) {
@@ -235,12 +278,12 @@ TEST(elfTests, getAppVersion) {
   EXPECT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/getAppVersion_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/getAppVersion_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/getAppVersion_0s.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/getAppVersion_Fs.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/getAppVersion_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/getAppVersion_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/getAppVersion_0s_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/getAppVersion_Fs_(npdrm_header).self"));
 }
 
 TEST(elfTests, getFwVersion) {
@@ -265,12 +308,12 @@ TEST(elfTests, getFwVersion) {
   EXPECT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/getFwVersion_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/getFwVersion_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/getFwVersion_0s.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/getFwVersion_Fs.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/getFwVersion_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/getFwVersion_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/getFwVersion_0s_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/getFwVersion_Fs_(npdrm_header).self"));
 }
 
 TEST(elfTests, getDigest) {
@@ -294,7 +337,17 @@ TEST(elfTests, getDigest) {
   // File is not a self
   EXPECT_EXCEPTION_REGEX(elf::get_digest("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Passed a file that was not a SELF");
 
-  // TODO
+  // Digests to test against
+  std::vector<unsigned char> digest_0 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  std::vector<unsigned char> digest_f = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+  // Non-NPDRM header
+  EXPECT_EQ(digest_0, elf::get_digest("./tests/files/elf/getDigest_0s.self"));
+  EXPECT_EQ(digest_f, elf::get_digest("./tests/files/elf/getDigest_Fs.self"));
+
+  // NPDRM header
+  EXPECT_EQ(digest_0, elf::get_digest("./tests/files/elf/getDigest_0s_(npdrm_header).self"));
+  EXPECT_EQ(digest_f, elf::get_digest("./tests/files/elf/getDigest_Fs_(npdrm_header).self"));
 }
 
 TEST(elfTests, getAuthInfo) {
@@ -323,6 +376,10 @@ TEST(elfTests, getAuthInfo) {
 
 TEST(elfTests, isValidDecrypt) {
   // TODO
+  std::vector<unsigned char> digest_1 = {}; // Minimum ELF Header
+  std::vector<unsigned char> digest_2 = {}; // Page size - 1
+  std::vector<unsigned char> digest_3 = {}; // Page size
+  std::vector<unsigned char> digest_4 = {}; // Page size + 1
 }
 
 TEST(elfTests, zeroSectionHeader) {
@@ -330,8 +387,7 @@ TEST(elfTests, zeroSectionHeader) {
 }
 
 TEST(elfTests, decrypt) {
-  // TODO
-  // Unlikely to be able to test this properly
+  // TODO: Unlikely to be able to test this properly
 }
 
 int main(int argc, char **argv) {

@@ -104,7 +104,7 @@ SceHeader get_sce_header(const std::string &path) {
   // Check to make sure file is a SELF
   if (!is_self(path)) {
     self_input.close();
-    FATAL_ERROR("Input file is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   // Calculate SCE header offset from number of ELF entries
@@ -142,7 +142,7 @@ SceHeaderNpdrm get_sce_header_npdrm(const std::string &path) {
   // Check to make sure file is a SELF
   if (!is_self(path)) {
     self_input.close();
-    FATAL_ERROR("Input file is not a SELF!");
+    FATAL_ERROR("Input path is not a SELF!");
   }
 
   // Calculate SCE header offset from number of ELF entries
@@ -294,7 +294,7 @@ std::string get_ptype(const std::string &path) {
   }
   self_input.close();
 
-  // Check if the file is a SELF, if not it *should* no have a SCE header
+  // Check if the file is a SELF. If it's not it *should* not have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
   }
@@ -360,7 +360,7 @@ uint64_t get_paid(const std::string &path) {
   }
   self_input.close();
 
-  // Check if the file is a SELF, if not it *should* no have a SCE header
+  // Check if the file is a SELF. If it's not it *should* not have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
   }
@@ -391,7 +391,7 @@ uint64_t get_app_version(const std::string &path) {
   }
   self_input.close();
 
-  // Check if the file is a SELF, if not it *should* no have a SCE header
+  // Check if the file is a SELF. If it's not it *should* not have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
   }
@@ -422,7 +422,7 @@ uint64_t get_fw_version(const std::string &path) {
   }
   self_input.close();
 
-  // Check if the file is a SELF, if not it *should* no have a SCE header
+  // Check if the file is a SELF. If it's not it *should* not have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
   }
@@ -453,7 +453,7 @@ std::vector<unsigned char> get_digest(const std::string &path) {
   }
   self_input.close();
 
-  // Check if the file is a SELF. If it's not, it *should* not have a SCE header
+  // Check if the file is a SELF. If it's not it *should* not have a SCE header
   if (!is_self(path)) {
     FATAL_ERROR("Input path is not a SELF!");
   }
