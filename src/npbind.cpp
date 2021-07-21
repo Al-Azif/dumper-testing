@@ -47,9 +47,10 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   }
   if (__builtin_bswap32(header.magic) != NPBIND_MAGIC) {
     npbind_input.close();
-    std::stringstream ss;
-    ss << "[npbind::read] File magic does not match npbind.dat! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << NPBIND_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header.magic);
-    FATAL_ERROR(ss.str());
+    // std::stringstream ss;
+    // ss << "File magic does not match npbind.dat! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << NPBIND_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header.magic);
+    // FATAL_ERROR(ss.str());
+    FATAL_ERROR("Input path is not a npbind.dat!");
   }
 
   // Read in body(s)
@@ -69,6 +70,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   npbind_input.seekg(-sizeof(digest), npbind_input.end); // Make sure we are in the right place
   npbind_input.read((char *)&digest, sizeof(digest));    // Flawfinder: ignore
   if (!npbind_input.good()) {
+    // Should never reach here... will affect coverage %
     npbind_input.close();
     FATAL_ERROR("Error reading digest!");
   }
