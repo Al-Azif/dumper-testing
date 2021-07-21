@@ -88,23 +88,18 @@ std::string get_entry_name_by_type(uint32_t type) {
     ss << "pic1.dds";
   } else if ((type >= 0x12C1) && (type <= 0x12DF)) {
     ss << "pic1_" << std::setfill('0') << std::setw(2) << type - 0x12C1 << ".dds";
-  } else if ((type >= 0x1400) && (type <= 0x1463)) {
+  } else if ((type >= 0x1400) && (type <= 0x147F)) {
     ss << "trophy/trophy" << std::setfill('0') << std::setw(2) << type - 0x1400 << ".trp";
   } else if ((type >= 0x1600) && (type <= 0x1609)) {
-    ss << "keymap_rp/" << std::setfill('0') << std::setw(3) << type - 0x1600 << ".png";
-  } else if ((type >= 0x1610) && (type <= 0x17F9)) {
-    ss << "keymap_rp/" << std::setfill('0') << std::setw(2) << (type - 0x1610) / 0x10 << "/" << std::setfill('0') << std::setw(3) << (type - 0x1609) % 0x10 << ".png";
+    ss << "keymap_rp/" << std::setfill('0') << std::setw(3) << type - 0x15FF << ".png";
+  } else if ((type >= 0x1610) && (type <= 0x16F5)) {
+    ss << "keymap_rp/" << std::setfill('0') << std::setw(2) << (type - 0x1610) / 10 << "/" << std::setfill('0') << std::setw(3) << (((type - 0x160F) % 10) ? (type - 0x160F) % 10 : 10) << ".png";
   }
 
   return ss.str();
 }
 
 void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
-  // Make sure output directory path exists or can be created
-  if (!std::filesystem::is_directory(output_path) && !std::filesystem::create_directories(output_path)) {
-    FATAL_ERROR("Unable to open/create output directory");
-  }
-
   // Check for empty or pure whitespace path
   if (pkg_path.empty() || std::all_of(pkg_path.begin(), pkg_path.end(), [](char c) { return std::isspace(c); })) {
     FATAL_ERROR("Empty input path argument!");
@@ -119,7 +114,7 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
   std::ifstream pkg_input(pkg_path, std::ios::in | std::ios::binary);
   if (!pkg_input || !pkg_input.good()) {
     pkg_input.close();
-    FATAL_ERROR("Cannot open file: " + std::string(pkg_path));
+    FATAL_ERROR("Cannot open input file: " + std::string(pkg_path));
   }
 
   // Check file magic (Read in whole header)
@@ -127,13 +122,14 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
   pkg_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
   if (!pkg_input.good()) {
     pkg_input.close();
-    FATAL_ERROR("Error reading header!");
+    FATAL_ERROR("Error reading PKG header!");
   }
   if (__builtin_bswap32(header.magic) != PKG_MAGIC) {
     pkg_input.close();
-    std::stringstream ss;
-    ss << "[pkg::extract_sc0] File magic does not match a PKG! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << PKG_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header.magic);
-    FATAL_ERROR(ss.str());
+    // std::stringstream ss;
+    // ss << "File magic does not match a PKG! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << PKG_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header.magic);
+    // FATAL_ERROR(ss.str());
+    FATAL_ERROR("Input path is not a PKG!");
   }
 
   // Read PKG entry table entries
@@ -149,9 +145,15 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
     entries.push_back(temp_entry);
   }
 
-  if (!std::filesystem::is_directory(output_path) && !std::filesystem::create_directory(output_path)) {
+  // Check for empty or pure whitespace path
+  if (output_path.empty() || std::all_of(output_path.begin(), output_path.end(), [](char c) { return std::isspace(c); })) {
+    FATAL_ERROR("Empty output path argument!");
+  }
+
+  // Make sure output directory path exists or can be created
+  if (!std::filesystem::is_directory(output_path) && !std::filesystem::create_directories(output_path)) {
     pkg_input.close();
-    FATAL_ERROR("Could not create output directory");
+    FATAL_ERROR("Unable to open/create output directory");
   }
 
   // Extract sc0 entries
@@ -167,6 +169,14 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
       if (!pkg_input.good()) {
         pkg_input.close();
         FATAL_ERROR("Error reading entry data!");
+      }
+
+      std::filesystem::path temp_output_dir = temp_output_path;
+      temp_output_dir.remove_filename();
+
+      if (!std::filesystem::is_directory(temp_output_dir) && !std::filesystem::create_directories(temp_output_dir)) {
+        pkg_input.close();
+        FATAL_ERROR("Unable to open/create output subdirectory");
       }
 
       // Open path

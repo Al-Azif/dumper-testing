@@ -7,6 +7,7 @@
 
 #include "elf_test.hpp"
 #include "npbind_test.hpp"
+#include "pkg_test.hpp"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
