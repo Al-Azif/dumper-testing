@@ -205,12 +205,12 @@ TEST(elfTests, getPaid) {
   EXPECT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/sceSection_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid_0000000000000000.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid_FFFFFFFFFFFFFFFF.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/sceSection_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_paid("./tests/files/elf/getPaid_0000000000000000_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_paid("./tests/files/elf/getPaid_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
 }
 
 TEST(elfTests, getAppVersion) {
@@ -235,12 +235,12 @@ TEST(elfTests, getAppVersion) {
   EXPECT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/sceSection_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/getAppVersion_0000000000000000.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/getAppVersion_FFFFFFFFFFFFFFFF.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/sceSection_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_app_version("./tests/files/elf/getAppVersion_0000000000000000_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_app_version("./tests/files/elf/getAppVersion_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
 }
 
 TEST(elfTests, getFwVersion) {
@@ -265,12 +265,12 @@ TEST(elfTests, getFwVersion) {
   EXPECT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/sceSection_0000000000000000.self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF.self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/getFwVersion_0000000000000000.self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/getFwVersion_FFFFFFFFFFFFFFFF.self"));
 
   // NPDRM header
-  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/sceSection_0000000000000000_(npdrm_header).self"));
-  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/sceSection_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
+  EXPECT_EQ(0x0000000000000000, elf::get_fw_version("./tests/files/elf/getFwVersion_0000000000000000_(npdrm_header).self"));
+  EXPECT_EQ(0xFFFFFFFFFFFFFFFF, elf::get_fw_version("./tests/files/elf/getFwVersion_FFFFFFFFFFFFFFFF_(npdrm_header).self"));
 }
 
 TEST(elfTests, getDigest) {
