@@ -36,7 +36,7 @@ TEST(elfTests, sceHeaderOffset) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_offset("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_sce_header_offset\\)$", "Passed a file that was not a SELF");
 
   // This code will not pass because elf::is_self() within the function will fail before it can get to this check
@@ -70,7 +70,7 @@ TEST(elfTests, getSceHeader) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_sce_header\\)$", "Passed a file that was not a SELF");
 
   // Check SCE header size
@@ -95,7 +95,7 @@ TEST(elfTests, getSceHeaderNpdrm) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_sce_header_npdrm("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_sce_header_npdrm\\)$", "Passed a file that was not a SELF");
 
   // Check SCE header size
@@ -172,7 +172,7 @@ TEST(elfTests, isNpdrm) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Passed a file that was not a SELF");
 
   // False
@@ -208,7 +208,7 @@ TEST(elfTests, getPtype) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_ptype("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_ptype\\)$", "Passed a file that was not a SELF");
 
   // Checks
@@ -243,7 +243,7 @@ TEST(elfTests, getPaid) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_paid("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_paid\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
@@ -273,7 +273,7 @@ TEST(elfTests, getAppVersion) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_app_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_app_version\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
@@ -303,7 +303,7 @@ TEST(elfTests, getFwVersion) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_fw_version("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_fw_version\\)$", "Passed a file that was not a SELF");
 
   // Non-NPDRM header
@@ -333,7 +333,7 @@ TEST(elfTests, getDigest) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_digest("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_digest("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_digest\\)$", "Passed a file that was not a SELF");
 
   // Digests to test against
@@ -367,7 +367,7 @@ TEST(elfTests, getAuthInfo) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::get_auth_info("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Could \"open\" file without permissions");
 
-  // File is not a self
+  // File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::get_auth_info("./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input path is not a SELF! at \"elf\\.cpp\":\\d*:\\(get_auth_info\\)$", "Passed a file that was not a SELF");
 
   // Unable to test this further
@@ -391,7 +391,7 @@ TEST(elfTests, isValidDecrypt) {
   // Original, Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/noPermission.ext", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Cannot open original file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Could \"open\" file without permissions");
 
-  // Original, File is not a self
+  // Original, File is not a SELF
   EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/brokenSelfMagic.self", "./tests/files/elf/isValidDecryptDecrypted_1.elf"), std::runtime_error, "^Error: Input original path is not a SELF! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Passed a file that was not a SELF");
 
   // Decrypted, Empty input arguments
@@ -411,8 +411,8 @@ TEST(elfTests, isValidDecrypt) {
   // Decrypted, Open file without permission to access
   EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open decrypted file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Could \"open\" file without permissions");
 
-  // Decrypted, File is not a self
-  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/brokenSelfMagic.self"), std::runtime_error, "^Error: Input decrypted path is not an ELF! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Passed a file that was not a SELF");
+  // Decrypted, File is not an ELF
+  EXPECT_EXCEPTION_REGEX(elf::is_valid_decrypt("./tests/files/elf/isValidDecryptEncrypted_1.self", "./tests/files/elf/brokenElfMagic.elf"), std::runtime_error, "^Error: Input decrypted path is not an ELF! at \"elf\\.cpp\":\\d*:\\(is_valid_decrypt\\)$", "Passed a file that was not a SELF");
 
   // Digests to test against
   // isValidDecryptDecrypted_1: Minimum ELF Header
@@ -446,11 +446,77 @@ TEST(elfTests, isValidDecrypt) {
 }
 
 TEST(elfTests, zeroSectionHeader) {
-  // TODO
+  // Empty input arguments
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header(""), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header(" "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header("\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header("\t\t"), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                             // nullptr
+
+  // Non-existant file
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Opened non-existant file");
+
+  // Open non-file object
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header("./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Opened non-file object as file");
+
+  // Open file without permission to access
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header("./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Could \"open\" file without permissions");
+
+  // File is not an ELF
+  EXPECT_EXCEPTION_REGEX(elf::zero_section_header("./tests/files/elf/brokenElfMagic.elf"), std::runtime_error, "^Error: Input path is not an ELF! at \"elf\\.cpp\":\\d*:\\(zero_section_header\\)$", "Passed a file that was not an ELF");
+
+  EXPECT_NO_THROW(elf::zero_section_header("./tests/files/elf/sectionHeaderZero.elf"));
+  // TODO: Validate
 }
 
 TEST(elfTests, decrypt) {
-  // TODO: Unlikely to be able to test this properly
+  // Input, Empty input arguments
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Empty input path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(elf::decrypt(" ", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Empty input path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("  ", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Empty input path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("\t", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Empty input path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("\t\t", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Empty input path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::decrypt(nullptr, "./tests/files/elf/decryptedOutput.elf"), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                              // nullptr
+
+  // Input, Non-existant file
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/doesNotExist.ext", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Opened non-existant file");
+
+  // Input, Open non-file object
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/notAFile.ext", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Opened non-file object as file");
+
+  // Input, Open file without permission to access
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/noPermission.ext", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Cannot open input file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Could \"open\" file without permissions");
+
+  // Input, File is not a SELF
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/brokenSelfMagic.self", "./tests/files/elf/decryptedOutput.elf"), std::runtime_error, "^Error: Input path is not a \\(S\\)ELF! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Passed a file that was not a (S)ELF");
+
+  // Output, Empty input arguments
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", ""), std::runtime_error, "^Error: Empty output path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", " "), std::runtime_error, "^Error: Empty output path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "  "), std::runtime_error, "^Error: Empty output path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "\t"), std::runtime_error, "^Error: Empty output path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "\t\t"), std::runtime_error, "^Error: Empty output path argument! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                              // nullptr
+
+  // Output, Open non-file object
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "./tests/files/elf/notAFile.ext"), std::runtime_error, "^Error: Output path exists, but is not a file! at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Opened non-file object as file");
+
+  // Output, Open file without permission to access
+  EXPECT_EXCEPTION_REGEX(elf::decrypt("./tests/files/elf/isValidSelf.self", "./tests/files/elf/noPermission.ext"), std::runtime_error, "^Error: Cannot open output file: \\./tests/files/elf/noPermission\\.ext at \"elf\\.cpp\":\\d*:\\(decrypt\\)$", "Could \"open\" file without permissions");
+
+  // Success, already ELF (Run twice to see if it works when the file already exists)
+  EXPECT_NO_THROW(elf::decrypt("./tests/files/elf/isValidElf.elf", "./tests/files/elf/decryptedOutput.elf"));
+  // TODO: Check digest // CC9D6FAC1F314CCBD3003C6A0E788A426958609B1312422D8FED40A08EE0BB51
+  EXPECT_NO_THROW(elf::decrypt("./tests/files/elf/isValidElf.elf", "./tests/files/elf/decryptedOutput.elf"));
+  // TODO: Check digest // CC9D6FAC1F314CCBD3003C6A0E788A426958609B1312422D8FED40A08EE0BB51
+  // TODO: Delete `./tests/files/elf/decryptedOutput.elf`
+
+  // TODO: `Error reading prog header!`
+
+  // TODO: `Error reading SELF data!`
+
+  // Unable to test this further
 }
 
 int main(int argc, char **argv) {

@@ -52,7 +52,7 @@ uint64_t get_sce_header_offset(const std::string &path) {
   SelfHeader self_header;
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
-    // Should never reach here... remove?
+    // Should never reach here... will affect coverage %
     self_input.close();
     FATAL_ERROR("Error reading SELF header!");
   }
@@ -267,7 +267,7 @@ bool is_npdrm(const std::string &path) {
   SelfHeader self_header;
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
-    // Should never reach here... remove?
+    // Should never reach here... will affect coverage %
     self_input.close();
     FATAL_ERROR("Error reading SELF header!");
   }
@@ -619,8 +619,58 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
   return true;
 }
 
+// This is done in other dumpers but is it necessary?
 void zero_section_header(const std::string &path) {
-  // TODO ??
+  // Check for empty or pure whitespace path
+  if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
+    FATAL_ERROR("Empty path argument!");
+  }
+
+  // Check if file exists and is file
+  if (!std::filesystem::is_regular_file(path)) {
+    FATAL_ERROR("Input path does not exist or is not a file!");
+  }
+
+  // Open path
+  std::ifstream elf_path(path, std::ios::in | std::ios::binary);
+  if (!elf_path || !elf_path.good()) {
+    elf_path.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+
+  // Check if file is an ELF
+  if (!is_elf(path)) {
+    elf_path.close();
+    FATAL_ERROR("Input path is not an ELF!");
+  }
+
+  elf_path.seekg(0, elf_path.beg);
+  Elf64_Ehdr elf_header;
+  elf_path.seekg(0, elf_path.beg);
+  elf_path.read((char *)&elf_header, sizeof(elf_header)); // Flawfinder: ignore
+  if (!elf_path.good()) {
+    // Should never reach here... will affect coverage %
+    elf_path.close();
+    FATAL_ERROR("Error reading ELF header!");
+  }
+  elf_path.close();
+
+  // Zero section headers as they are invalid
+  elf_header.e_shoff = 0;
+  elf_header.e_shnum = 0;
+  elf_header.e_shentsize = 0;
+  elf_header.e_shstrndx = 0;
+
+  std::ofstream output_file(path, std::ios::out | std::ios::binary);
+  if (!output_file || !output_file.good()) {
+    // Should never reach here... will affect coverage %
+    output_file.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+
+  output_file.seekp(0, output_file.beg);
+  output_file.write((char*)&elf_header, sizeof(elf_header));
+  output_file.close();
 }
 
 // The following code inspired from:
@@ -629,7 +679,7 @@ void zero_section_header(const std::string &path) {
 void decrypt(const std::string &input, const std::string &output) {
   // Check for empty or pure whitespace path
   if (input.empty() || std::all_of(input.begin(), input.end(), [](char c) { return std::isspace(c); })) {
-    FATAL_ERROR("Empty path argument!");
+    FATAL_ERROR("Empty input path argument!");
   }
 
   // Check if file exists and is file
@@ -641,13 +691,13 @@ void decrypt(const std::string &input, const std::string &output) {
   std::ifstream self_input(input, std::ios::in | std::ios::binary);
   if (!self_input || !self_input.good()) {
     self_input.close();
-    FATAL_ERROR("Cannot open file: " + std::string(input));
+    FATAL_ERROR("Cannot open input file: " + std::string(input));
   }
 
   // Check if file is already decrypted
   if (!is_elf(input) && !is_self(input)) {
     self_input.close();
-    FATAL_ERROR("Input file is not a (S)ELF!");
+    FATAL_ERROR("Input path is not a (S)ELF!");
   }
 
   // Check for empty or pure whitespace path
@@ -661,7 +711,7 @@ void decrypt(const std::string &input, const std::string &output) {
   // Exists, but is not a file
   if (std::filesystem::exists(output_path) && !std::filesystem::is_regular_file(output_path)) {
     self_input.close();
-    FATAL_ERROR("Output object exists but is not a file!");
+    FATAL_ERROR("Output path exists, but is not a file!");
   }
 
   // Open path
@@ -669,7 +719,7 @@ void decrypt(const std::string &input, const std::string &output) {
   if (!output_file || !output_file.good()) {
     self_input.close();
     output_file.close();
-    FATAL_ERROR("Cannot open file: " + std::string(output_path));
+    FATAL_ERROR("Cannot open output file: " + std::string(output_path));
   }
 
   // File is already decrypted, just copy the file to the output location
@@ -684,6 +734,7 @@ void decrypt(const std::string &input, const std::string &output) {
   SelfHeader self_header;
   self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
+    // Should never reach here... will affect coverage %
     self_input.close();
     output_file.close();
     FATAL_ERROR("Error reading SELF header!");
@@ -695,17 +746,11 @@ void decrypt(const std::string &input, const std::string &output) {
   self_input.seekg(elf_header_offset, self_input.beg);
   self_input.read((char *)&elf_header, sizeof(elf_header)); // Flawfinder: ignore
   if (!self_input.good()) {
+    // Should never reach here... will affect coverage %
     self_input.close();
     output_file.close();
     FATAL_ERROR("Error reading ELF header!");
   }
-
-  // TODO: This is done in other dumpers but is it necessary? If it's not done then the digest in SceHeader/SceHeaderNpdrm should match the decrypted ELF
-  // Zero section headers as they are invalid
-  // elf_header.e_shoff = 0;
-  // elf_header.e_shnum = 0;
-  // elf_header.e_shentsize = 0;
-  // elf_header.e_shstrndx = 0;
 
   // Calculate minimum ELF size
   uint64_t elf_size = elf_header.e_phoff + (elf_header.e_phnum * elf_header.e_phentsize);
@@ -754,8 +799,9 @@ void decrypt(const std::string &input, const std::string &output) {
   // Open input file as descriptor
   int fd = open(input.c_str(), O_RDONLY, 0);
   if (fd < 0) {
+    // Should never reach here... will affect coverage %
     output_file.close();
-    FATAL_ERROR("Cannot open file: " + std::string(input));
+    FATAL_ERROR("Cannot open input file: " + std::string(input));
   }
 
   // Loop: Copy program headers and then segments via mmap
