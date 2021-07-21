@@ -1,6 +1,20 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
+#ifdef __TEST__
+
+#include <gtest/gtest.h>
+
+#include "elf_test.hpp"
+#include "npbind_test.hpp"
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+
+#else
+
 #include "common.hpp"
 #include "dump.hpp"
 
@@ -14,3 +28,5 @@ int main() {
 
   return 0;
 }
+
+#endif // __TEST__

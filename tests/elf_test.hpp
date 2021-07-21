@@ -1,22 +1,7 @@
-#include "../include/elf.hpp"
-
-#include <regex>
-
 #include <gtest/gtest.h>
+#include "testing.hpp"
 
-// Checks the expression to throw a specific exception message matching a regex string
-// If the test doesn't thow an exception the test fails and "pass" is printed
-#define EXPECT_EXCEPTION_REGEX(expression, exception_type, exception_string, pass) \
-  {                                                                                \
-    try {                                                                          \
-      expression;                                                                  \
-      FAIL() << pass;                                                              \
-    } catch (exception_type const &err) {                                          \
-      if (!std::regex_match(err.what(), std::regex(exception_string))) {           \
-        FAIL() << "Unexpected exception";                                          \
-      }                                                                            \
-    }                                                                              \
-  }
+#include "elf.hpp"
 
 TEST(elfTests, sceHeaderOffset) {
   // Empty input arguments
@@ -517,9 +502,4 @@ TEST(elfTests, decrypt) {
   // TODO: `Error reading SELF data!`
 
   // Unable to test this further
-}
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }
