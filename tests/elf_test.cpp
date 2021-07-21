@@ -119,7 +119,7 @@ TEST(elfTests, isNpdrm) {
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument");   // Double space
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm("  "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument");   // Single tab
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm("    "), std::runtime_error, "^Error: Empty path argument! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Accepted whitespace argument"); // Double tab
-  EXPECT_EXCEPTION_REGEX(elf::is_npdrm(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                             // nullptr
+  EXPECT_EXCEPTION_REGEX(elf::is_npdrm(nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                            // nullptr
 
   // Non-existant file
   EXPECT_EXCEPTION_REGEX(elf::is_npdrm("./tests/files/elf/doesNotExist.ext"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"elf\\.cpp\":\\d*:\\(is_npdrm\\)$", "Opened non-existant file");
