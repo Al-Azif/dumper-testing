@@ -4,11 +4,10 @@
 #ifndef PKG_TEST_HPP_
 #define PKG_TEST_HPP_
 
-#include <gtest/gtest.h>
-
+#include "pkg.hpp"
 #include "testing.hpp"
 
-#include "pkg.hpp"
+#include <gtest/gtest.h>
 
 TEST(pkgTest, getEntryNameByType) {
   // Valid

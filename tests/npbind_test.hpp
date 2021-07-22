@@ -4,11 +4,10 @@
 #ifndef NPBIND_TEST_HPP_
 #define NPBIND_TEST_HPP_
 
-#include <gtest/gtest.h>
-
+#include "npbind.hpp"
 #include "testing.hpp"
 
-#include "npbind.hpp"
+#include <gtest/gtest.h>
 
 TEST(npbindTest, read) {
   // Empty input arguments

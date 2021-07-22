@@ -4,6 +4,8 @@
 #ifndef TESTING_HPP_
 #define TESTING_HPP_
 
+#include "common.hpp"
+
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -14,8 +16,6 @@
 #else
 #include <openssl/sha.h>
 #endif // __ORBIS__
-
-#include "common.hpp"
 
 // Checks the expression to throw a specific exception message matching a regex string
 // If the test doesn't thow an exception the test fails and "pass" is printed

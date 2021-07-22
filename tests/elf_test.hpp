@@ -4,11 +4,10 @@
 #ifndef ELF_TEST_HPP_
 #define ELF_TEST_HPP_
 
-#include <gtest/gtest.h>
-
+#include "elf.hpp"
 #include "testing.hpp"
 
-#include "elf.hpp"
+#include <gtest/gtest.h>
 
 TEST(elfTests, sceHeaderOffset) {
   // Empty input arguments

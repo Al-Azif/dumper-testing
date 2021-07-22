@@ -4,11 +4,10 @@
 #ifndef PFS_TEST_HPP_
 #define PFS_TEST_HPP_
 
-#include <gtest/gtest.h>
-
+#include "pfs.hpp"
 #include "testing.hpp"
 
-#include "pfs.hpp"
+#include <gtest/gtest.h>
 
 TEST(pfsTests, calculate_pfs_size) {
   // TODO

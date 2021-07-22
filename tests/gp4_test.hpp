@@ -4,11 +4,10 @@
 #ifndef GP4_TEST_HPP_
 #define GP4_TEST_HPP_
 
-#include <gtest/gtest.h>
-
+#include "gp4.hpp"
 #include "testing.hpp"
 
-#include "gp4.hpp"
+#include <gtest/gtest.h>
 
 TEST(gp4Tests, generate) {
   // TODO

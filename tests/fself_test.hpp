@@ -4,11 +4,10 @@
 #ifndef FSELF_TEST_HPP_
 #define FSELF_TEST_HPP_
 
-#include <gtest/gtest.h>
-
+#include "fself.hpp"
 #include "testing.hpp"
 
-#include "fself.hpp"
+#include <gtest/gtest.h>
 
 TEST(fselfTest, make_fself) {
   // TODO

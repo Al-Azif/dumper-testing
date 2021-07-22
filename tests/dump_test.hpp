@@ -4,11 +4,10 @@
 #ifndef DUMP_TEST_HPP_
 #define DUMP_TEST_HPP_
 
-#include <gtest/gtest.h>
-
+#include "dump.hpp"
 #include "testing.hpp"
 
-#include "dump.hpp"
+#include <gtest/gtest.h>
 
 TEST(dumpTests, dump_base) {
   // TODO
