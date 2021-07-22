@@ -18,6 +18,6 @@ pugi::xml_document make_directories(const std::string &path);
 pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_document &playgo, const pugi::xml_document &files, const pugi::xml_document &directories, const std::string &custom_version = "");
 void write(const pugi::xml_document &xml, const std::string &path);
 void generate(const std::string &sfo_path, const std::string &output_path, const std::string &gp4_path, std::vector<std::string> &self_files, const std::string &type);
-}
+} // namespace gp4
 
 #endif // GP4_HPP_

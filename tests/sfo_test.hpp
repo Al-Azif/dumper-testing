@@ -16,7 +16,7 @@ TEST(sfoTests, isSfo) {
   EXPECT_EXCEPTION_REGEX(sfo::is_sfo("  "), "^Error: Empty path argument! at \"sfo\\.cpp\":\\d*:\\(is_sfo\\)$", "Accepted whitespace argument");   // Double space
   EXPECT_EXCEPTION_REGEX(sfo::is_sfo("\t"), "^Error: Empty path argument! at \"sfo\\.cpp\":\\d*:\\(is_sfo\\)$", "Accepted whitespace argument");   // Single tab
   EXPECT_EXCEPTION_REGEX(sfo::is_sfo("\t\t"), "^Error: Empty path argument! at \"sfo\\.cpp\":\\d*:\\(is_sfo\\)$", "Accepted whitespace argument"); // Double tab
-  EXPECT_EXCEPTION_REGEX(sfo::is_sfo(nullptr), "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                       // nullptr
+  EXPECT_EXCEPTION_REGEX(sfo::is_sfo(nullptr), "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                        // nullptr
 
   // Non-existant file
   EXPECT_EXCEPTION_REGEX(sfo::is_sfo("./tests/files/sfo/doesNotExist.ext"), "^Error: Input path does not exist or is not a file! at \"sfo\\.cpp\":\\d*:\\(is_sfo\\)$", "Opened non-existant file");
