@@ -12,6 +12,10 @@
 #define PAGE_SIZE 0x4000
 #endif
 
+#ifndef UNUSED
+#define UNUSED(x) (void)(x)
+#endif
+
 #define FATAL_ERROR(error_message)                                                                                                                        \
   {                                                                                                                                                       \
     std::stringstream compiled_msg;                                                                                                                       \
