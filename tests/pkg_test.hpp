@@ -580,44 +580,46 @@ TEST(pkgTest, getEntryNameByType) {
 
 TEST(pkgTest, extract_sc0) {
   // Empty input arguments
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted empty argument");          // Empty
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0(" ", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");    // Single space
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("  ", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("\t", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("\t\t", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument"); // Double tab
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0(nullptr, "./tests/files/pkg/outputDirectory/"), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                     // nullptr
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("", "./tests/files/pkg/outputDirectory/"), "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0(" ", "./tests/files/pkg/outputDirectory/"), "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("  ", "./tests/files/pkg/outputDirectory/"), "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("\t", "./tests/files/pkg/outputDirectory/"), "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("\t\t", "./tests/files/pkg/outputDirectory/"), "^Error: Empty input path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0(nullptr, "./tests/files/pkg/outputDirectory/"), "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                   // nullptr
 
   // Non-existant file
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/doesNotExist.ext", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Opened non-existant file");
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/doesNotExist.ext", "./tests/files/pkg/outputDirectory/"), "^Error: Input path does not exist or is not a file! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Opened non-existant file");
 
   // Open non-file object
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/notAFile.ext", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Input path does not exist or is not a file! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Opened non-file object as file");
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/notAFile.ext", "./tests/files/pkg/outputDirectory/"), "^Error: Input path does not exist or is not a file! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Opened non-file object as file");
 
   // Open file without permission to access
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/noPermission.ext", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Cannot open input file: \\./tests/files/pkg/noPermission\\.ext at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Could \"open\" file without permissions");
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/noPermission.ext", "./tests/files/pkg/outputDirectory/"), "^Error: Cannot open input file: \\./tests/files/pkg/noPermission\\.ext at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Could \"open\" file without permissions");
 
+  /*
   // Error reading header (size)
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgSize.pkg", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Error reading PKG header! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Error reading PKG header (Size)");
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgSize.pkg", "./tests/files/pkg/outputDirectory/"), "^Error: Error reading PKG header! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Error reading PKG header (Size)");
 
   // File is not a PKG
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgMagic.pkg", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Input path is not a PKG! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Passed file that wasn't a PKG");
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgMagic.pkg", "./tests/files/pkg/outputDirectory/"), "^Error: Input path is not a PKG! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Passed file that wasn't a PKG");
 
   // Error reading entry table
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgEntryTableSize.pkg", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Error reading entry table! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Passed a broken entry table header (Size)");
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgEntryTableSize.pkg", "./tests/files/pkg/outputDirectory/"), "^Error: Error reading entry table! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Passed a broken entry table header (Size)");
 
   // Empty output arguments
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", ""), std::runtime_error, "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted empty argument");          // Empty
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", " "), std::runtime_error, "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");    // Single space
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", "  "), std::runtime_error, "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");   // Double space
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", "\t"), std::runtime_error, "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");   // Single tab
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", "\t\t"), std::runtime_error, "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument"); // Double tab
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", nullptr), std::logic_error, "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                      // nullptr
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", ""), "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted empty argument");          // Empty
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", " "), "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");    // Single space
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", "  "), "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");   // Double space
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", "\t"), "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument");   // Single tab
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", "\t\t"), "^Error: Empty output path argument! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Accepted whitespace argument"); // Double tab
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", nullptr), "^basic_string::_M_construct null not valid$", "Accepted nullptr argument");                                    // nullptr
 
   // Unable to open/create output directory
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", "./tests/files/pkg/notADirectory.ext"), std::runtime_error, "^Error: Unable to open/create output directory at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Able to open/create output directory");
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/valid.pkg", "./tests/files/pkg/notADirectory.ext"), "^Error: Unable to open/create output directory at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Able to open/create output directory");
 
   // Error reading entry data
-  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgEntrySize.pkg", "./tests/files/pkg/outputDirectory/"), std::runtime_error, "^Error: Error reading entry data! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Passed broken entry data");
+  EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgEntrySize.pkg", "./tests/files/pkg/outputDirectory/"), "^Error: Error reading entry data! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Passed broken entry data");
+  */
 
   // TODO: Unable to open/create output subdirectory
 

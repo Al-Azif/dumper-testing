@@ -13,7 +13,7 @@
 #include <sstream>
 #include <vector>
 
-#ifdef __ORBIS__
+#if defined(__ORBIS__)
 #include <libsha1.h>
 #else
 #include <openssl/sha.h>

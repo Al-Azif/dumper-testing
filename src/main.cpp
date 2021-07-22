@@ -5,9 +5,14 @@
 
 #include <gtest/gtest.h>
 
+#include "dump_test.hpp"
 #include "elf_test.hpp"
+#include "fself_test.hpp"
+#include "gp4_test.hpp"
 #include "npbind_test.hpp"
+#include "pfs_test.hpp"
 #include "pkg_test.hpp"
+#include "sfo_test.hpp"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

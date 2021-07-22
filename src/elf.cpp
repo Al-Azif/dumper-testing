@@ -17,8 +17,8 @@
 #include <iostream>
 #include <vector>
 
-#ifdef __ORBIS__
-#include <libsha1.h>
+#if defined(__ORBIS__)
+#include <libsha256.h>
 #else
 #include <openssl/sha.h>
 #endif // __ORBIS__
@@ -509,6 +509,7 @@ std::vector<unsigned char> get_auth_info(const std::string &path) {
     FATAL_ERROR("Input path is not a SELF!");
   }
 
+#if defined(__ORBIS__)
   // TODO:
   // This may be better as a Mira fuctions to expose the required kernel functions as getting the auth_info is done in kernel
   // int kern_get_self_auth_info(struct thread* td, const char* path, int pathseg, char* info);
@@ -525,6 +526,11 @@ std::vector<unsigned char> get_auth_info(const std::string &path) {
   //     kdprintf("Failed to get AUTH_INFO\n");
   //   }
   // }
+#elif defined(__TEST__)
+  // TODO: Some sort of output to know the above code is functioning as much as can be expected
+#else
+  // TODO: Some sort of output to know the above code is functioning as much as can be expected
+#endif
 
   std::vector<unsigned char> blah;
 
@@ -816,11 +822,18 @@ void decrypt(const std::string &input, const std::string &output) {
     // Copy program data to correct offset in elf_data via mmap to decrypt
     if (prog_headers[i].p_type == PT_LOAD || prog_headers[i].p_type == PT_NID) {
       lseek(fd, 0, SEEK_SET);
+
+#if defined(__ORBIS__)
       uint64_t *elf_segment = static_cast<uint64_t *>(mmap(NULL, prog_headers[i].p_filesz, PROT_READ, MAP_SHARED | MAP_SELF, fd, i << 32));
       for (uint64_t j = 0; j < prog_headers[i].p_filesz; j++) {
         elf_data[prog_headers[i].p_offset + j] = elf_segment[j];
       }
       munmap(elf_segment, prog_headers[i].p_filesz);
+#elif defined(__TEST__)
+      // TODO: Some sort of output to know the above code is functioning as much as can be expected
+#else
+      // TODO: Some sort of output to know the above code is functioning as much as can be expected
+#endif
     }
   }
 
