@@ -8,7 +8,6 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -47,6 +46,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   }
   if (__builtin_bswap32(header.magic) != NPBIND_MAGIC) {
     npbind_input.close();
+    // #include <iomanip>
     // std::stringstream ss;
     // ss << "File magic does not match npbind.dat! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << NPBIND_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header.magic);
     // FATAL_ERROR(ss.str());

@@ -595,7 +595,7 @@ TEST(pkgTest, extract_sc0) {
   // Open file without permission to access
   EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/noPermission.ext", "./tests/files/pkg/outputDirectory/"), "^Error: Cannot open input file: \\./tests/files/pkg/noPermission\\.ext at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Could \"open\" file without permissions");
 
-  /*
+  /* TODO
   // Error reading header (size)
   EXPECT_EXCEPTION_REGEX(pkg::extract_sc0("./tests/files/pkg/brokenPkgSize.pkg", "./tests/files/pkg/outputDirectory/"), "^Error: Error reading PKG header! at \"pkg\\.cpp\":\\d*:\\(extract_sc0\\)$", "Error reading PKG header (Size)");
 

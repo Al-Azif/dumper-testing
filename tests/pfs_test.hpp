@@ -9,11 +9,15 @@
 
 #include <gtest/gtest.h>
 
-TEST(pfsTests, calculate_pfs_size) {
+TEST(pfsTests, parseDirectory) {
   // TODO
 }
 
-TEST(pfsTests, dump_pfs) {
+TEST(pfsTests, calculatePfsSize) {
+  // TODO
+}
+
+TEST(pfsTests, dumpPfs) {
   //TODO
 }
 

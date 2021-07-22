@@ -7,6 +7,7 @@
 #include <iostream>
 
 namespace dump {
+void __dump(const std::string &usb_device, const std::string &title_id, const std::string &type);
 void dump_base(const std::string &usb_device, const std::string &title_id);
 void dump_patch(const std::string &usb_device, const std::string &title_id);
 void dump_remaster(const std::string &usb_device, const std::string &title_id);

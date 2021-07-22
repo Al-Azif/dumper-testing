@@ -9,31 +9,35 @@
 
 #include <gtest/gtest.h>
 
-TEST(dumpTests, dump_base) {
+TEST(dumpTests, dump) {
   // TODO
 }
 
-TEST(dumpTests, dump_patch) {
+TEST(dumpTests, dumpBase) {
   // TODO
 }
 
-TEST(dumpTests, dump_remaster) {
+TEST(dumpTests, dumpPatch) {
   // TODO
 }
 
-TEST(dumpTests, dump_theme) {
+TEST(dumpTests, dumpRemaster) {
   // TODO
 }
 
-TEST(dumpTests, dump_theme_unlock) {
+TEST(dumpTests, dumpTheme) {
   // TODO
 }
 
-TEST(dumpTests, dump_ac) {
+TEST(dumpTests, dumpThemeUnlock) {
   // TODO
 }
 
-TEST(dumpTests, dump_ac_no_data) {
+TEST(dumpTests, dumpAc) {
+  // TODO
+}
+
+TEST(dumpTests, dumpAcNoData) {
   // TODO
 }
 

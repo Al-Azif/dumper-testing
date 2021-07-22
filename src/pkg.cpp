@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -126,6 +125,7 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
   }
   if (__builtin_bswap32(header.magic) != PKG_MAGIC) {
     pkg_input.close();
+    // #include <iomanip>
     // std::stringstream ss;
     // ss << "File magic does not match a PKG! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << PKG_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header.magic);
     // FATAL_ERROR(ss.str());

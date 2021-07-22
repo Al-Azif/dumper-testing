@@ -9,6 +9,34 @@
 
 #include <gtest/gtest.h>
 
+TEST(gp4Tests, recursiveDirectory) {
+  // TODO
+}
+
+TEST(gp4Tests, makeVolume) {
+  // TODO
+}
+
+TEST(gp4Tests, makePlaygo) {
+  // TODO
+}
+
+TEST(gp4Tests, makeFiles) {
+  // TODO
+}
+
+TEST(gp4Tests, makeDirectories) {
+  // TODO
+}
+
+TEST(gp4Tests, assemble) {
+  // TODO
+}
+
+TEST(gp4Tests, write) {
+  // TODO
+}
+
 TEST(gp4Tests, generate) {
   // TODO
 }

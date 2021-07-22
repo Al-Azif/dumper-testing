@@ -248,35 +248,36 @@ void generate(const std::string &sfo_path, const std::string &output_path, const
     FATAL_ERROR("Unknown asset type");
   }
 
-  sfo sfo_obj(sfo_path);
-  std::vector<std::string> sfo_keys = sfo_obj.get_keys();
+  std::vector<sfo::SfoData> sfo_data = sfo::read(sfo_path);
+  std::vector<std::string> sfo_keys = sfo::get_keys(sfo_data);
 
   if (!std::count(sfo_keys.begin(), sfo_keys.end(), std::string("CONTENT_ID"))) {
     FATAL_ERROR("param.sfo does not contain `CONTENT_ID`!");
   }
 
+  std::vector<sfo::SfoPubtoolinfoIndex> pubtool_data = sfo::read_pubtool_data(sfo_data);
   std::vector<std::string> pubtool_keys;
   if (std::count(sfo_keys.begin(), sfo_keys.end(), std::string("PUBTOOLINFO"))) {
-    pubtool_keys = sfo_obj.get_pubtoolinfo_keys();
+    pubtool_keys = sfo::get_pubtool_keys(pubtool_data);
   }
 
-  std::vector<unsigned char> temp_content_id = sfo_obj.get_value("CONTENT_ID");
+  std::vector<unsigned char> temp_content_id = sfo::get_value("CONTENT_ID", sfo_data);
   std::string content_id(temp_content_id.begin(), temp_content_id.end());
 
   std::string c_date; // "YYYY-MM-DD"
   if (std::count(pubtool_keys.begin(), pubtool_keys.end(), std::string("c_date"))) {
     try {
-      c_date = sfo_obj.get_pubtoolinfo_value("c_date");
+      c_date = sfo::get_pubtool_value("c_date", pubtool_data);
     } catch (...) {
-    } // get_pubtoolinfo_value throws if key is not found but we don't care and c_date will remain empty
+    } // get_pubtool_value throws if key is not found but we don't care and c_date will remain empty
   }
 
   std::string c_time; // "XXXXXX"
   if (std::count(pubtool_keys.begin(), pubtool_keys.end(), std::string("c_time"))) {
     try {
-      c_time = sfo_obj.get_pubtoolinfo_value("c_time");
+      c_time = sfo::get_pubtool_value("c_time", pubtool_data);
     } catch (...) {
-    } // get_pubtoolinfo_value throws if key is not found but we don't care and c_time will remain empty
+    } // get_pubtool_value throws if key is not found but we don't care and c_time will remain empty
   }
 
   // Get content type string for GP4

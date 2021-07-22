@@ -40,23 +40,23 @@ TEST(npbindTest, read) {
   EXPECT_EXCEPTION_REGEX(npbind::read("./tests/files/npbind/brokenNpbindDigest.dat"), "^Error: Digests do not match! Aborting... at \"npbind\\.cpp\":\\d*:\\(read\\)$", "Passed non matching digests");
 
   // Success
-  if (npbind::read("./tests/files/npbind/validNoEntry.dat").size() != 0) {
+  if (npbind::read("./tests/files/npbind/valid_NoEntry.dat").size() != 0) {
     FAIL() << "No entry file failed";
   }
 
-  if (npbind::read("./tests/files/npbind/validNoEntry_alt.dat").size() != 0) { // Includes entry size in file header
+  if (npbind::read("./tests/files/npbind/valid_NoEntry_Alternative.dat").size() != 0) { // Includes entry size in file header
     FAIL() << "No entry (alternative) file failed";
   }
 
-  if (npbind::read("./tests/files/npbind/validOneEntry.dat").size() != 1) {
+  if (npbind::read("./tests/files/npbind/valid_OneEntry.dat").size() != 1) {
     FAIL() << "One entry entry file failed";
   }
 
-  if (npbind::read("./tests/files/npbind/validTwoEntries.dat").size() != 2) {
+  if (npbind::read("./tests/files/npbind/valid_TwoEntries.dat").size() != 2) {
     FAIL() << "Two entry entry file failed";
   }
 
-  if (npbind::read("./tests/files/npbind/validThreeEntries.dat").size() != 3) {
+  if (npbind::read("./tests/files/npbind/valid_ThreeEntries.dat").size() != 3) {
     FAIL() << "Three entry entry file failed";
   }
 }

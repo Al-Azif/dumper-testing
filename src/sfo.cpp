@@ -5,14 +5,13 @@
 #include "common.hpp"
 
 #include <algorithm>
-#include <cstring>
 #include <filesystem>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <vector>
 
-sfo::sfo(const std::string &path) {
+namespace sfo {
+bool is_sfo(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
     FATAL_ERROR("Empty path argument!");
@@ -30,77 +29,167 @@ sfo::sfo(const std::string &path) {
     FATAL_ERROR("Cannot open file: " + std::string(path));
   }
 
-  // Check file magic (Read in whole header)
-  sfo_input.read((char *)&header_, sizeof(header_)); // Flawfinder: ignore
+  // Read SFO header
+  SfoHeader header;
+  sfo_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
   if (!sfo_input.good()) {
     sfo_input.close();
-    FATAL_ERROR("Error reading header!");
+    return false;
   }
-  if (__builtin_bswap32(header_.magic) != SFO_MAGIC) {
-    sfo_input.close();
-    std::stringstream ss;
-    ss << "[sfo::open] File magic does not match a SFO! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << SFO_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << __builtin_bswap32(header_.magic);
-    FATAL_ERROR(ss.str());
+  sfo_input.close();
+
+  // Compare magic
+  if (__builtin_bswap32(header.magic) == SFO_MAGIC) {
+    return true;
   }
 
-  // Read indices
-  for (size_t i = 0; i < header_.num_entries; i++) {
-    // Cannot just read sizeof(SfoIndex) as it includes the std::string valude for key_name which is added in the next loop
-    SfoIndex temp_index;
-    sfo_input.read((char *)&temp_index.key_offset, sizeof(temp_index.key_offset)); // Flawfinder: ignore
+  return false;
+}
+
+std::vector<SfoData> read(const std::string &path) {
+  // Check for empty or pure whitespace path
+  if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
+    FATAL_ERROR("Empty path argument!");
+  }
+
+  // Check if file exists and is file
+  if (!std::filesystem::is_regular_file(path)) {
+    FATAL_ERROR("Input path does not exist or is not a file!");
+  }
+
+  // Open path
+  std::ifstream sfo_input(path, std::ios::in | std::ios::binary);
+  if (!sfo_input || !sfo_input.good()) {
+    sfo_input.close();
+    FATAL_ERROR("Cannot open file: " + std::string(path));
+  }
+
+  // Check to make sure file is a SFO
+  if (!is_sfo(path)) {
+    sfo_input.close();
+    FATAL_ERROR("Input path is not a SFO!");
+  }
+
+  // Read SFO header
+  SfoHeader header;
+  sfo_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
+  if (!sfo_input.good()) {
+    // Should never reach here... will affect coverage %
+    sfo_input.close();
+    FATAL_ERROR("Error reading SFO header!");
+  }
+
+  std::vector<SfoData> data;
+
+  // Read data
+  for (size_t i = 0; i < header.num_entries; i++) {
+    // Cannot just read sizeof(SfoData) as it includes the std::string valude for key_name which is added in the next loop and the actual data added shortly after that
+    SfoData temp_data;
+    sfo_input.read((char *)&temp_data.key_offset, sizeof(temp_data.key_offset)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry key offset!");
     }
-    sfo_input.read((char *)&temp_index.format, sizeof(temp_index.format)); // Flawfinder: ignore
+    sfo_input.read((char *)&temp_data.format, sizeof(temp_data.format)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry format!");
     }
-    sfo_input.read((char *)&temp_index.length, sizeof(temp_index.length)); // Flawfinder: ignore
+    sfo_input.read((char *)&temp_data.length, sizeof(temp_data.length)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry length!");
     }
-    sfo_input.read((char *)&temp_index.max_length, sizeof(temp_index.max_length)); // Flawfinder: ignore
+    sfo_input.read((char *)&temp_data.max_length, sizeof(temp_data.max_length)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry max length!");
     }
-    sfo_input.read((char *)&temp_index.data_offset, sizeof(temp_index.data_offset)); // Flawfinder: ignore
+    sfo_input.read((char *)&temp_data.data_offset, sizeof(temp_data.data_offset)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry data offset!");
     }
-    indices_.push_back(temp_index);
+    data.push_back(temp_data);
   }
 
-  // Read key names
-  for (auto &&entry : indices_) {
-    sfo_input.seekg(header_.key_table_offset + entry.key_offset, sfo_input.beg);
+  // Read key names and data
+  for (auto &&entry : data) {
+    sfo_input.seekg(header.key_table_offset + entry.key_offset, sfo_input.beg);
     std::getline(sfo_input, entry.key_name, '\0');
-  }
 
-  // Read data
-  sfo_input.seekg(0, sfo_input.end);
-  uint32_t data_table_length = sfo_input.tellg();
-  data_table_length -= header_.data_table_offset;
-  unsigned char temp_data_table[data_table_length];
-  sfo_input.seekg(header_.data_table_offset, sfo_input.beg);
-  sfo_input.read((char *)&temp_data_table, data_table_length); // Flawfinder: ignore
-  if (!sfo_input.good()) {
-    sfo_input.close();
-    FATAL_ERROR("Error reading data table!");
-  }
-  for (uint32_t i = 0; i < data_table_length; i++) {
-    data_table_.push_back(temp_data_table[i]);
-  }
+    // TODO: This bit is broken
+    unsigned char buffer[entry.length];
+    sfo_input.seekg(header.data_table_offset + entry.data_offset, sfo_input.beg);
+    sfo_input.read((char *)&buffer, sizeof(buffer));
+    if (!sfo_input.good()) {
+      sfo_input.close();
+      FATAL_ERROR("Error reading data table!");
+    }
 
+    for (uint32_t i = 0; i < sizeof(buffer); i++) {
+      entry.data.push_back(buffer[i]);
+    }
+  }
   sfo_input.close();
 
-  std::vector<std::string> sfo_keys = get_keys();
+  return data;
+}
+
+std::vector<std::string> get_keys(std::vector<SfoData> data) {
+  std::vector<std::string> temp_key_list;
+  for (auto &&entry : data) {
+    temp_key_list.push_back(entry.key_name);
+  }
+  return temp_key_list;
+}
+
+uint16_t get_format(const std::string &key, std::vector<SfoData> data) {
+  for (auto &&entry : data) {
+    if (entry.key_name == key) {
+      return entry.format;
+    }
+  }
+  FATAL_ERROR("Could not find key");
+}
+
+uint32_t get_length(const std::string &key, std::vector<SfoData> data) {
+  for (auto &&entry : data) {
+    if (entry.key_name == key) {
+      return entry.length;
+    }
+  }
+  FATAL_ERROR("Could not find key");
+}
+
+uint32_t get_max_length(const std::string &key, std::vector<SfoData> data) {
+  for (auto &&entry : data) {
+    if (entry.key_name == key) {
+      return entry.max_length;
+    }
+  }
+  FATAL_ERROR("Could not find key");
+}
+
+std::vector<unsigned char> get_value(const std::string &key, std::vector<SfoData> data) {
+  for (auto &&entry : data) {
+    if (entry.key_name == key) {
+      std::vector<unsigned char> buffer;
+      for (uint32_t i = 0; i < entry.length; i++) {
+        buffer.push_back(entry.data[i]);
+      }
+      return buffer;
+    }
+  }
+  FATAL_ERROR("Could not find key");
+}
+
+std::vector<SfoPubtoolinfoIndex> read_pubtool_data(std::vector<SfoData> data) {
+  std::vector<std::string> sfo_keys = get_keys(data);
+  std::vector<SfoPubtoolinfoIndex> pubtool_data;
+
   if (std::count(sfo_keys.begin(), sfo_keys.end(), std::string("PUBTOOLINFO"))) {
-    std::vector<unsigned char> pubtoolinfo_buffer = get_value("PUBTOOLINFO");
+    std::vector<unsigned char> pubtoolinfo_buffer = get_value("PUBTOOLINFO", data);
     std::stringstream ss(std::string(pubtoolinfo_buffer.begin(), pubtoolinfo_buffer.end()));
 
     std::vector<std::string> csv;
@@ -114,72 +203,64 @@ sfo::sfo(const std::string &path) {
       SfoPubtoolinfoIndex temp_index;
       temp_index.key_name = value.substr(0, value.find('='));
       temp_index.value = value.substr(value.find('=') + 1, value.size());
-      pubtool_indices_.push_back(temp_index);
+      pubtool_data.push_back(temp_index);
     }
   }
+
+  return pubtool_data;
 }
 
-std::vector<std::string> sfo::get_keys() {
+std::vector<std::string> get_pubtool_keys(std::vector<SfoPubtoolinfoIndex> data) {
   std::vector<std::string> temp_key_list;
-  for (auto &&entry : indices_) {
+  for (auto &&entry : data) {
     temp_key_list.push_back(entry.key_name);
   }
   return temp_key_list;
 }
 
-uint16_t sfo::get_format(const std::string &key) {
-  for (auto &&entry : indices_) {
-    if (entry.key_name == key) {
-      return entry.format;
-    }
-  }
-  FATAL_ERROR("Could not find key");
-}
-
-uint32_t sfo::get_length(const std::string &key) {
-  for (auto &&entry : indices_) {
-    if (entry.key_name == key) {
-      return entry.length;
-    }
-  }
-  FATAL_ERROR("Could not find key");
-}
-
-uint32_t sfo::get_max_length(const std::string &key) {
-  for (auto &&entry : indices_) {
-    if (entry.key_name == key) {
-      return entry.max_length;
-    }
-  }
-  FATAL_ERROR("Could not find key");
-}
-
-std::vector<unsigned char> sfo::get_value(const std::string &key) {
-  for (auto &&entry : indices_) {
-    if (entry.key_name == key) {
-      std::vector<unsigned char> buffer;
-      for (uint32_t i = 0; i < entry.length; i++) {
-        buffer.push_back(data_table_[entry.data_offset + i]);
-      }
-      return buffer;
-    }
-  }
-  FATAL_ERROR("Could not find key");
-}
-
-std::vector<std::string> sfo::get_pubtoolinfo_keys() {
-  std::vector<std::string> temp_key_list;
-  for (auto &&entry : pubtool_indices_) {
-    temp_key_list.push_back(entry.key_name);
-  }
-  return temp_key_list;
-}
-
-std::string sfo::get_pubtoolinfo_value(const std::string &key) {
-  for (auto &&entry : pubtool_indices_) {
+std::string get_pubtool_value(const std::string &key, std::vector<SfoPubtoolinfoIndex> data) {
+  for (auto &&entry : data) {
     if (entry.key_name == key) {
       return entry.value;
     }
   }
   FATAL_ERROR("Could not find key");
 }
+
+std::vector<SfoData> add_key(SfoData add_data, std::vector<SfoData> current_data) {
+  // TODO
+  UNUSED(add_data);
+  UNUSED(current_data);
+
+  return current_data;
+}
+
+std::vector<SfoData> add_pubtool_key(SfoPubtoolinfoIndex add_data, std::vector<SfoData> current_data) {
+  // TODO
+  UNUSED(add_data);
+  UNUSED(current_data);
+
+  return current_data;
+}
+
+std::vector<SfoData> remove_key(std::string remove_key, std::vector<SfoData> current_data) {
+  // TODO
+  UNUSED(remove_key);
+  UNUSED(current_data);
+
+  return current_data;
+}
+
+std::vector<SfoData> remove_pubtool_key(std::string remove_key, std::vector<SfoData> current_data) {
+  // TODO
+  UNUSED(remove_key);
+  UNUSED(current_data);
+
+  return current_data;
+}
+
+void write(std::vector<SfoData> data) {
+  // TODO
+  UNUSED(data);
+}
+} // namespace sfo

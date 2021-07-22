@@ -58,6 +58,7 @@ extern std::vector<di_d32> inodes;
 
 extern std::ifstream pfs_input;
 
+void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_path, bool calculate_only);
 void calculate_pfs_size(uint32_t ino, uint32_t level);
 void dump_pfs(uint32_t ino, uint32_t level, const std::string &output_path);
 void extract(const std::string &pfs_path, const std::string &output_path);

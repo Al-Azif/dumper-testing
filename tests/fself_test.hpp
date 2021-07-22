@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-TEST(fselfTest, make_fself) {
+TEST(fselfTest, makeFself) {
   // TODO
 }
 

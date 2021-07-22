@@ -164,7 +164,7 @@ void extract(const std::string &pfs_path, const std::string &output_path) {
   if (__builtin_bswap64(header.magic) != PFS_MAGIC) {
     pfs_input.close();
     std::stringstream ss;
-    ss << "[pfs::extract] File magic does not match pfs_image.dat! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(16) << std::hex << PFS_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(16) << std::hex << __builtin_bswap64(header.magic);
+    ss << "File magic does not match pfs_image.dat! Expected: 0x" << std::uppercase << std::setfill('0') << std::setw(16) << std::hex << PFS_MAGIC << " | Actual: 0x" << std::uppercase << std::setfill('0') << std::setw(16) << std::hex << __builtin_bswap64(header.magic);
     FATAL_ERROR(ss.str());
   }
 
