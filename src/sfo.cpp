@@ -46,7 +46,7 @@ bool is_sfo(const std::string &path) {
   return false;
 }
 
-std::vector<SfoData> read(const std::string &path) {
+std::vector<SfoData> read(const std::string &path) { // Flawfinder: ignore
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
     FATAL_ERROR("Empty path argument!");
@@ -118,10 +118,9 @@ std::vector<SfoData> read(const std::string &path) {
     sfo_input.seekg(header.key_table_offset + entry.key_offset, sfo_input.beg);
     std::getline(sfo_input, entry.key_name, '\0');
 
-    // TODO: This bit is broken
     unsigned char buffer[entry.length];
     sfo_input.seekg(header.data_table_offset + entry.data_offset, sfo_input.beg);
-    sfo_input.read((char *)&buffer, sizeof(buffer));
+    sfo_input.read((char *)&buffer, sizeof(buffer)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading data table!");
@@ -136,7 +135,7 @@ std::vector<SfoData> read(const std::string &path) {
   return data;
 }
 
-std::vector<std::string> get_keys(std::vector<SfoData> data) {
+std::vector<std::string> get_keys(const std::vector<SfoData> &data) {
   std::vector<std::string> temp_key_list;
   for (auto &&entry : data) {
     temp_key_list.push_back(entry.key_name);
@@ -144,7 +143,7 @@ std::vector<std::string> get_keys(std::vector<SfoData> data) {
   return temp_key_list;
 }
 
-uint16_t get_format(const std::string &key, std::vector<SfoData> data) {
+uint16_t get_format(const std::string &key, const std::vector<SfoData> &data) {
   for (auto &&entry : data) {
     if (entry.key_name == key) {
       return entry.format;
@@ -153,7 +152,7 @@ uint16_t get_format(const std::string &key, std::vector<SfoData> data) {
   FATAL_ERROR("Could not find key");
 }
 
-uint32_t get_length(const std::string &key, std::vector<SfoData> data) {
+uint32_t get_length(const std::string &key, const std::vector<SfoData> &data) {
   for (auto &&entry : data) {
     if (entry.key_name == key) {
       return entry.length;
@@ -162,7 +161,7 @@ uint32_t get_length(const std::string &key, std::vector<SfoData> data) {
   FATAL_ERROR("Could not find key");
 }
 
-uint32_t get_max_length(const std::string &key, std::vector<SfoData> data) {
+uint32_t get_max_length(const std::string &key, const std::vector<SfoData> &data) {
   for (auto &&entry : data) {
     if (entry.key_name == key) {
       return entry.max_length;
@@ -171,7 +170,7 @@ uint32_t get_max_length(const std::string &key, std::vector<SfoData> data) {
   FATAL_ERROR("Could not find key");
 }
 
-std::vector<unsigned char> get_value(const std::string &key, std::vector<SfoData> data) {
+std::vector<unsigned char> get_value(const std::string &key, const std::vector<SfoData> &data) {
   for (auto &&entry : data) {
     if (entry.key_name == key) {
       std::vector<unsigned char> buffer;
@@ -184,7 +183,7 @@ std::vector<unsigned char> get_value(const std::string &key, std::vector<SfoData
   FATAL_ERROR("Could not find key");
 }
 
-std::vector<SfoPubtoolinfoIndex> read_pubtool_data(std::vector<SfoData> data) {
+std::vector<SfoPubtoolinfoIndex> read_pubtool_data(const std::vector<SfoData> &data) {
   std::vector<std::string> sfo_keys = get_keys(data);
   std::vector<SfoPubtoolinfoIndex> pubtool_data;
 
@@ -210,7 +209,7 @@ std::vector<SfoPubtoolinfoIndex> read_pubtool_data(std::vector<SfoData> data) {
   return pubtool_data;
 }
 
-std::vector<std::string> get_pubtool_keys(std::vector<SfoPubtoolinfoIndex> data) {
+std::vector<std::string> get_pubtool_keys(const std::vector<SfoPubtoolinfoIndex> &data) {
   std::vector<std::string> temp_key_list;
   for (auto &&entry : data) {
     temp_key_list.push_back(entry.key_name);
@@ -218,7 +217,7 @@ std::vector<std::string> get_pubtool_keys(std::vector<SfoPubtoolinfoIndex> data)
   return temp_key_list;
 }
 
-std::string get_pubtool_value(const std::string &key, std::vector<SfoPubtoolinfoIndex> data) {
+std::string get_pubtool_value(const std::string &key, const std::vector<SfoPubtoolinfoIndex> &data) {
   for (auto &&entry : data) {
     if (entry.key_name == key) {
       return entry.value;
@@ -227,7 +226,7 @@ std::string get_pubtool_value(const std::string &key, std::vector<SfoPubtoolinfo
   FATAL_ERROR("Could not find key");
 }
 
-std::vector<SfoData> add_key(SfoData add_data, std::vector<SfoData> current_data) {
+std::vector<SfoData> add_key(const SfoData &add_data, const std::vector<SfoData> &current_data) {
   // TODO
   UNUSED(add_data);
   UNUSED(current_data);
@@ -235,7 +234,7 @@ std::vector<SfoData> add_key(SfoData add_data, std::vector<SfoData> current_data
   return current_data;
 }
 
-std::vector<SfoData> add_pubtool_key(SfoPubtoolinfoIndex add_data, std::vector<SfoData> current_data) {
+std::vector<SfoData> add_pubtool_key(const SfoPubtoolinfoIndex &add_data, const std::vector<SfoData> &current_data) {
   // TODO
   UNUSED(add_data);
   UNUSED(current_data);
@@ -243,7 +242,7 @@ std::vector<SfoData> add_pubtool_key(SfoPubtoolinfoIndex add_data, std::vector<S
   return current_data;
 }
 
-std::vector<SfoData> remove_key(std::string remove_key, std::vector<SfoData> current_data) {
+std::vector<SfoData> remove_key(const std::string &remove_key, const std::vector<SfoData> &current_data) {
   // TODO
   UNUSED(remove_key);
   UNUSED(current_data);
@@ -251,7 +250,7 @@ std::vector<SfoData> remove_key(std::string remove_key, std::vector<SfoData> cur
   return current_data;
 }
 
-std::vector<SfoData> remove_pubtool_key(std::string remove_key, std::vector<SfoData> current_data) {
+std::vector<SfoData> remove_pubtool_key(const std::string &remove_key, const std::vector<SfoData> &current_data) {
   // TODO
   UNUSED(remove_key);
   UNUSED(current_data);
@@ -259,7 +258,7 @@ std::vector<SfoData> remove_pubtool_key(std::string remove_key, std::vector<SfoD
   return current_data;
 }
 
-void write(std::vector<SfoData> data) {
+void write(const std::vector<SfoData> &data) {
   // TODO
   UNUSED(data);
 }

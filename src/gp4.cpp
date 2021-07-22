@@ -248,7 +248,7 @@ void generate(const std::string &sfo_path, const std::string &output_path, const
     FATAL_ERROR("Unknown asset type");
   }
 
-  std::vector<sfo::SfoData> sfo_data = sfo::read(sfo_path);
+  std::vector<sfo::SfoData> sfo_data = sfo::read(sfo_path); // Flawfinder: ignore
   std::vector<std::string> sfo_keys = sfo::get_keys(sfo_data);
 
   if (!std::count(sfo_keys.begin(), sfo_keys.end(), std::string("CONTENT_ID"))) {

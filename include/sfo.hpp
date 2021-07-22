@@ -36,19 +36,19 @@ typedef struct {
 bool is_sfo(const std::string &path);
 
 std::vector<SfoData> read(const std::string &path);
-std::vector<std::string> get_keys(std::vector<SfoData> data);
-uint16_t get_format(const std::string &key, std::vector<SfoData> data);
-uint32_t get_length(const std::string &key, std::vector<SfoData> data);
-uint32_t get_max_length(const std::string &key, std::vector<SfoData> data);
-std::vector<unsigned char> get_value(const std::string &key, std::vector<SfoData> data);
-std::vector<SfoPubtoolinfoIndex> read_pubtool_data(std::vector<SfoData> data);
-std::vector<std::string> get_pubtool_keys(std::vector<SfoPubtoolinfoIndex> data);
-std::string get_pubtool_value(const std::string &key, std::vector<SfoPubtoolinfoIndex> data);
-std::vector<SfoData> add_key(SfoData add_data, std::vector<SfoData> current_data);
-std::vector<SfoData> add_pubtool_key(SfoPubtoolinfoIndex add_data, std::vector<SfoData> current_data);
-std::vector<SfoData> remove_key(std::string remove_key, std::vector<SfoData> current_data);
-std::vector<SfoData> remove_pubtool_key(std::string remove_key, std::vector<SfoData> current_data);
-void write(std::vector<SfoData> data);
+std::vector<std::string> get_keys(const std::vector<SfoData> &data);
+uint16_t get_format(const std::string &key, const std::vector<SfoData> &data);
+uint32_t get_length(const std::string &key, const std::vector<SfoData> &data);
+uint32_t get_max_length(const std::string &key, const std::vector<SfoData> &data);
+std::vector<unsigned char> get_value(const std::string &key, const std::vector<SfoData> &data);
+std::vector<SfoPubtoolinfoIndex> read_pubtool_data(const std::vector<SfoData> &data);
+std::vector<std::string> get_pubtool_keys(const std::vector<SfoPubtoolinfoIndex> &data);
+std::string get_pubtool_value(const std::string &key, const std::vector<SfoPubtoolinfoIndex> &data);
+std::vector<SfoData> add_key(const SfoData &add_data, const std::vector<SfoData> &current_data);
+std::vector<SfoData> add_pubtool_key(const SfoPubtoolinfoIndex &add_data, const std::vector<SfoData> &current_data);
+std::vector<SfoData> remove_key(const std::string &remove_key, const std::vector<SfoData> &current_data);
+std::vector<SfoData> remove_pubtool_key(const std::string &remove_key, const std::vector<SfoData> &current_data);
+void write(const std::vector<SfoData> &data);
 } // namespace sfo
 
 #endif // SFO_HPP_
