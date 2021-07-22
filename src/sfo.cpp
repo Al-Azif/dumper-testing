@@ -127,7 +127,7 @@ std::vector<SfoData> read(const std::string &path) {
       FATAL_ERROR("Error reading data table!");
     }
 
-    for (uint32_t i = 0; i < sizeof(buffer); i++) {
+    for (size_t i = 0; i < sizeof(buffer); i++) {
       entry.data.push_back(buffer[i]);
     }
   }

@@ -169,8 +169,8 @@ void extract(const std::string &pfs_path, const std::string &output_path) {
   }
 
   // Read in inodes
-  for (uint32_t i = 0; i < header.ndinodeblock; i++) {
-    for (uint32_t j = 0; (j < (header.blocksz / sizeof(di_d32))) && (j < header.ndinode); j++) {
+  for (uint64_t i = 0; i < header.ndinodeblock; i++) {
+    for (uint64_t j = 0; (j < (header.blocksz / sizeof(di_d32))) && (j < header.ndinode); j++) {
       di_d32 temp_inodes;
       pfs_input.seekg((uint64_t)header.blocksz * (i + 1) + sizeof(di_d32) * j, pfs_input.beg);
       pfs_input.read((char *)&temp_inodes, sizeof(di_d32)); // Flawfinder: ignore

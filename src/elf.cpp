@@ -789,7 +789,7 @@ void decrypt(const std::string &input, const std::string &output) {
 
   // Copy input file to self_data
   std::vector<uint8_t> self_data;
-  for (uint32_t i = 0; i < self_header.self_size; i++) {
+  for (uint64_t i = 0; i < self_header.self_size; i++) {
     self_data.push_back(temp_self_data[i]);
   }
 
@@ -798,7 +798,7 @@ void decrypt(const std::string &input, const std::string &output) {
 
   // Copy ELF header to elf_data
   std::vector<uint8_t> elf_data;
-  for (uint32_t i = 0; i < elf_header.e_ehsize; i++) {
+  for (uint16_t i = 0; i < elf_header.e_ehsize; i++) {
     elf_data[i] = self_data[i + elf_header_offset];
   }
 
@@ -811,11 +811,11 @@ void decrypt(const std::string &input, const std::string &output) {
   }
 
   // Loop: Copy program headers and then segments via mmap
-  for (size_t i = 0; i < elf_header.e_phnum; i++) {
+  for (uint16_t i = 0; i < elf_header.e_phnum; i++) {
 
     // Copy program header to correct offset in elf_data
-    for (size_t j = 0; j < elf_header.e_phentsize; j++) {
-      size_t offset = elf_header.e_phoff + (i * elf_header.e_phentsize) + j;
+    for (uint16_t j = 0; j < elf_header.e_phentsize; j++) {
+      uint64_t offset = elf_header.e_phoff + (i * elf_header.e_phentsize) + j;
       elf_data[offset + elf_header_offset] = self_data[offset + elf_header_offset];
     }
 
