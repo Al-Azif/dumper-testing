@@ -50,8 +50,8 @@
       digest[i] = static_cast<unsigned char>(s);                                     \
     }                                                                                \
     unsigned char calculated_digest[SHA256_DIGEST_LENGTH];                           \
-  SceSha256Context context;                                                          \
-  sceSha256BlockInit(&context);                                                      \
+    SceSha256Context context;                                                        \
+    sceSha256BlockInit(&context);                                                    \
     while (file_to_check.good()) {                                                   \
       unsigned char buffer[PAGE_SIZE];                                               \
       file_to_check.read((char *)buffer, sizeof(buffer)); /* Flawfinder: ignore */   \
