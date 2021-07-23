@@ -213,19 +213,25 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
     std::filesystem::path fself_path(decrypted_path);
     fself_path.replace_extension(".fself");
 
-    // Get proper Program Authority ID, App Version, Firmware Version, and Auth Info
-    uint64_t program_authority_id = elf::get_paid(encrypted_path);
-    std::string ptype = "fake"; // elf::get_ptype(encrypted_path);
-    uint64_t app_version = elf::get_app_version(encrypted_path);
-    uint64_t fw_version = elf::get_fw_version(encrypted_path);
-    std::vector<unsigned char> auth_info = elf::get_auth_info(encrypted_path);
+    if (fself::is_fself(encrypted_path)) {
+      if (!std::filesystem::copy_file(encrypted_path, fself_path, std::filesystem::copy_options::overwrite_existing)) {
+        FATAL_ERROR("Unable to copy" + std::string(encrypted_path) + " to " + std::string(fself_path));
+      }
+    } else {
+      // Get proper Program Authority ID, App Version, Firmware Version, and Auth Info
+      uint64_t program_authority_id = elf::get_paid(encrypted_path);
+      std::string ptype = "fake"; // elf::get_ptype(encrypted_path);
+      uint64_t app_version = elf::get_app_version(encrypted_path);
+      uint64_t fw_version = elf::get_fw_version(encrypted_path);
+      std::vector<unsigned char> auth_info = elf::get_auth_info(encrypted_path);
 
-    elf::decrypt(encrypted_path, decrypted_path);
-    if (!elf::is_valid_decrypt(encrypted_path, decrypted_path)) {
-      FATAL_ERROR("Invalid ELF decryption!")
+      elf::decrypt(encrypted_path, decrypted_path);
+      if (!elf::is_valid_decrypt(encrypted_path, decrypted_path)) {
+        FATAL_ERROR("Invalid ELF decryption!")
+      }
+      elf::zero_section_header(decrypted_path);
+      fself::make_fself(decrypted_path, fself_path, program_authority_id, ptype, app_version, fw_version, auth_info);
     }
-    elf::zero_section_header(decrypted_path);
-    fself::make_fself(decrypted_path, fself_path, program_authority_id, ptype, app_version, fw_version, auth_info);
   }
 
   // Delete .dumping semaphore

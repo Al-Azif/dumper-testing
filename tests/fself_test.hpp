@@ -9,6 +9,10 @@
 
 #include <gtest/gtest.h>
 
+TEST(fselfTests, isFself) {
+  // TODO
+}
+
 TEST(fselfTest, makeFself) {
   // TODO
 }

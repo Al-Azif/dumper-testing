@@ -11,6 +11,11 @@
 #include <iostream>
 
 namespace fself {
+bool is_fself(const std::string &path) {
+  // TODO
+  return false;
+}
+
 void make_fself(const std::string &input, const std::string &output, uint64_t paid, const std::string &ptype, uint64_t app_version, uint64_t fw_version, std::vector<unsigned char> auth_info) {
   // Check for empty or pure whitespace path
   if (input.empty() || std::all_of(input.begin(), input.end(), [](char c) { return std::isspace(c); })) {
