@@ -29,10 +29,10 @@ void make_fself(const std::string &input, const std::string &output, uint64_t pa
     FATAL_ERROR("Cannot open file: " + std::string(input));
   }
 
-  // Check to make sure file is a SELF
-  if (!elf::is_self(input)) {
+  // Check to make sure file is a ELF
+  if (!elf::is_elf(input)) {
     self_input.close();
-    FATAL_ERROR("Input file is not a SELF!");
+    FATAL_ERROR("Input file is not an ELF!");
   }
 
   // Check for empty or pure whitespace path
@@ -49,24 +49,11 @@ void make_fself(const std::string &input, const std::string &output, uint64_t pa
     FATAL_ERROR("Oputput object exists but is not a file!");
   }
 
-  if (paid > 0xFFFFFFFFFFFFFFFF) { // Unsigned, so no need to check < 0
-    self_input.close();
-    FATAL_ERROR("Invalid program authority ID!");
-  }
+  // paid, app_version and fw_version are unsigned and any value between 0x0 and 0xFFFFFFFFFFFFFFFF is valid so we do not have to check range
 
   if (ptype != "fake" && ptype != "npdrm_exec" && ptype != "npdrm_dynlib" && ptype != "system_exec" && ptype != "system_dynlib" && ptype != "host_kernel" && ptype != "secure_module" && ptype != "secure_kernel") {
     self_input.close();
     FATAL_ERROR("Invalid ptype!");
-  }
-
-  if (app_version > 0xFFFFFFFFFFFFFFFF) { // Unsigned, so no need to check < 0
-    self_input.close();
-    FATAL_ERROR("Invalid application version!");
-  }
-
-  if (fw_version > 0xFFFFFFFFFFFFFFFF) { // Unsigned, so no need to check < 0
-    self_input.close();
-    FATAL_ERROR("Invalid firmware version!");
   }
 
   // Should be 0x110 in size and 0-9a-fA-F
@@ -83,5 +70,8 @@ void make_fself(const std::string &input, const std::string &output, uint64_t pa
 
   // TODO
   self_input.close();
+  UNUSED(paid);
+  UNUSED(app_version);
+  UNUSED(fw_version);
 }
 } // namespace fself
