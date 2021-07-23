@@ -269,28 +269,47 @@ SfoPubtoolinfoIndex build_pubtool_data(const std::string &key, const std::string
   return new_data;
 }
 
-std::vector<SfoData> add_data(const SfoData &add_data, const std::vector<SfoData> &current_data) {
-  // Validate add_data
-  if (add_data.format != 0x0004 && add_data.format != 0x0204 && add_data.format != 0x0404) {
+std::vector<SfoData> add_data(const SfoData &data_to_add, const std::vector<SfoData> &current_data) {
+  // Validate data_to_add
+  if (data_to_add.format != 0x0004 && data_to_add.format != 0x0204 && data_to_add.format != 0x0404) {
     FATAL_ERROR("Unknown SFO format type!");
   }
-  if (add_data.length > add_data.max_length) {
+  if (data_to_add.length > data_to_add.max_length) {
     FATAL_ERROR("Input `length` of SFO entry must be <= input `max_length`!");
   }
-  if (add_data.data.size() > add_data.length) {
+  if (data_to_add.data.size() > data_to_add.length) {
     FATAL_ERROR("Input SFO data is larger than the `length`");
   }
 
   // Remove existing key from current data and add new data
-  std::vector<SfoData> new_data = remove_key(add_data.key_name, current_data);
-  new_data.push_back(add_data);
+  std::vector<SfoData> new_data = remove_key(data_to_add.key_name, current_data);
+  new_data.push_back(data_to_add);
 
   return new_data;
 }
 
-std::vector<SfoData> add_pubtool_data(const SfoPubtoolinfoIndex &add_data, const std::vector<SfoData> &current_data) {
-  std::vector<SfoData> new_data = remove_pubtool_key(add_data.key_name, current_data);
-  new_data.push_back(add_data);
+std::vector<SfoData> add_pubtool_data(const SfoPubtoolinfoIndex &data_to_add, const std::vector<SfoData> &current_data) {
+  std::vector<SfoData> new_data = remove_pubtool_key(data_to_add.key_name, current_data);
+  std::vector<SfoPubtoolinfoIndex> pubtool_data = read_pubtool_data(new_data);
+
+  std::vector<unsigned char> new_value;
+  for (auto &&entry : pubtool_data) {
+    for (auto &&character : entry.key_name) {
+      new_value.push_back(character);
+    }
+    new_value.push_back('=');
+    for (auto &&character : entry.value) {
+      new_value.push_back(character);
+    }
+    new_value.push_back(',');
+  }
+  new_value.pop_back(); // Remove trailing comma
+  if (new_value.size() > 0x200) {
+    FATAL_ERROR("New PUBTOOLINFO key is too large (> 0x200)!")
+  }
+
+  SfoData new_entry = build_data("PUBTOOLINFO", "utf-8", new_value.size(), 0x200, new_value);
+  new_data = add_data(new_entry, new_data);
 
   return new_data;
 }
