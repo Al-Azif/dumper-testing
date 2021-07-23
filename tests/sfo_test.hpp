@@ -73,11 +73,19 @@ TEST(sfoTests, getPubtoolValue) {
   // TODO
 }
 
-TEST(sfoTests, addKey) {
+TEST(sfoTests, buildData) {
   // TODO
 }
 
-TEST(sfoTests, addPubtoolKey) {
+TEST(sfoTests, buildPubtoolData) {
+  // TODO
+}
+
+TEST(sfoTests, addData) {
+  // TODO
+}
+
+TEST(sfoTests, addPubtoolData) {
   // TODO
 }
 
@@ -86,6 +94,10 @@ TEST(sfoTests, removeKey) {
 }
 
 TEST(sfoTests, removePubtoolKey) {
+  // TODO
+}
+
+TEST(sfoTests, compareSfoDate) {
   // TODO
 }
 
