@@ -289,12 +289,10 @@ std::vector<SfoData> add_data(const SfoData &add_data, const std::vector<SfoData
 }
 
 std::vector<SfoData> add_pubtool_data(const SfoPubtoolinfoIndex &add_data, const std::vector<SfoData> &current_data) {
-  // TODO
+  std::vector<SfoData> new_data = remove_pubtool_key(add_data.key_name, current_data);
+  new_data.push_back(add_data);
 
-  UNUSED(add_data);
-  UNUSED(current_data);
-
-  return current_data;
+  return new_data;
 }
 
 std::vector<SfoData> remove_key(const std::string &remove_key, const std::vector<SfoData> &current_data) {
@@ -309,12 +307,40 @@ std::vector<SfoData> remove_key(const std::string &remove_key, const std::vector
 }
 
 std::vector<SfoData> remove_pubtool_key(const std::string &remove_key, const std::vector<SfoData> &current_data) {
-  // TODO
+  std::vector<std::string> sfo_keys = sfo::get_keys(current_data);
+  if (!std::count(sfo_keys.begin(), sfo_keys.end(), std::string("PUBTOOLINFO"))) {
+    return current_data;
+  }
 
-  UNUSED(remove_key);
-  UNUSED(current_data);
+  std::vector<SfoPubtoolinfoIndex> pubtool_data = read_pubtool_data(current_data);
+  std::vector<SfoPubtoolinfoIndex> new_pubtool_data;
 
-  return current_data;
+  for (auto &&index : pubtool_data) {
+    if (index.key_name != remove_key) {
+      new_pubtool_data.push_back(index);
+    }
+  }
+
+  std::vector<unsigned char> new_value;
+  for (auto &&entry : new_pubtool_data) {
+    for (auto &&character : entry.key_name) {
+      new_value.push_back(character);
+    }
+    new_value.push_back('=');
+    for (auto &&character : entry.value) {
+      new_value.push_back(character);
+    }
+    new_value.push_back(',');
+  }
+  new_value.pop_back(); // Remove trailing comma
+  if (new_value.size() > 0x200) {
+    FATAL_ERROR("New PUBTOOLINFO key is too large (> 0x200)!")
+  }
+
+  SfoData new_entry = build_data("PUBTOOLINFO", "utf-8", new_value.size(), 0x200, new_value);
+  std::vector<SfoData> new_data = add_data(new_entry, current_data);
+
+  return new_data;
 }
 
 bool compare_sfo_date(SfoData data_1, SfoData data_2) {
