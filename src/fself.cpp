@@ -13,6 +13,9 @@
 namespace fself {
 bool is_fself(const std::string &path) {
   // TODO
+
+  UNUSED(path);
+
   return false;
 }
 
