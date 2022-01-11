@@ -308,7 +308,7 @@ std::vector<SfoData> add_pubtool_data(const SfoPubtoolinfoIndex &data_to_add, co
   }
   new_value.pop_back(); // Remove trailing comma
   if (new_value.size() > 0x200) {
-    FATAL_ERROR("New PUBTOOLINFO key is too large (> 0x200)!")
+    FATAL_ERROR("New PUBTOOLINFO key is too large (> 0x200)!");
   }
 
   SfoData new_entry = build_data("PUBTOOLINFO", "utf-8", new_value.size(), 0x200, new_value);
@@ -356,7 +356,7 @@ std::vector<SfoData> remove_pubtool_key(const std::string &remove_key, const std
   }
   new_value.pop_back(); // Remove trailing comma
   if (new_value.size() > 0x200) {
-    FATAL_ERROR("New PUBTOOLINFO key is too large (> 0x200)!")
+    FATAL_ERROR("New PUBTOOLINFO key is too large (> 0x200)!");
   }
 
   SfoData new_entry = build_data("PUBTOOLINFO", "utf-8", new_value.size(), 0x200, new_value);
@@ -393,7 +393,7 @@ void write(const std::vector<SfoData> &data, const std::string &path) {
   for (size_t i = 0; i < data.size(); i++) {
     for (size_t j = 0; j < data.size(); j++) {
       if (i != j && data[i].key_name == data[j].key_name) {
-        FATAL_ERROR("Duplicate key name found in SFO!")
+        FATAL_ERROR("Duplicate key name found in SFO!");
       }
     }
   }

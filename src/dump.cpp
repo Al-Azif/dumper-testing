@@ -230,7 +230,7 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
 
       elf::decrypt(encrypted_path, decrypted_path);
       if (!elf::is_valid_decrypt(encrypted_path, decrypted_path)) {
-        FATAL_ERROR("Invalid ELF decryption!")
+        FATAL_ERROR("Invalid ELF decryption!");
       }
       elf::zero_section_header(decrypted_path);
       fself::make_fself(decrypted_path, fself_path, program_authority_id, ptype, app_version, fw_version, auth_info);
