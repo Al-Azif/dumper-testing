@@ -654,7 +654,6 @@ void zero_section_header(const std::string &path) {
 
   elf_path.seekg(0, elf_path.beg);
   Elf64_Ehdr elf_header;
-  elf_path.seekg(0, elf_path.beg);
   elf_path.read(reinterpret_cast<char *>(&elf_header), sizeof(elf_header)); // Flawfinder: ignore
   if (!elf_path.good()) {
     // Should never reach here... will affect coverage %
@@ -669,7 +668,7 @@ void zero_section_header(const std::string &path) {
   elf_header.e_shentsize = 0;
   elf_header.e_shstrndx = 0;
 
-  std::ofstream output_file(path, std::ios::out | std::ios::binary);
+  std::ofstream output_file(path, std::ios::in | std::ios::out | std::ios::binary);
   if (!output_file || !output_file.good()) {
     // Should never reach here... will affect coverage %
     output_file.close();
