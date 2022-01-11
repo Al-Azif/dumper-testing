@@ -75,7 +75,7 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
   std::tm *timeinfo = std::localtime(&t);
 
   char buffer[20];
-  memset(buffer, '\0', sizeof(buffer));
+  std::memset(buffer, '\0', sizeof(buffer));
   std::strftime(buffer, 20, "%Y-%m-%d %H:%M:%S", timeinfo);
   volume_ts_node.append_child(pugi::node_pcdata).set_value(buffer);
 
@@ -91,7 +91,7 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
 
   // Set c_date and possibly c_time
   if (c_date.empty()) {
-    memset(buffer, '\0', sizeof(buffer));
+    std::memset(buffer, '\0', sizeof(buffer));
     std::strftime(buffer, 20, "%Y-%m-%d", timeinfo);
     c_date = std::string(buffer);
   }
