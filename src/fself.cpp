@@ -1,14 +1,17 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #include "fself.hpp"
+
 #include "common.hpp"
 #include "elf.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
+#include <string>
+#include <vector>
 
 namespace fself {
 bool is_fself(const std::string &path) {

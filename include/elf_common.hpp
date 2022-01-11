@@ -30,7 +30,7 @@
 #ifndef ELF_COMMON_HPP_
 #define ELF_COMMON_HPP_
 
-#include <iostream>
+#include <cstdint>
 
 /*
  * ELF definitions that are independent of architecture or word size.

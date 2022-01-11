@@ -31,7 +31,7 @@
 
 #include "elf_common.hpp"
 
-#include <iostream>
+#include <cstdint>
 
 /*
  * ELF definitions common to all 64-bit architectures.
@@ -247,4 +247,4 @@ typedef struct {
   Elf64_Half si_flags;   /* per symbol flags */
 } Elf64_Syminfo;
 
-#endif // ELF_STRUCTS_HPP_
+#endif // ELF_64_HPP_

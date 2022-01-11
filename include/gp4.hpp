@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #ifndef GP4_HPP_
@@ -6,7 +6,7 @@
 
 #include "pugixml.hpp"
 
-#include <iostream>
+#include <string>
 #include <vector>
 
 namespace gp4 {

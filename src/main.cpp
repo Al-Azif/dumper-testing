@@ -1,7 +1,7 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#ifdef __TEST__
+#if defined(__TEST__)
 
 #include <gtest/gtest.h>
 
@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 #include "common.hpp"
 #include "dump.hpp"
 
-#include <iostream>
+#include <string>
 
 int main() {
   std::string dump_dir = "/mnt/usb0";

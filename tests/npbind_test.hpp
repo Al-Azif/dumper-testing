@@ -5,6 +5,7 @@
 #define NPBIND_TEST_HPP_
 
 #include "npbind.hpp"
+
 #include "testing.hpp"
 
 #include <gtest/gtest.h>

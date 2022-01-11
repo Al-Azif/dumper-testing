@@ -5,6 +5,7 @@
 #define ELF_TEST_HPP_
 
 #include "elf.hpp"
+
 #include "testing.hpp"
 
 #include <gtest/gtest.h>

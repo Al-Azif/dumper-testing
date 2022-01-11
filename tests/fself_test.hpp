@@ -5,6 +5,7 @@
 #define FSELF_TEST_HPP_
 
 #include "fself.hpp"
+
 #include "testing.hpp"
 
 #include <gtest/gtest.h>

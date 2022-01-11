@@ -1,15 +1,17 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #include "npbind.hpp"
+
 #include "common.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #if defined(__ORBIS__)
@@ -39,7 +41,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
 
   // Check file magic (Read in whole header)
   NpBindHeader header;
-  npbind_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
+  npbind_input.read(reinterpret_cast<char *>(&header), sizeof(header)); // Flawfinder: ignore
   if (!npbind_input.good()) {
     npbind_input.close();
     FATAL_ERROR("Error reading header!");
@@ -57,7 +59,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   std::vector<NpBindEntry> entries;
   for (uint64_t i = 0; i < __builtin_bswap64(header.num_entries); i++) {
     NpBindEntry temp_entry;
-    npbind_input.read((char *)&temp_entry, __builtin_bswap64(header.entry_size)); // Flawfinder: ignore
+    npbind_input.read(reinterpret_cast<char *>(&temp_entry), __builtin_bswap64(header.entry_size)); // Flawfinder: ignore
     if (!npbind_input.good()) {
       npbind_input.close();
       FATAL_ERROR("Error reading entries!");
@@ -67,8 +69,8 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
 
   // Read digest
   unsigned char digest[SHA_DIGEST_LENGTH];
-  npbind_input.seekg(-sizeof(digest), npbind_input.end); // Make sure we are in the right place
-  npbind_input.read((char *)&digest, sizeof(digest));    // Flawfinder: ignore
+  npbind_input.seekg(-sizeof(digest), npbind_input.end);                // Make sure we are in the right place
+  npbind_input.read(reinterpret_cast<char *>(&digest), sizeof(digest)); // Flawfinder: ignore
   if (!npbind_input.good()) {
     // Should never reach here... will affect coverage %
     npbind_input.close();
@@ -91,11 +93,11 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
     data_to_hash[i] = ss.str().c_str()[i];
   }
 
-#ifdef __ORBIS__
+#if defined(__ORBIS__)
   SceSha1Context context;
   sceSha1BlockInit(&context);
   sceSha1BlockUpdate(&context, data_to_hash, ss.str().size());
-  sceSha1BlockResult(calculated_digest, &context));
+  sceSha1BlockResult(&context, calculated_digest));
 #else
   SHA_CTX context;
   SHA1_Init(&context);

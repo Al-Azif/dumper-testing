@@ -14,24 +14,43 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
 
 **ANYONE** can contribute. Code is currently licensed under GPLv3, by submitting a pull request you agree to this term and agree to possible relicensing later.
 
-## Approximate order of completion
-- [X] PKG
+## TODO
+
 - [X] NpBind
-- [X] SFO
-- [X] PFS
-- [X] Decrypt SELF
-- [ ] FSELF
-- [ ] RIF (For Additional Content w/o Data & Entitlment Keys)
-- [ ] Dump
-    - [X] Base
-    - [X] Patch
-    - [X] Additional Content w/ Data
-    - [X] Theme
-    - [X] Retail Theme + Theme "Unlock"
-    - [X] Remaster (Build a script to diff the actual files with the original content PC side to make a patch PKG vs a Remaster?)
-    - [ ] Additional Content w/o Data
-    - [ ] Multi-Disc (Does it just work without changes?)
+  - [X] Implementation
+  - [X] Tests
+- [ ] SFO
+  - [X] Implementation
+  - [ ] Tests
 - [ ] GP4
-  - [X] Basic GP4 Generation
-  - [ ] PlayGo Related Issues
-  - [ ] PFS Compress Option
+  - [ ] Implementation
+    - [X] Basic GP4 Generation
+    - [ ] PlayGo Related Issues
+    - [ ] PFS Compress Option
+  - [ ] Tests
+- [ ] PKG
+  - [ ] Implementation
+    - [X] Basic
+    - [ ] Decrypt encrypted Sc0 entires
+  - [ ] Tests
+- [ ] PFS
+  - [X] Implementation
+  - [ ] Tests
+- [ ] Decrypt SELF
+  - [X] Implementation
+  - [ ] Tests
+- [ ] FSELF
+  - [ ] Implementation
+  - [ ] Tests
+- [ ] RIF (For Additional Content w/o Data & Entitlment Keys)
+  - [ ] Implementation
+  - [ ] Tests
+- [ ] Dump
+  - [X] Base
+  - [X] Patch
+  - [X] Additional Content w/ Data
+  - [X] Theme
+  - [X] Retail Theme + Theme "Unlock"
+  - [X] Remaster (Build a script to diff the actual files with the original content PC side to make a patch PKG vs a Remaster?)
+  - [ ] Additional Content w/o Data
+  - [ ] Multi-Disc (Does it just work without changes?)

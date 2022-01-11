@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #ifndef COMMON_HPP_

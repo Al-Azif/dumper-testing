@@ -1,15 +1,18 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #include "pfs.hpp"
+
 #include "common.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
-#include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 namespace pfs {
@@ -42,7 +45,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
       }
 
       char name[ent.namelen + 1];
-      memset(name, '\0', sizeof(name));
+      std::memset(name, '\0', sizeof(name));
       if (level > 0) {
         pfs_input.seekg(pos + sizeof(dirent_t), pfs_input.beg);
         pfs_input.read((char *)&name, ent.namelen); // Flawfinder: ignore
@@ -68,7 +71,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
           }
 
           unsigned char buffer[PFS_DUMP_BUFFER];
-          memset(buffer, '\0', sizeof(buffer));
+          std::memset(buffer, '\0', sizeof(buffer));
 
           std::stringstream ss;
           uint64_t dump_counter = 0;
@@ -86,7 +89,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
             output_file << ss.rdbuf();
             ss.str("");
             ss.clear();
-            memset(buffer, '\0', sizeof(buffer));
+            std::memset(buffer, '\0', sizeof(buffer));
             pfs_copied += sizeof(buffer);
             dump_counter += sizeof(buffer);
           }

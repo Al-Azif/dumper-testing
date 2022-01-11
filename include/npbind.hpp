@@ -1,10 +1,11 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #ifndef NPBIND_HPP_
 #define NPBIND_HPP_
 
-#include <iostream>
+#include <cstdint>
+#include <string>
 #include <vector>
 
 #define NPBIND_MAGIC 0xD294A018

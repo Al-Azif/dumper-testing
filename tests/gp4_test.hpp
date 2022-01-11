@@ -5,6 +5,7 @@
 #define GP4_TEST_HPP_
 
 #include "gp4.hpp"
+
 #include "testing.hpp"
 
 #include <gtest/gtest.h>

@@ -1,5 +1,7 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
+
+#include <gp4.hpp>
 
 #include "common.hpp"
 #include "elf.hpp" // `bool is_self(const std::string &path);`
@@ -12,8 +14,8 @@
 // #include <ctime> // TODO: Not including doesn't generate and error even though "strftime" is used?
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <regex>
+#include <string>
 #include <vector>
 
 namespace gp4 {
@@ -42,7 +44,7 @@ void recursive_directory(const std::string &path, pugi::xml_node &node) {
   }
 }
 
-pugi::xml_document make_volume(const std::string &content_id, const std::string &volume_type, std::string c_date = "", std::string c_time = "") {
+pugi::xml_document make_volume(const std::string &content_id, const std::string &volume_type, std::string c_date, std::string c_time) {
   // Check input
   if (!std::regex_match(content_id, std::regex("^\\D{2}\\d{4}-\\D{4}\\d{5}_\\d{2}-\\w{16}$"))) {
     FATAL_ERROR("Malformed content ID");
@@ -192,7 +194,7 @@ pugi::xml_document make_directories(const std::string &path) {
   return doc;
 }
 
-pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_document &playgo, const pugi::xml_document &files, const pugi::xml_document &directories, const std::string &custom_version = "") {
+pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_document &playgo, const pugi::xml_document &files, const pugi::xml_document &directories, const std::string &custom_version) {
   // Generate XML
   pugi::xml_document doc;
 

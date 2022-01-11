@@ -1,10 +1,10 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #ifndef DUMP_HPP_
 #define DUMP_HPP_
 
-#include <iostream>
+#include <string>
 
 namespace dump {
 void __dump(const std::string &usb_device, const std::string &title_id, const std::string &type);

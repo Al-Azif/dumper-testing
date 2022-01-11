@@ -1,7 +1,8 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #include "elf.hpp"
+
 #include "common.hpp"
 #include "elf_64.hpp"
 #include "elf_common.hpp"
@@ -11,10 +12,11 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
+#include <string>
 #include <vector>
 
 #if defined(__ORBIS__)
@@ -593,7 +595,7 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
 
   unsigned char calculated_digest[sizeof(digest)];
 
-#ifdef __ORBIS__
+#if defined(__ORBIS__)
   SceSha256Context context;
   sceSha256BlockInit(&context);
 #else
@@ -604,7 +606,7 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
   while (decrypted_elf.good()) {
     unsigned char buffer[PAGE_SIZE];
     decrypted_elf.read((char *)buffer, sizeof(buffer)); // Flawfinder: ignore
-#ifdef __ORBIS__
+#if defined(__ORBIS__)
     sceSha256BlockUpdate(&context, buffer, decrypted_elf.gcount());
 #else
     SHA256_Update(&context, buffer, decrypted_elf.gcount());
@@ -612,7 +614,7 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
   }
   decrypted_elf.close();
 
-#ifdef __ORBIS__
+#if defined(__ORBIS__)
   sceSha256BlockResult(calculated_digest, &context));
 #else
   SHA256_Final(calculated_digest, &context);
@@ -799,7 +801,9 @@ void decrypt(const std::string &input, const std::string &output) {
   // Copy ELF header to elf_data
   std::vector<uint8_t> elf_data;
   for (uint16_t i = 0; i < elf_header.e_ehsize; i++) {
-    elf_data[i] = self_data[i + elf_header_offset];
+    elf_data.insert(elf_data.begin() + i, self_data[elf_header_offset + i]);
+    // TODO: The above line replaced the line below... test it
+    // elf_data[i] = self_data[elf_header_offset + i]; // Array overrun is possible. The 'i' index is pointing beyond array bound.
   }
 
   // Open input file as descriptor
@@ -816,7 +820,9 @@ void decrypt(const std::string &input, const std::string &output) {
     // Copy program header to correct offset in elf_data
     for (uint16_t j = 0; j < elf_header.e_phentsize; j++) {
       uint64_t offset = elf_header.e_phoff + (i * elf_header.e_phentsize) + j;
-      elf_data[offset + elf_header_offset] = self_data[offset + elf_header_offset];
+      elf_data.insert(elf_data.begin() + elf_header_offset + offset, self_data[elf_header_offset + offset]);
+      // TODO: The above line replaced the line below... test it
+      // elf_data[elf_header_offset + offset] = self_data[elf_header_offset + offset];
     }
 
     // Copy program data to correct offset in elf_data via mmap to decrypt
@@ -826,7 +832,9 @@ void decrypt(const std::string &input, const std::string &output) {
 #if defined(__ORBIS__)
       uint64_t *elf_segment = static_cast<uint64_t *>(mmap(NULL, prog_headers[i].p_filesz, PROT_READ, MAP_SHARED | MAP_SELF, fd, i << 32));
       for (uint64_t j = 0; j < prog_headers[i].p_filesz; j++) {
-        elf_data[prog_headers[i].p_offset + j] = elf_segment[j];
+        elf_data.insert(elf_data.begin() + prog_headers[i].p_offset + j, elf_segment[j]);
+        // TODO: The above line replaced the line below... test it
+        // elf_data[prog_headers[i].p_offset + j] = elf_segment[j];
       }
       munmap(elf_segment, prog_headers[i].p_filesz);
 #elif defined(__TEST__)

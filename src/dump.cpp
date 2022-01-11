@@ -1,5 +1,7 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
+
+#include "dump.hpp"
 
 #include "common.hpp"
 #include "elf.hpp"
@@ -10,11 +12,12 @@
 #include "pkg.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <regex>
+#include <string>
 #include <vector>
 
 namespace dump {

@@ -1,13 +1,16 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #include "sfo.hpp"
+
 #include "common.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 namespace sfo {
@@ -31,7 +34,7 @@ bool is_sfo(const std::string &path) {
 
   // Read SFO header
   SfoHeader header;
-  sfo_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
+  sfo_input.read(reinterpret_cast<char *>(&header), sizeof(header)); // Flawfinder: ignore
   if (!sfo_input.good()) {
     sfo_input.close();
     return false;
@@ -72,7 +75,7 @@ std::vector<SfoData> read(const std::string &path) { // Flawfinder: ignore
 
   // Read SFO header
   SfoHeader header;
-  sfo_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
+  sfo_input.read(reinterpret_cast<char *>(&header), sizeof(header)); // Flawfinder: ignore
   if (!sfo_input.good()) {
     // Should never reach here... will affect coverage %
     sfo_input.close();
@@ -85,27 +88,27 @@ std::vector<SfoData> read(const std::string &path) { // Flawfinder: ignore
   for (size_t i = 0; i < header.num_entries; i++) {
     // Cannot just read sizeof(SfoData) as it includes a std::string value for key_name which is added in the next loop along with the actual data
     SfoData temp_data;
-    sfo_input.read((char *)&temp_data.key_offset, sizeof(temp_data.key_offset)); // Flawfinder: ignore
+    sfo_input.read(reinterpret_cast<char *>(&temp_data.key_offset), sizeof(temp_data.key_offset)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry key offset!");
     }
-    sfo_input.read((char *)&temp_data.format, sizeof(temp_data.format)); // Flawfinder: ignore
+    sfo_input.read(reinterpret_cast<char *>(&temp_data.format), sizeof(temp_data.format)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry format!");
     }
-    sfo_input.read((char *)&temp_data.length, sizeof(temp_data.length)); // Flawfinder: ignore
+    sfo_input.read(reinterpret_cast<char *>(&temp_data.length), sizeof(temp_data.length)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry length!");
     }
-    sfo_input.read((char *)&temp_data.max_length, sizeof(temp_data.max_length)); // Flawfinder: ignore
+    sfo_input.read(reinterpret_cast<char *>(&temp_data.max_length), sizeof(temp_data.max_length)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry max length!");
     }
-    sfo_input.read((char *)&temp_data.data_offset, sizeof(temp_data.data_offset)); // Flawfinder: ignore
+    sfo_input.read(reinterpret_cast<char *>(&temp_data.data_offset), sizeof(temp_data.data_offset)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading entry data offset!");
@@ -120,7 +123,7 @@ std::vector<SfoData> read(const std::string &path) { // Flawfinder: ignore
 
     unsigned char buffer[entry.length];
     sfo_input.seekg(header.data_table_offset + entry.data_offset, sfo_input.beg);
-    sfo_input.read((char *)&buffer, sizeof(buffer)); // Flawfinder: ignore
+    sfo_input.read(reinterpret_cast<char *>(&buffer), sizeof(buffer)); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading data table!");
@@ -362,7 +365,7 @@ std::vector<SfoData> remove_pubtool_key(const std::string &remove_key, const std
   return new_data;
 }
 
-bool compare_sfo_date(SfoData data_1, SfoData data_2) {
+bool compare_sfo_data(SfoData data_1, SfoData data_2) {
   return (data_1.key_name.compare(data_2.key_name) < 0);
 }
 
@@ -419,7 +422,7 @@ void write(const std::vector<SfoData> &data, const std::string &path) {
   }
 
   // Alphabetize new_data by key_name
-  std::sort(new_data.begin(), new_data.end(), compare_sfo_date);
+  std::sort(new_data.begin(), new_data.end(), compare_sfo_data);
 
   // Calculate file offsets
   uint16_t total_key_offset = 0;

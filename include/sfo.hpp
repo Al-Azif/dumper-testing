@@ -1,10 +1,11 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #ifndef SFO_HPP_
 #define SFO_HPP_
 
-#include <iostream>
+#include <cstdint>
+#include <string>
 #include <vector>
 
 #define SFO_MAGIC 0x00505346
@@ -49,7 +50,7 @@ std::vector<SfoData> add_data(const SfoData &add_data, const std::vector<SfoData
 std::vector<SfoData> add_pubtool_data(const SfoPubtoolinfoIndex &add_data, const std::vector<SfoData> &current_data);
 std::vector<SfoData> remove_key(const std::string &remove_key, const std::vector<SfoData> &current_data);
 std::vector<SfoData> remove_pubtool_key(const std::string &remove_key, const std::vector<SfoData> &current_data);
-bool compare_sfo_date(SfoData data_1, SfoData data_2);
+bool compare_sfo_data(SfoData data_1, SfoData data_2);
 void write(const std::vector<SfoData> &data, const std::string &path);
 } // namespace sfo
 

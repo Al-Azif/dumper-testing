@@ -5,6 +5,7 @@
 #define DUMP_TEST_HPP_
 
 #include "dump.hpp"
+
 #include "testing.hpp"
 
 #include <gtest/gtest.h>

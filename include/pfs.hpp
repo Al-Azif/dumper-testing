@@ -1,7 +1,8 @@
 #ifndef PFS_HPP_
 #define PFS_HPP_
 
-#include <iostream>
+#include <cstdint>
+#include <string>
 #include <vector>
 
 #define PFS_MAGIC 0x0B2A330100000000

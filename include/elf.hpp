@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Al Azif
+// Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
 #ifndef ELF_HPP_
@@ -7,7 +7,8 @@
 #include "elf_64.hpp"
 #include "elf_common.hpp"
 
-#include <iostream>
+#include <cstdint>
+#include <string>
 #include <vector>
 
 #define ELF_MAGIC 0x7F454C46

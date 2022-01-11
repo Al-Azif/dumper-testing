@@ -5,6 +5,7 @@
 #define SFO_TEST_HPP_
 
 #include "sfo.hpp"
+
 #include "testing.hpp"
 
 #include <gtest/gtest.h>
@@ -97,7 +98,7 @@ TEST(sfoTests, removePubtoolKey) {
   // TODO
 }
 
-TEST(sfoTests, compareSfoDate) {
+TEST(sfoTests, compareSfoData) {
   // TODO
 }
 

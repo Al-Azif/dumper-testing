@@ -1,7 +1,8 @@
 #ifndef PKG_HPP_
 #define PKG_HPP_
 
-#include <iostream>
+#include <cstdint>
+#include <string>
 
 #define PKG_MAGIC 0x7F434E54
 
