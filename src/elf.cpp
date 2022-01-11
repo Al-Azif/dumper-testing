@@ -52,7 +52,7 @@ uint64_t get_sce_header_offset(const std::string &path) {
 
   // Read SELF header
   SelfHeader self_header;
-  self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&self_header), sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     // Should never reach here... will affect coverage %
     self_input.close();
@@ -65,7 +65,7 @@ uint64_t get_sce_header_offset(const std::string &path) {
   // Read ELF header
   Elf64_Ehdr elf_header;
   self_input.seekg(elf_header_offset, self_input.beg);
-  self_input.read((char *)&elf_header, sizeof(elf_header)); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&elf_header), sizeof(elf_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
     FATAL_ERROR("Error reading ELF header!");
@@ -124,7 +124,7 @@ SceHeader get_sce_header(const std::string &path) {
 
   self_input.seekg(sce_header_offset, self_input.beg);
   SceHeader sce_header;
-  self_input.read((char *)&sce_header, sizeof(sce_header)); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&sce_header), sizeof(sce_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
     FATAL_ERROR("Error reading SCE header!");
@@ -162,7 +162,7 @@ SceHeaderNpdrm get_sce_header_npdrm(const std::string &path) {
 
   self_input.seekg(sce_header_offset, self_input.beg);
   SceHeaderNpdrm sce_header;
-  self_input.read((char *)&sce_header, sizeof(sce_header)); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&sce_header), sizeof(sce_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
     FATAL_ERROR("Error reading SCE header!");
@@ -191,7 +191,7 @@ bool is_elf(const std::string &path) {
 
   // Read ELF header
   SelfHeader elf_header;
-  elf_input.read((char *)&elf_header, sizeof(Elf64_Ehdr)); // Flawfinder: ignore
+  elf_input.read(reinterpret_cast<char *>(&elf_header), sizeof(Elf64_Ehdr)); // Flawfinder: ignore
   if (!elf_input.good()) {
     elf_input.close();
     return false;
@@ -226,7 +226,7 @@ bool is_self(const std::string &path) {
 
   // Read SELF header
   SelfHeader self_header;
-  self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&self_header), sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
     return false;
@@ -267,7 +267,7 @@ bool is_npdrm(const std::string &path) {
 
   // Read SELF header
   SelfHeader self_header;
-  self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&self_header), sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     // Should never reach here... will affect coverage %
     self_input.close();
@@ -605,7 +605,7 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
 
   while (decrypted_elf.good()) {
     unsigned char buffer[PAGE_SIZE];
-    decrypted_elf.read((char *)buffer, sizeof(buffer)); // Flawfinder: ignore
+    decrypted_elf.read(reinterpret_cast<char *>(buffer), sizeof(buffer)); // Flawfinder: ignore
 #if defined(__ORBIS__)
     sceSha256BlockUpdate(&context, buffer, decrypted_elf.gcount());
 #else
@@ -655,7 +655,7 @@ void zero_section_header(const std::string &path) {
   elf_path.seekg(0, elf_path.beg);
   Elf64_Ehdr elf_header;
   elf_path.seekg(0, elf_path.beg);
-  elf_path.read((char *)&elf_header, sizeof(elf_header)); // Flawfinder: ignore
+  elf_path.read(reinterpret_cast<char *>(&elf_header), sizeof(elf_header)); // Flawfinder: ignore
   if (!elf_path.good()) {
     // Should never reach here... will affect coverage %
     elf_path.close();
@@ -677,7 +677,7 @@ void zero_section_header(const std::string &path) {
   }
 
   output_file.seekp(0, output_file.beg);
-  output_file.write((char *)&elf_header, sizeof(elf_header));
+  output_file.write(reinterpret_cast<char *>(&elf_header), sizeof(elf_header));
   output_file.close();
 }
 
@@ -740,7 +740,7 @@ void decrypt(const std::string &input, const std::string &output) {
 
   // Read SELF header
   SelfHeader self_header;
-  self_input.read((char *)&self_header, sizeof(self_header)); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&self_header), sizeof(self_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     // Should never reach here... will affect coverage %
     self_input.close();
@@ -752,7 +752,7 @@ void decrypt(const std::string &input, const std::string &output) {
   uint64_t elf_header_offset = sizeof(self_header) + self_header.num_of_segments * sizeof(SelfEntry);
   Elf64_Ehdr elf_header;
   self_input.seekg(elf_header_offset, self_input.beg);
-  self_input.read((char *)&elf_header, sizeof(elf_header)); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&elf_header), sizeof(elf_header)); // Flawfinder: ignore
   if (!self_input.good()) {
     // Should never reach here... will affect coverage %
     self_input.close();
@@ -768,7 +768,7 @@ void decrypt(const std::string &input, const std::string &output) {
   for (uint16_t i = 0; i < elf_header.e_phnum; i++) {
     Elf64_Phdr prog_header;
     self_input.seekg(elf_header.e_phoff + (i * elf_header.e_phentsize), self_input.beg);
-    self_input.read((char *)&prog_header, elf_header.e_phentsize); // Flawfinder: ignore
+    self_input.read(reinterpret_cast<char *>(&prog_header), elf_header.e_phentsize); // Flawfinder: ignore
     if (!self_input.good()) {
       self_input.close();
       output_file.close();
@@ -781,8 +781,8 @@ void decrypt(const std::string &input, const std::string &output) {
   }
 
   uint8_t temp_self_data[self_header.self_size];
-  self_input.seekg(0, self_input.end);
-  self_input.read((char *)&temp_self_data, self_header.self_size); // Flawfinder: ignore
+  self_input.seekg(0, self_input.beg);
+  self_input.read(reinterpret_cast<char *>(&temp_self_data), self_header.self_size); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
     output_file.close();

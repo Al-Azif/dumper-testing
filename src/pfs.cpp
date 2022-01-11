@@ -26,7 +26,7 @@ std::ifstream pfs_input;
 void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_path, bool calculate_only) {
   for (uint32_t i = 0; i < inodes[ino].blocks; i++) {
     uint32_t db = inodes[ino].db[0] + i;
-    uint64_t pos = (uint64_t)header.blocksz * db;
+    uint64_t pos = static_cast<uint64_t>(header.blocksz) * db;
     uint64_t size = inodes[ino].size;
     uint64_t top = pos + size;
 
@@ -34,7 +34,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
       dirent_t ent;
 
       pfs_input.seekg(pos, pfs_input.beg);
-      pfs_input.read((char *)&ent, sizeof(ent)); // Flawfinder: ignore
+      pfs_input.read(reinterpret_cast<char *>(&ent), sizeof(ent)); // Flawfinder: ignore
       if (!pfs_input.good()) {
         pfs_input.close();
         FATAL_ERROR("Error reading entry!");
@@ -48,7 +48,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
       std::memset(name, '\0', sizeof(name));
       if (level > 0) {
         pfs_input.seekg(pos + sizeof(dirent_t), pfs_input.beg);
-        pfs_input.read((char *)&name, ent.namelen); // Flawfinder: ignore
+        pfs_input.read(reinterpret_cast<char *>(&name), ent.namelen); // Flawfinder: ignore
         if (!pfs_input.good()) {
           pfs_input.close();
           FATAL_ERROR("Error reading entry name!");
@@ -76,10 +76,10 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
           std::stringstream ss;
           uint64_t dump_counter = 0;
 
-          pfs_input.seekg((uint64_t)header.blocksz * inodes[ent.ino].db[0], pfs_input.beg);
+          pfs_input.seekg(static_cast<uint64_t>(header.blocksz) * inodes[ent.ino].db[0], pfs_input.beg);
 
           while (dump_counter + sizeof(buffer) <= inodes[ent.ino].size) {
-            pfs_input.read((char *)&buffer, sizeof(buffer)); // Flawfinder: ignore
+            pfs_input.read(reinterpret_cast<char *>(&buffer), sizeof(buffer)); // Flawfinder: ignore
             if (!pfs_input.good()) {
               pfs_input.close();
               output_file.close();
@@ -94,7 +94,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
             dump_counter += sizeof(buffer);
           }
 
-          pfs_input.read((char *)&buffer, inodes[ent.ino].size - dump_counter); // Flawfinder: ignore
+          pfs_input.read(reinterpret_cast<char *>(&buffer), inodes[ent.ino].size - dump_counter); // Flawfinder: ignore
           if (!pfs_input.good()) {
             pfs_input.close();
             output_file.close();
@@ -159,7 +159,7 @@ void extract(const std::string &pfs_path, const std::string &output_path) {
   }
 
   // Check file magic (Read in whole header)
-  pfs_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
+  pfs_input.read(reinterpret_cast<char *>(&header), sizeof(header)); // Flawfinder: ignore
   if (!pfs_input.good()) {
     pfs_input.close();
     FATAL_ERROR("Error reading header!");
@@ -175,8 +175,8 @@ void extract(const std::string &pfs_path, const std::string &output_path) {
   for (uint64_t i = 0; i < header.ndinodeblock; i++) {
     for (uint64_t j = 0; (j < (header.blocksz / sizeof(di_d32))) && (j < header.ndinode); j++) {
       di_d32 temp_inodes;
-      pfs_input.seekg((uint64_t)header.blocksz * (i + 1) + sizeof(di_d32) * j, pfs_input.beg);
-      pfs_input.read((char *)&temp_inodes, sizeof(di_d32)); // Flawfinder: ignore
+      pfs_input.seekg(static_cast<uint64_t>(header.blocksz) * (i + 1) + sizeof(di_d32) * j, pfs_input.beg);
+      pfs_input.read(reinterpret_cast<char *>(&temp_inodes), sizeof(di_d32)); // Flawfinder: ignore
       if (!pfs_input.good()) {
         pfs_input.close();
         FATAL_ERROR("Error reading inodes!");

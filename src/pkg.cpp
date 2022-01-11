@@ -126,7 +126,7 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
 
   // Check file magic (Read in whole header)
   PkgHeader header;
-  pkg_input.read((char *)&header, sizeof(header)); // Flawfinder: ignore
+  pkg_input.read(reinterpret_cast<char *>(&header), sizeof(header)); // Flawfinder: ignore
   if (!pkg_input.good()) {
     pkg_input.close();
     FATAL_ERROR("Error reading PKG header!");
@@ -145,7 +145,7 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
   pkg_input.seekg(__builtin_bswap32(header.entry_table_offset), pkg_input.beg);
   for (uint32_t i = 0; i < __builtin_bswap32(header.entry_count); i++) {
     PkgTableEntry temp_entry;
-    pkg_input.read((char *)&temp_entry, sizeof(temp_entry)); // Flawfinder: ignore
+    pkg_input.read(reinterpret_cast<char *>(&temp_entry), sizeof(temp_entry)); // Flawfinder: ignore
     if (!pkg_input.good()) {
       pkg_input.close();
       FATAL_ERROR("Error reading entry table!");
@@ -173,7 +173,7 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
 
       pkg_input.seekg(__builtin_bswap32(entry.offset), pkg_input.beg);
       unsigned char temp_file[__builtin_bswap32(entry.size)];
-      pkg_input.read((char *)&temp_file, __builtin_bswap32(entry.size)); // Flawfinder: ignore
+      pkg_input.read(reinterpret_cast<char *>(&temp_file), __builtin_bswap32(entry.size)); // Flawfinder: ignore
       if (!pkg_input.good()) {
         pkg_input.close();
         FATAL_ERROR("Error reading entry data!");
