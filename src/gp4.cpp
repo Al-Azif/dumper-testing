@@ -11,7 +11,7 @@
 
 #include <algorithm>
 #include <cstring>
-// #include <ctime> // TODO: Not including doesn't generate and error even though "strftime" is used?
+#include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <regex>
