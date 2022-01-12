@@ -5,14 +5,14 @@
 
 #include <gtest/gtest.h>
 
-#include "dump_test.hpp"
-#include "elf_test.hpp"
-#include "fself_test.hpp"
-#include "gp4_test.hpp"
-#include "npbind_test.hpp"
-#include "pfs_test.hpp"
-#include "pkg_test.hpp"
-#include "sfo_test.hpp"
+#include "dump_test.h"
+#include "elf_test.h"
+#include "fself_test.h"
+#include "gp4_test.h"
+#include "npbind_test.h"
+#include "pfs_test.h"
+#include "pkg_test.h"
+#include "sfo_test.h"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
@@ -21,10 +21,10 @@ int main(int argc, char **argv) {
 
 #else
 
-#include "common.hpp"
-#include "dump.hpp"
-
 #include <string>
+
+#include "common.h"
+#include "dump.h"
 
 int main() {
   std::string dump_dir = "/mnt/usb0";

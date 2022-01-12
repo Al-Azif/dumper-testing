@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef GP4_TEST_HPP_
-#define GP4_TEST_HPP_
+#ifndef DUMPER_TESTS_GP4_TEST_H_
+#define DUMPER_TESTS_GP4_TEST_H_
 
-#include "gp4.hpp"
-
-#include "testing.hpp"
+#include "gp4.h"
 
 #include <gtest/gtest.h>
+
+#include "testing.h"
 
 TEST(gp4Tests, recursiveDirectory) {
   // TODO
@@ -42,4 +42,4 @@ TEST(gp4Tests, generate) {
   // TODO
 }
 
-#endif // GP4_TEST_HPP_
+#endif // DUMPER_TESTS_GP4_TEST_H_

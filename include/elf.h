@@ -1,15 +1,15 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#ifndef ELF_HPP_
-#define ELF_HPP_
-
-#include "elf_64.hpp"
-#include "elf_common.hpp"
+#ifndef DUMPER_INCLUDE_ELF_H_
+#define DUMPER_INCLUDE_ELF_H_
 
 #include <cstdint>
 #include <string>
 #include <vector>
+
+#include "elf_common.h"
+#include "elf_structs.h"
 
 #define ELF_MAGIC 0x7F454C46
 #define SELF_MAGIC 0x4F153D1D
@@ -85,4 +85,4 @@ void zero_section_header(const std::string &path);
 void decrypt(const std::string &input_path, const std::string &output_path);
 } // namespace elf
 
-#endif // ELF_HPP_
+#endif // DUMPER_INCLUDE_ELF_H_

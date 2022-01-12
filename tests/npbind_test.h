@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef NPBIND_TEST_HPP_
-#define NPBIND_TEST_HPP_
+#ifndef DUMPER_TESTS_NPBIND_TEST_H_
+#define DUMPER_TESTS_NPBIND_TEST_H_
 
-#include "npbind.hpp"
-
-#include "testing.hpp"
+#include "npbind.h"
 
 #include <gtest/gtest.h>
+
+#include "testing.h"
 
 TEST(npbindTest, read) {
   // Empty input arguments
@@ -62,4 +62,4 @@ TEST(npbindTest, read) {
   }
 }
 
-#endif // NPBIND_TEST_HPP_
+#endif // DUMPER_TESTS_NPBIND_TEST_H_

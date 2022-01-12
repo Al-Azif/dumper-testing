@@ -1,10 +1,10 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef TESTING_HPP_
-#define TESTING_HPP_
+#ifndef DUMPER_TESTS_TESTING_H_
+#define DUMPER_TESTS_TESTING_H_
 
-#include "common.hpp"
+#include "common.h"
 
 #include <cstring>
 #include <filesystem>
@@ -97,4 +97,4 @@
   }
 #endif // __ORBIS__
 
-#endif // TESTING_HPP_
+#endif // DUMPER_TESTS_TESTING_H_

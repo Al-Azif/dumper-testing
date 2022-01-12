@@ -1,8 +1,8 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#ifndef SFO_HPP_
-#define SFO_HPP_
+#ifndef DUMPER_INCLUDE_SFO_H_
+#define DUMPER_INCLUDE_SFO_H_
 
 #include <cstdint>
 #include <string>
@@ -54,4 +54,4 @@ bool compare_sfo_data(SfoData data_1, SfoData data_2);
 void write(const std::vector<SfoData> &data, const std::string &path);
 } // namespace sfo
 
-#endif // SFO_HPP_
+#endif // DUMPER_INCLUDE_SFO_H_

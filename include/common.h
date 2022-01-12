@@ -1,8 +1,8 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#ifndef COMMON_HPP_
-#define COMMON_HPP_
+#ifndef DUMPER_INCLUDE_COMMON_H_
+#define DUMPER_INCLUDE_COMMON_H_
 
 #include <filesystem>
 #include <sstream>
@@ -30,4 +30,4 @@
     std::cout << compiled_msg.str() << std::endl;                                                                                                       \
   };
 
-#endif // COMMON_HPP_
+#endif // DUMPER_INCLUDE_COMMON_H_

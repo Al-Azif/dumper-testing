@@ -1,15 +1,7 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#include "dump.hpp"
-
-#include "common.hpp"
-#include "elf.hpp"
-#include "fself.hpp"
-#include "gp4.hpp"
-#include "npbind.hpp"
-#include "pfs.hpp"
-#include "pkg.hpp"
+#include "dump.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -19,6 +11,14 @@
 #include <regex>
 #include <string>
 #include <vector>
+
+#include "common.h"
+#include "elf.h"
+#include "fself.h"
+#include "gp4.h"
+#include "npbind.h"
+#include "pfs.h"
+#include "pkg.h"
 
 namespace dump {
 void __dump(const std::string &usb_device, const std::string &title_id, const std::string &type) {

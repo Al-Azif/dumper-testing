@@ -1,5 +1,5 @@
-#ifndef PKG_HPP_
-#define PKG_HPP_
+#ifndef DUMPER_INCLUDE_PKG_H_
+#define DUMPER_INCLUDE_PKG_H_
 
 #include <cstdint>
 #include <string>
@@ -75,4 +75,4 @@ std::string get_entry_name_by_type(uint32_t type);
 void extract_sc0(const std::string &pkg_path, const std::string &output_path);
 } // namespace pkg
 
-#endif // PKG_HPP_
+#endif // DUMPER_INCLUDE_PKG_H_

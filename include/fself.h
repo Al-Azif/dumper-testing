@@ -1,8 +1,8 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#ifndef FSELF_HPP_
-#define FSELF_HPP_
+#ifndef DUMPER_INCLUDE_FSELF_H_
+#define DUMPER_INCLUDE_FSELF_H_
 
 #include <string>
 #include <vector>
@@ -12,4 +12,4 @@ bool is_fself(const std::string &path);
 void make_fself(const std::string &input, const std::string &output, uint64_t paid, const std::string &ptype, uint64_t app_version, uint64_t fw_version, std::vector<unsigned char> auth_info);
 } // namespace fself
 
-#endif // FSELF_HPP_
+#endif // DUMPER_INCLUDE_FSELF_H_

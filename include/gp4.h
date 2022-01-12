@@ -1,13 +1,13 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#ifndef GP4_HPP_
-#define GP4_HPP_
-
-#include "pugixml.hpp"
+#ifndef DUMPER_INCLUDE_GP4_H_
+#define DUMPER_INCLUDE_GP4_H_
 
 #include <string>
 #include <vector>
+
+#include "pugixml.hpp"
 
 namespace gp4 {
 void recursive_directory(const std::string &path, pugi::xml_node &node);
@@ -20,4 +20,4 @@ void write(const pugi::xml_document &xml, const std::string &path);
 void generate(const std::string &sfo_path, const std::string &output_path, const std::string &gp4_path, std::vector<std::string> &self_files, const std::string &type);
 } // namespace gp4
 
-#endif // GP4_HPP_
+#endif // DUMPER_INCLUDE_GP4_H_

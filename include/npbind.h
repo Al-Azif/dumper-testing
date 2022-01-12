@@ -1,8 +1,8 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#ifndef NPBIND_HPP_
-#define NPBIND_HPP_
+#ifndef DUMPER_INCLUDE_NPBIND_H_
+#define DUMPER_INCLUDE_NPBIND_H_
 
 #include <cstdint>
 #include <string>
@@ -55,4 +55,4 @@ typedef struct {
 std::vector<NpBindEntry> read(const std::string &path); // Flawfinder: ignore
 } // namespace npbind
 
-#endif // NPBIND_HPP_
+#endif // DUMPER_INCLUDE_NPBIND_H_

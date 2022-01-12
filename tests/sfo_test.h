@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef SFO_TEST_HPP_
-#define SFO_TEST_HPP_
+#ifndef DUMPER_TESTS_SFO_TEST_H_
+#define DUMPER_TESTS_SFO_TEST_H_
 
-#include "sfo.hpp"
-
-#include "testing.hpp"
+#include "sfo.h"
 
 #include <gtest/gtest.h>
+
+#include "testing.h"
 
 TEST(sfoTests, isSfo) {
   // Empty input arguments
@@ -106,4 +106,4 @@ TEST(sfoTests, write) {
   // TODO
 }
 
-#endif // SFO_TEST_HPP_
+#endif // DUMPER_TESTS_SFO_TEST_H_

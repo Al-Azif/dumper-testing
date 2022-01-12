@@ -26,12 +26,12 @@
  * $FreeBSD: release/9.0.0/sys/sys/elf64.h 186667 2009-01-01 02:08:56Z obrien $
  */
 
-#ifndef ELF_64_HPP_
-#define ELF_64_HPP_
-
-#include "elf_common.hpp"
+#ifndef ELF_STRUCTS_H_
+#define ELF_STRUCTS_H_
 
 #include <cstdint>
+
+#include "elf_common.h"
 
 /*
  * ELF definitions common to all 64-bit architectures.
@@ -247,4 +247,4 @@ typedef struct {
   Elf64_Half si_flags;   /* per symbol flags */
 } Elf64_Syminfo;
 
-#endif // ELF_64_HPP_
+#endif // ELF_STRUCTS_H_

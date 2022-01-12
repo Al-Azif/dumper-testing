@@ -1,5 +1,5 @@
-#ifndef PFS_HPP_
-#define PFS_HPP_
+#ifndef DUMPER_INCLUDE_PFS_H_
+#define DUMPER_INCLUDE_PFS_H_
 
 #include <cstdint>
 #include <string>
@@ -65,4 +65,4 @@ void dump_pfs(uint32_t ino, uint32_t level, const std::string &output_path);
 void extract(const std::string &pfs_path, const std::string &output_path);
 } // namespace pfs
 
-#endif // PFS_HPP_
+#endif // DUMPER_INCLUDE_PFS_H_

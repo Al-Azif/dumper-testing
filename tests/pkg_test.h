@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef PKG_TEST_HPP_
-#define PKG_TEST_HPP_
+#ifndef DUMPER_TESTS_PKG_TEST_H_
+#define DUMPER_TESTS_PKG_TEST_H_
 
-#include "pkg.hpp"
-
-#include "testing.hpp"
+#include "pkg.h"
 
 #include <gtest/gtest.h>
+
+#include "testing.h"
 
 TEST(pkgTest, getEntryNameByType) {
   // Valid
@@ -628,4 +628,4 @@ TEST(pkgTest, extract_sc0) {
   // TODO: Success and verify files with known layout/digests
 }
 
-#endif // PKG_TEST_HPP_
+#endif // DUMPER_TESTS_PKG_TEST_H_

@@ -1,9 +1,7 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#include "pfs.hpp"
-
-#include "common.hpp"
+#include "pfs.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -14,6 +12,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "common.h"
 
 namespace pfs {
 pfs_header header;

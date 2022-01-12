@@ -1,13 +1,7 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#include <gp4.hpp>
-
-#include "common.hpp"
-#include "elf.hpp" // `bool is_self(const std::string &path);`
-#include "sfo.hpp"
-
-#include "pugixml.hpp"
+#include "gp4.h"
 
 #include <algorithm>
 #include <cstring>
@@ -17,6 +11,12 @@
 #include <regex>
 #include <string>
 #include <vector>
+
+#include "pugixml.hpp"
+
+#include "common.h"
+#include "elf.h" // `bool is_self(const std::string &path);`
+#include "sfo.h"
 
 namespace gp4 {
 void recursive_directory(const std::string &path, pugi::xml_node &node) {

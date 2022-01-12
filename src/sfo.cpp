@@ -1,9 +1,7 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#include "sfo.hpp"
-
-#include "common.hpp"
+#include "sfo.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -12,6 +10,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "common.h"
 
 namespace sfo {
 bool is_sfo(const std::string &path) {

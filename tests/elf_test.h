@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef ELF_TEST_HPP_
-#define ELF_TEST_HPP_
+#ifndef DUMPER_TESTS_ELF_TEST_H_
+#define DUMPER_TESTS_ELF_TEST_H_
 
-#include "elf.hpp"
-
-#include "testing.hpp"
+#include "elf.h"
 
 #include <gtest/gtest.h>
+
+#include "testing.h"
 
 TEST(elfTests, sceHeaderOffset) {
   // Empty input arguments
@@ -522,4 +522,4 @@ TEST(elfTests, decrypt) {
   // Unable to test this further
 }
 
-#endif // ELF_TEST_HPP_
+#endif // DUMPER_TESTS_ELF_TEST_H_

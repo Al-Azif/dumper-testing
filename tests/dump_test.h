@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef DUMP_TEST_HPP_
-#define DUMP_TEST_HPP_
+#ifndef DUMPER_TESTS_DUMP_TEST_H_
+#define DUMPER_TESTS_DUMP_TEST_H_
 
-#include "dump.hpp"
-
-#include "testing.hpp"
+#include "dump.h"
 
 #include <gtest/gtest.h>
+
+#include "testing.h"
 
 TEST(dumpTests, dump) {
   // TODO
@@ -42,4 +42,4 @@ TEST(dumpTests, dumpAcNoData) {
   // TODO
 }
 
-#endif // DUMP_TEST_HPP_
+#endif // DUMPER_TESTS_DUMP_TEST_H_

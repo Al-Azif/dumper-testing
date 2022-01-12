@@ -1,8 +1,8 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#ifndef DUMP_HPP_
-#define DUMP_HPP_
+#ifndef DUMPER_INCLUDE_DUMP_H_
+#define DUMPER_INCLUDE_DUMP_H_
 
 #include <string>
 
@@ -17,4 +17,4 @@ void dump_ac(const std::string &usb_device, const std::string &ac_id);
 void dump_ac_no_data(const std::string &usb_device, const std::string &ac_id);
 } // namespace dump
 
-#endif // DUMP_HPP_
+#endif // DUMPER_INCLUDE_DUMP_H_

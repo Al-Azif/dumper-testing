@@ -1,9 +1,7 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#include "pkg.hpp"
-
-#include "common.hpp"
+#include "pkg.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -12,6 +10,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "common.h"
 
 namespace pkg {
 std::string get_entry_name_by_type(uint32_t type) {

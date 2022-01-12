@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef PFS_TEST_HPP_
-#define PFS_TEST_HPP_
+#ifndef DUMPER_TESTS_PFS_TEST_H_
+#define DUMPER_TESTS_PFS_TEST_H_
 
-#include "pfs.hpp"
-
-#include "testing.hpp"
+#include "pfs.h"
 
 #include <gtest/gtest.h>
+
+#include "testing.h"
 
 TEST(pfsTests, parseDirectory) {
   // TODO
@@ -26,4 +26,4 @@ TEST(pfsTests, extract) {
   // TODO
 }
 
-#endif // PFS_TEST_HPP_
+#endif // DUMPER_TESTS_PFS_TEST_H_

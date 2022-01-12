@@ -27,8 +27,8 @@
  * $FreeBSD: release/9.0.0/sys/sys/elf_common.h 221569 2011-05-07 01:05:31Z obrien $
  */
 
-#ifndef ELF_COMMON_HPP_
-#define ELF_COMMON_HPP_
+#ifndef ELF_COMMON_H_
+#define ELF_COMMON_H_
 
 #include <cstdint>
 
@@ -964,4 +964,4 @@ typedef struct {
 #define R_X86_64_GOTTPOFF 22 /* PC relative offset to IE GOT entry */
 #define R_X86_64_TPOFF32 23  /* Offset in static TLS block */
 
-#endif // ELF_COMMON_HPP_
+#endif // ELF_COMMON_H_

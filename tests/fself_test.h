@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Al Azif
 // License: GPLv3
 
-#ifndef FSELF_TEST_HPP_
-#define FSELF_TEST_HPP_
+#ifndef DUMPER_TESTS_FSELF_TEST_H_
+#define DUMPER_TESTS_FSELF_TEST_H_
 
-#include "fself.hpp"
-
-#include "testing.hpp"
+#include "fself.h"
 
 #include <gtest/gtest.h>
+
+#include "testing.h"
 
 TEST(fselfTests, isFself) {
   // TODO
@@ -18,4 +18,4 @@ TEST(fselfTest, makeFself) {
   // TODO
 }
 
-#endif // FSELF_TEST_HPP_
+#endif // DUMPER_TESTS_FSELF_TEST_H_

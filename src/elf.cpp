@@ -1,11 +1,7 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#include "elf.hpp"
-
-#include "common.hpp"
-#include "elf_64.hpp"
-#include "elf_common.hpp"
+#include "elf.h"
 
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -18,6 +14,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+
+#include "common.h"
 
 #if defined(__ORBIS__)
 #include <libsha256.h>

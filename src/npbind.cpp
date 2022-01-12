@@ -1,9 +1,7 @@
 // Copyright (c) 2021-2022 Al Azif
 // License: GPLv3
 
-#include "npbind.hpp"
-
-#include "common.hpp"
+#include "npbind.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -13,6 +11,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "common.h"
 
 #if defined(__ORBIS__)
 #include <libsha1.h>
