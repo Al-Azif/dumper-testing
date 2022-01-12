@@ -28,11 +28,11 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
 
   // TID vs CID and type checks
   if (type == "base" || type == "patch" || type == "remaster") {
-    if (!std::regex_match(title_id, std::regex("^\\D{4}\\d{5}$"))) {
+    if (!std::regex_match(title_id, std::regex("^[A-Z]{4}\\d{5}$"))) {
       FATAL_ERROR("Malformed title ID");
     }
   } else {
-    if (!std::regex_match(title_id, std::regex("^\\D{2}\\d{4}-\\D{4}\\d{5}_\\d{2}-\\w{16}$"))) {
+    if (!std::regex_match(title_id, std::regex("^[A-Z]{2}\\d{4}-[A-Z]{4}\\d{5}_\\d{2}-[A-Z0-9]{16}$"))) {
       FATAL_ERROR("Malformed content ID");
     }
   }
@@ -129,7 +129,7 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
       pkg_directory_path /= "addcont";
       // This regex will match because of the checks at the beginning of the function
       std::smatch match;
-      std::regex_search(title_id, match, std::regex("^\\D{2}\\d{4}-(\\D{4}\\d{5})_\\d{2}-(\\w{16})$"));
+      std::regex_search(title_id, match, std::regex("^[A-Z]{2}\\d{4}-([A-Z]{4}\\d{5})_\\d{2}-([A-Z0-9]{16})$"));
       pkg_directory_path /= match.str(1);
       pkg_directory_path /= match.str(2);
       pkg_directory_path /= "ac.pkg";

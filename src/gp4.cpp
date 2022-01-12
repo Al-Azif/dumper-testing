@@ -46,7 +46,7 @@ void recursive_directory(const std::string &path, pugi::xml_node &node) {
 
 pugi::xml_document make_volume(const std::string &content_id, const std::string &volume_type, std::string c_date, std::string c_time) {
   // Check input
-  if (!std::regex_match(content_id, std::regex("^\\D{2}\\d{4}-\\D{4}\\d{5}_\\d{2}-\\w{16}$"))) {
+  if (!std::regex_match(content_id, std::regex("^[A-Z]{2}\\d{4}-[A-Z]{4}\\d{5}_\\d{2}-[A-Z0-9]{16}$"))) {
     FATAL_ERROR("Malformed content ID");
   }
 
@@ -90,16 +90,14 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
   package_node.append_attribute("app_type") = "full";
 
   // Set c_date and possibly c_time
-  if (c_date.empty()) {
-    std::memset(buffer, '\0', sizeof(buffer));
-    std::strftime(buffer, 20, "%Y-%m-%d", timeinfo);
-    c_date = std::string(buffer);
+  std::string new_time = std::string("actual_datetime");
+  if (!c_date.empty()) {
+    new_time = c_date;
+    if (!c_time.empty()) {
+      // TODO: Append time to new_time
+    }
   }
-  package_node.append_attribute("c_date") = c_date.c_str();
-
-  if (!c_time.empty()) {
-    package_node.append_attribute("c_time") = c_time.c_str();
-  }
+  package_node.append_attribute("c_date") = new_time.c_str();
 
   return doc;
 }
@@ -174,9 +172,13 @@ pugi::xml_document make_files(const std::string &path, std::vector<std::string> 
       // TODO:
       //   - Add proper PlayGo options
       //   - Add PFS Compression option
+
       pugi::xml_node file_node = files_node.append_child("file");
       file_node.append_attribute("targ_path") = targ_path.c_str();
-      file_node.append_attribute("orig_path") = orig_path.c_str();
+
+      std::string orig_path_mod = orig_path.c_str();
+      std::replace(orig_path_mod.begin(), orig_path_mod.end(), '/', '\\');
+      file_node.append_attribute("orig_path") = orig_path_mod.c_str();
     }
   }
 
