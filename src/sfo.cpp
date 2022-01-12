@@ -121,16 +121,11 @@ std::vector<SfoData> read(const std::string &path) { // Flawfinder: ignore
     sfo_input.seekg(header.key_table_offset + entry.key_offset, sfo_input.beg);
     std::getline(sfo_input, entry.key_name, '\0');
 
-    unsigned char buffer[entry.length];
     sfo_input.seekg(header.data_table_offset + entry.data_offset, sfo_input.beg);
-    sfo_input.read(reinterpret_cast<char *>(&buffer), sizeof(buffer)); // Flawfinder: ignore
+    sfo_input.read(reinterpret_cast<char *>(&entry.data[0]), entry.length); // Flawfinder: ignore
     if (!sfo_input.good()) {
       sfo_input.close();
       FATAL_ERROR("Error reading data table!");
-    }
-
-    for (size_t i = 0; i < sizeof(buffer); i++) {
-      entry.data.push_back(buffer[i]);
     }
   }
   sfo_input.close();

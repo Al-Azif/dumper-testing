@@ -89,7 +89,7 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
   package_node.append_attribute("storage_type") = "digital50";
   package_node.append_attribute("app_type") = "full";
 
-  // Set c_date and possibly c_time
+  // Set c_date
   std::string new_time = std::string("actual_datetime");
   if (!c_date.empty()) {
     new_time = c_date;

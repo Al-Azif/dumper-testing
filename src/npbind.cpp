@@ -68,9 +68,9 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   }
 
   // Read digest
-  unsigned char digest[SHA_DIGEST_LENGTH];
-  npbind_input.seekg(-sizeof(digest), npbind_input.end);                // Make sure we are in the right place
-  npbind_input.read(reinterpret_cast<char *>(&digest), sizeof(digest)); // Flawfinder: ignore
+  std::vector<unsigned char> digest(SHA_DIGEST_LENGTH);
+  npbind_input.seekg(-digest.size(), npbind_input.end);                  // Make sure we are in the right place
+  npbind_input.read(reinterpret_cast<char *>(&digest[0]),digest.size()); // Flawfinder: ignore
   if (!npbind_input.good()) {
     // Should never reach here... will affect coverage %
     npbind_input.close();
@@ -79,8 +79,6 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   npbind_input.close();
 
   // Check digest
-  unsigned char calculated_digest[sizeof(digest)];
-
   std::stringstream ss;
   ss.write(reinterpret_cast<const char *>(&header), sizeof(header));
 
@@ -88,24 +86,26 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
     ss.write(reinterpret_cast<const char *>(&entries[i]), sizeof(NpBindEntry));
   }
 
-  unsigned char data_to_hash[ss.str().size()];
+  std::vector<unsigned char> data_to_hash;
   for (size_t i = 0; i < ss.str().size(); i++) {
-    data_to_hash[i] = ss.str().c_str()[i];
+    data_to_hash.push_back(ss.str().c_str()[i]);
   }
+
+  std::vector<unsigned char> calculated_digest(digest.size());
 
 #if defined(__ORBIS__)
   SceSha1Context context;
   sceSha1BlockInit(&context);
-  sceSha1BlockUpdate(&context, data_to_hash, ss.str().size());
-  sceSha1BlockResult(&context, calculated_digest));
+  sceSha1BlockUpdate(&context, &data_to_hash[0], ss.str().size());
+  sceSha1BlockResult(&context, &calculated_digest[0]));
 #else
   SHA_CTX context;
   SHA1_Init(&context);
-  SHA1_Update(&context, data_to_hash, ss.str().size());
-  SHA1_Final(calculated_digest, &context);
+  SHA1_Update(&context, &data_to_hash[0], ss.str().size());
+  SHA1_Final(&calculated_digest[0], &context);
 #endif // __ORBIS__
 
-  if (std::memcmp(calculated_digest, digest, sizeof(digest)) != 0) {
+  if (std::memcmp(&calculated_digest[0], &digest[0], digest.size()) != 0) {
     FATAL_ERROR("Digests do not match! Aborting...");
   }
 

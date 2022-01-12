@@ -172,8 +172,8 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
       temp_output_path /= entry_name;
 
       pkg_input.seekg(__builtin_bswap32(entry.offset), pkg_input.beg);
-      unsigned char temp_file[__builtin_bswap32(entry.size)];
-      pkg_input.read(reinterpret_cast<char *>(&temp_file), __builtin_bswap32(entry.size)); // Flawfinder: ignore
+      std::vector<unsigned char> temp_file(__builtin_bswap32(entry.size));
+      pkg_input.read(reinterpret_cast<char *>(&temp_file[0]), temp_file.size()); // Flawfinder: ignore
       if (!pkg_input.good()) {
         pkg_input.close();
         FATAL_ERROR("Error reading entry data!");
@@ -197,7 +197,7 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
 
       // Write to file
       std::stringstream ss;
-      ss.write(reinterpret_cast<const char *>(&temp_file), __builtin_bswap32(entry.size));
+      ss.write(reinterpret_cast<const char *>(&temp_file[0]), temp_file.size());
       output_file << ss.rdbuf();
       output_file.close();
     }

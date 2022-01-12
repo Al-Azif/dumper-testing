@@ -44,11 +44,10 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
         break;
       }
 
-      char name[ent.namelen + 1];
-      std::memset(name, '\0', sizeof(name));
+      std::vector<char> name(ent.namelen);
       if (level > 0) {
         pfs_input.seekg(pos + sizeof(dirent_t), pfs_input.beg);
-        pfs_input.read(reinterpret_cast<char *>(&name), ent.namelen); // Flawfinder: ignore
+        pfs_input.read(reinterpret_cast<char *>(&name[0]), name.size()); // Flawfinder: ignore
         if (!pfs_input.good()) {
           pfs_input.close();
           FATAL_ERROR("Error reading entry name!");
@@ -56,7 +55,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
       }
 
       std::filesystem::path new_output_path(output_path);
-      new_output_path /= std::string(name);
+      new_output_path /= std::string(name.begin(), name.end());
 
       if (ent.type == 2 && level > 0) {
         if (calculate_only) {

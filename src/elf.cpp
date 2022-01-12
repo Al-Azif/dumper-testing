@@ -585,13 +585,8 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
   }
 
   // Read digest
-  unsigned char digest[SHA256_DIGEST_LENGTH];
-  std::vector<unsigned char> original_digest_from_self = get_digest(original_path);
-  for (size_t i = 0; i < sizeof(digest); i++) {
-    digest[i] = original_digest_from_self[i];
-  }
-
-  unsigned char calculated_digest[sizeof(digest)];
+  std::vector<unsigned char> digest = get_digest(original_path);
+  std::vector<unsigned char> calculated_digest(digest.size());
 
 #if defined(__ORBIS__)
   SceSha256Context context;
@@ -602,12 +597,12 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
 #endif // __ORBIS__
 
   while (decrypted_elf.good()) {
-    unsigned char buffer[PAGE_SIZE];
-    decrypted_elf.read(reinterpret_cast<char *>(buffer), sizeof(buffer)); // Flawfinder: ignore
+    std::vector<unsigned char> buffer(PAGE_SIZE);
+    decrypted_elf.read(reinterpret_cast<char *>(&buffer[0]), buffer.size()); // Flawfinder: ignore
 #if defined(__ORBIS__)
-    sceSha256BlockUpdate(&context, buffer, decrypted_elf.gcount());
+    sceSha256BlockUpdate(&context, &buffer[0], decrypted_elf.gcount());
 #else
-    SHA256_Update(&context, buffer, decrypted_elf.gcount());
+    SHA256_Update(&context, &buffer[0], decrypted_elf.gcount());
 #endif // __ORBIS__
   }
   decrypted_elf.close();
@@ -615,10 +610,10 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
 #if defined(__ORBIS__)
   sceSha256BlockResult(calculated_digest, &context));
 #else
-  SHA256_Final(calculated_digest, &context);
+  SHA256_Final(&calculated_digest[0], &context);
 #endif // __ORBIS__
 
-  if (std::memcmp(calculated_digest, digest, sizeof(digest)) != 0) {
+  if (std::memcmp(&calculated_digest[0], &digest[0], digest.size()) != 0) {
     return false;
   }
 
@@ -777,19 +772,13 @@ void decrypt(const std::string &input, const std::string &output) {
     prog_headers.push_back(prog_header);
   }
 
-  uint8_t temp_self_data[self_header.self_size];
+  std::vector<uint8_t> self_data(self_header.self_size);
   self_input.seekg(0, self_input.beg);
-  self_input.read(reinterpret_cast<char *>(&temp_self_data), self_header.self_size); // Flawfinder: ignore
+  self_input.read(reinterpret_cast<char *>(&self_data[0]), self_data.size()); // Flawfinder: ignore
   if (!self_input.good()) {
     self_input.close();
     output_file.close();
     FATAL_ERROR("Error reading SELF data!");
-  }
-
-  // Copy input file to self_data
-  std::vector<uint8_t> self_data;
-  for (uint64_t i = 0; i < self_header.self_size; i++) {
-    self_data.push_back(temp_self_data[i]);
   }
 
   // We're done with the input as a stream
