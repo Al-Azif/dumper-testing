@@ -801,10 +801,9 @@ void decrypt(const std::string &input, const std::string &output) {
   }
 
   // Loop: Copy program headers and then segments via mmap
-  for (uint16_t i = 0; i < elf_header.e_phnum; i++) {
-
+  for (uint64_t i = 0; i < elf_header.e_phnum; i++) {
     // Copy program header to correct offset in elf_data
-    for (uint16_t j = 0; j < elf_header.e_phentsize; j++) {
+    for (uint64_t j = 0; j < elf_header.e_phentsize; j++) {
       uint64_t offset = elf_header.e_phoff + (i * elf_header.e_phentsize) + j;
       elf_data.insert(elf_data.begin() + elf_header_offset + offset, self_data[elf_header_offset + offset]);
       // TODO: The above line replaced the line below... test it
