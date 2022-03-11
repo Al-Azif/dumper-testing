@@ -109,6 +109,9 @@ pugi::xml_document make_playgo(const std::string &playgo_xml) {
 
   // Return external XML if it exists
   if (std::filesystem::exists(playgo_xml) && std::filesystem::is_regular_file(playgo_xml) && doc.load_file(playgo_xml.c_str())) {
+    // TODO:
+    //    - Get `chunk_info`'s `chunk_count`, subtract one, then make that many chunks
+    //    - Remove `initial_chunk_count_disc` from each `scenario` if it exists
     return doc;
   }
 
@@ -127,7 +130,6 @@ pugi::xml_document make_playgo(const std::string &playgo_xml) {
 
   pugi::xml_node chunk_node = chunks_node.append_child("chunk");
   chunk_node.append_attribute("id") = "0";
-  chunk_node.append_attribute("layer_no") = "0";
   chunk_node.append_attribute("label") = "Chunk #0";
 
   pugi::xml_node scenarios_node = chunk_info_node.append_child("scenarios");
@@ -203,8 +205,6 @@ pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_do
   // TODO: Set XML node attributes
 
   pugi::xml_node psproject_node = doc.append_child("psproject");
-  psproject_node.append_attribute("xmlns:xsd") = "http://www.w3.org/2001/XMLSchema";
-  psproject_node.append_attribute("xmlns:xsi") = "http://www.w3.org/2001/XMLSchema-instance";
   psproject_node.append_attribute("fmt") = "gp4";
   if (custom_version.empty()) {
     if (!playgo.child("psproject").attribute("version").empty()) {
