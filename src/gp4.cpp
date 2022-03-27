@@ -205,7 +205,7 @@ pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_do
 
   pugi::xml_node psproject_node = doc.append_child("psproject");
   psproject_node.append_attribute("fmt") = "gp4";
-  if (custom_version.empty()) {
+  if (!custom_version.empty()) {
     psproject_node.append_attribute("version") = custom_version.c_str();
   } else {
     if (playgo.child("psproject").attribute("version").empty()) {
