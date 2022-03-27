@@ -235,8 +235,7 @@ pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_do
   }
 
   // Remove `initial_chunk_count_disc` from each `scenario` if it exists... we aren't a disc anymore
-  pugi::xml_node scenarios = psproject_node.child("volume").child("chunk_info");
-  for (pugi::xml_node scenarios: scenarios.children("scenarios")) {
+  for (pugi::xml_node scenarios: psproject_node.child("volume").child("chunk_info")) {
     for (pugi::xml_node scenario: scenarios.children("scenario")) {
       scenario.remove_attribute("initial_chunk_count_disc");
     }
