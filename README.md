@@ -67,7 +67,7 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
   - [ ] Additional Content w/o Data
   - [ ] Multi-Disc (Does it just work without changes?)
 - [ ] Verification
-  - [ ] Save encrypted files within another directory for backup/preservation purposes
+  - [ ] Save encrypted/modified files within another directory for backup/preservation purposes
   - [X] Check decrypted binaries vs hash in encrypted header
   - [ ] SFV-like file to compare vs known good rips
   - [ ] External service to verify/submit rip data

@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <fstream>
 #include <regex>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -225,7 +226,7 @@ pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_do
 
   for (uint64_t i = 0; i < chunk_count; i++) {
     pugi::xml_node chunk_node = psproject_node.child("volume").child("chunk_info").child("chunks").append_child("chunk");
-    std::ostringstream ss;
+    std::stringstream ss;
 
     ss << "Chunk #" << std::dec << i; // TODO: The labels are not what they actually are, need to see if they are stored in other playgo files
 
