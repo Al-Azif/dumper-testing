@@ -4,6 +4,7 @@
 #include "gp4.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <cstring>
 #include <ctime>
 #include <filesystem>
@@ -109,16 +110,13 @@ pugi::xml_document make_playgo(const std::string &playgo_xml) {
 
   // Return external XML if it exists
   if (std::filesystem::exists(playgo_xml) && std::filesystem::is_regular_file(playgo_xml) && doc.load_file(playgo_xml.c_str())) {
-    // TODO:
-    //    - Get `chunk_info`'s `chunk_count`, subtract one, then make that many chunks
-    //    - Remove `initial_chunk_count_disc` from each `scenario` if it exists
     return doc;
   }
 
   // Build default
   pugi::xml_node psproject_node = doc.append_child("psproject");
   psproject_node.append_attribute("fmt") = "playgo-manifest";
-  psproject_node.append_attribute("version") = "1000";
+  psproject_node.append_attribute("version") = "1000"; // TODO: Will this be correct?
 
   pugi::xml_node volume_node = psproject_node.append_child("volume");
 
@@ -207,15 +205,42 @@ pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_do
   pugi::xml_node psproject_node = doc.append_child("psproject");
   psproject_node.append_attribute("fmt") = "gp4";
   if (custom_version.empty()) {
-    if (!playgo.child("psproject").attribute("version").empty()) {
+    psproject_node.append_attribute("version") = custom_version.c_str();
+  } else {
+    if (playgo.child("psproject").attribute("version").empty()) {
+      psproject_node.append_attribute("version") = "1000"; // TODO: Will this be correct?
+    } else {
       psproject_node.append_attribute("version") = playgo.child("psproject").attribute("version").value(); // TODO: Will this be correct?
     }
-  } else {
-    psproject_node.append_attribute("version") = custom_version.c_str();
   }
 
   psproject_node.append_copy(volume.child("volume"));
   psproject_node.child("volume").append_copy(playgo.child("psproject").child("volume").child("chunk_info"));
+
+  psproject_node.child("volume").child("psproject").child("volume").child("chunk_info").append_child("chunks");
+  uint64_t chunk_count = 1;
+  if (!doc.child("psproject").child("volume").child("chunk_info").attribute("chunk_count").empty()) {
+    chunk_count = std::strtoull(doc.child("psproject").child("volume").child("chunk_info").attribute("chunk_count").value(), NULL, 10);
+  }
+
+  for (uint64_t i = 0; i < chunk_count; i++) {
+    pugi::xml_node chunk_node = psproject_node.child("volume").child("chunk_info").child("chunks").append_child("chunk");
+    std::ostringstream ss;
+
+    ss << "Chunk #" << std::dec << i; // TODO: The labels are not what they actually are, need to see if they are stored in other playgo files
+
+    chunk_node.append_attribute("id") = i;
+    chunk_node.append_attribute("label") = ss.str().c_str();
+  }
+
+  // Remove `initial_chunk_count_disc` from each `scenario` if it exists... we aren't a disc anymore
+  pugi::xml_node scenarios = psproject_node.child("volume").child("chunk_info");
+  for (pugi::xml_node scenarios: scenarios.children("scenarios")) {
+    for (pugi::xml_node scenario: scenarios.children("scenario")) {
+      scenario.remove_attribute("initial_chunk_count_disc");
+    }
+  }
+
   psproject_node.append_copy(files.child("files"));
   psproject_node.append_copy(directories.child("rootdir"));
 

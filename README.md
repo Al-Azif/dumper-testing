@@ -16,7 +16,6 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
 
 ## Known Issues
 
-- Using the generated GP4 with official PKG tools causes an error
 - sc0 entry decryption (Like `npbind.dat`)
 - "Missing" trophy files in patches can cause issues
 - "New" binary decryption function crashes
@@ -75,3 +74,6 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
     - [ ] Optional submission to database
     - [ ] No actual data downloaded/uploaded, only metadata
 - [ ] UI integration
+  - Dump via dump options in main menu
+  - Progress shown within notifications
+  - Errors via error dialog
