@@ -69,8 +69,8 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
 
   // Read digest
   std::vector<unsigned char> digest(SHA_DIGEST_LENGTH);
-  npbind_input.seekg(-digest.size(), npbind_input.end);                  // Make sure we are in the right place
-  npbind_input.read(reinterpret_cast<char *>(&digest[0]),digest.size()); // Flawfinder: ignore
+  npbind_input.seekg(-digest.size(), npbind_input.end);                   // Make sure we are in the right place
+  npbind_input.read(reinterpret_cast<char *>(&digest[0]), digest.size()); // Flawfinder: ignore
   if (!npbind_input.good()) {
     // Should never reach here... will affect coverage %
     npbind_input.close();
