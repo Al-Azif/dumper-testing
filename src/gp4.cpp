@@ -218,7 +218,7 @@ pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_do
   psproject_node.append_copy(volume.child("volume"));
   psproject_node.child("volume").append_copy(playgo.child("psproject").child("volume").child("chunk_info"));
 
-  psproject_node.child("volume").child("volume").child("chunk_info").append_child("chunks");
+  psproject_node.child("volume").child("chunk_info").append_child("chunks");
   uint64_t chunk_count = 1;
   if (!doc.child("psproject").child("volume").child("chunk_info").attribute("chunk_count").empty()) {
     chunk_count = std::strtoull(doc.child("psproject").child("volume").child("chunk_info").attribute("chunk_count").value(), NULL, 10);
