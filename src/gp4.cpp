@@ -226,12 +226,14 @@ pugi::xml_document assemble(const pugi::xml_document &volume, const pugi::xml_do
 
   for (uint64_t i = 0; i < chunk_count; i++) {
     pugi::xml_node chunk_node = psproject_node.child("volume").child("chunk_info").child("chunks").append_child("chunk");
-    std::stringstream ss;
+    std::stringstream ss_id;
+    std::stringstream ss_label;
 
-    ss << "Chunk #" << std::dec << i; // TODO: The labels are not what they actually are, need to see if they are stored in other playgo files
+    ss_id << "" << std::dec << i;
+    ss_label << "Chunk #" << std::dec << i; // TODO: The labels are not what they actually are, need to see if they are stored in other playgo files
 
-    chunk_node.append_attribute("id") = i;
-    chunk_node.append_attribute("label") = ss.str().c_str();
+    chunk_node.append_attribute("id") = ss_id.str().c_str();
+    chunk_node.append_attribute("label") = ss_label.str().c_str();
   }
 
   // Remove `initial_chunk_count_disc` from each `scenario` if it exists... we aren't a disc anymore
