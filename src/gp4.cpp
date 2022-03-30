@@ -56,6 +56,7 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
 
   // Just fucking trust me on this regex (Hits on Jan 01 1970+, but only valid dates... except leap years, Feb 29th is always assumed valid)
   if (!c_date.empty() && !std::regex_match(c_date, std::regex("^(?:19[7-9]\\d|[2-9]\\d{3})(?:02(?:0[1-9]|[12][0-9])|(?:0[469]|11)(?:0[1-9]|[12][0-9]|30)|(?:0[13578]|1[02])(?:0[1-9]|[12][0-9]|3[01]))$"))) {
+    // TODO: Check for valid leap year so we get an invalid error here vs something else going wrong later when manipulating the date
     FATAL_ERROR("Malformed c_date");
   }
 
