@@ -3,6 +3,8 @@
 
 #include "gp4.h"
 
+#include <time.h>
+
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
@@ -52,11 +54,12 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
     FATAL_ERROR("Malformed content ID");
   }
 
-  if (!c_date.empty() && !std::regex_match(c_date, std::regex("^\\d{4}-\\d{2}-\\d{2}$"))) {
+  // Just fucking trust me on this regex (Hits on Jan 01 1970+, but only valid dates... except leap years, Feb 29th is always assumed valid)
+  if (!c_date.empty() && !std::regex_match(c_date, std::regex("^(?:19[7-9]\\d|[2-9]\\d{3})(?:02(?:0[1-9]|[12][0-9])|(?:0[469]|11)(?:0[1-9]|[12][0-9]|30)|(?:0[13578]|1[02])(?:0[1-9]|[12][0-9]|3[01]))$"))) {
     FATAL_ERROR("Malformed c_date");
   }
 
-  if (!c_time.empty() && !std::regex_match(c_time, std::regex("^\\d{6}$"))) {
+  if (!c_time.empty() && !std::regex_match(c_time, std::regex("^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"))) {
     FATAL_ERROR("Malformed c_time");
   }
 
@@ -94,10 +97,25 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
   // Set c_date
   std::string new_time = std::string("actual_datetime");
   if (!c_date.empty()) {
-    new_time = c_date;
+    std::string current_time_format;
+    std::string new_time_format;
+
+    // TODO: Double check sizes here based on resize sizeof -1 and .size() further down
     if (!c_time.empty()) {
-      // TODO: Append time to new_time
+      new_time = c_date + std::string(" ") + c_time;
+      current_time_format = "%Y%m%d %H%M%S";
+      new_time_format = "%Y-%m-%d %H:%M:%S";
+      new_time.resize(sizeof("YYYY-MM-DD HH:MM:SS") - 1);
+    } else {
+      new_time = c_date;
+      current_time_format = "%Y%m%d";
+      new_time_format = "%Y-%m-%d";
+      new_time.resize(sizeof("YYYY-MM-DD") - 1);
     }
+
+    struct tm tm;
+    strptime(c_date.c_str(), current_time_format.c_str(), &tm);
+    strftime(&new_time[0], new_time.size(), new_time_format.c_str(), &tm);
   }
   package_node.append_attribute("c_date") = new_time.c_str();
 
