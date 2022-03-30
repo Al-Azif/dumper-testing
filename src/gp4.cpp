@@ -100,21 +100,20 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
     std::string current_time_format;
     std::string new_time_format;
 
-    // TODO: Double check sizes here based on resize sizeof -1 and .size() further down
     if (!c_time.empty()) {
       new_time = c_date + std::string(" ") + c_time;
       current_time_format = "%Y%m%d %H%M%S";
       new_time_format = "%Y-%m-%d %H:%M:%S";
-      new_time.resize(sizeof("YYYY-MM-DD HH:MM:SS") - 1);
+      new_time.resize(sizeof("YYYY-MM-DD HH:MM:SS"));
     } else {
       new_time = c_date;
       current_time_format = "%Y%m%d";
       new_time_format = "%Y-%m-%d";
-      new_time.resize(sizeof("YYYY-MM-DD") - 1);
+      new_time.resize(sizeof("YYYY-MM-DD"));
     }
 
     struct tm tm;
-    strptime(c_date.c_str(), current_time_format.c_str(), &tm);
+    strptime(new_time.c_str(), current_time_format.c_str(), &tm);
     strftime(&new_time[0], new_time.size(), new_time_format.c_str(), &tm);
   }
   package_node.append_attribute("c_date") = new_time.c_str();
