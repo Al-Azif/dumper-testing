@@ -86,7 +86,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
             }
             ss.write(reinterpret_cast<const char *>(&buffer), sizeof(buffer));
             output_file << ss.rdbuf();
-            ss.str("");
+            ss.str(std::string());
             ss.clear();
             std::memset(buffer, '\0', sizeof(buffer));
             pfs_copied += sizeof(buffer);
@@ -101,7 +101,7 @@ void __parse_directory(uint32_t ino, uint32_t level, const std::string &output_p
           }
           ss.write(reinterpret_cast<const char *>(&buffer), inodes[ent.ino].size - dump_counter);
           output_file << ss.rdbuf();
-          ss.str("");
+          ss.str(std::string());
           ss.clear();
           dump_counter += inodes[ent.ino].size - dump_counter;
           pfs_copied += inodes[ent.ino].size - dump_counter;
