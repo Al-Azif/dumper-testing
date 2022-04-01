@@ -29,7 +29,16 @@ void recursive_directory(const std::string &path, pugi::xml_node &node) {
     FATAL_ERROR("Empty path argument!");
   }
 
+  std::vector<std::string> skip_directories = {
+    // "sce_sys/about" // Cannot be included for official PKG tools
+  };
+
   for (auto &&p : std::filesystem::directory_iterator(path)) {
+    // Skip files/directories contained in the `skip_directories` vector
+    if(std::count(skip_directories.begin(), skip_directories.end(), p.path())) {
+      continue;
+    }
+
     if (std::filesystem::is_directory(p.path())) {
       pugi::xml_node dir_node = node.append_child("dir");
 
@@ -173,7 +182,41 @@ pugi::xml_document make_files(const std::string &path, std::vector<std::string> 
   pugi::xml_node files_node = doc.append_child("files");
   files_node.append_attribute("img_no") = "0"; // TODO: PlayGo
 
+  // Files to skip when making GP4
+  std::vector<std::string> skip_files = {
+    "sce_discmap.plt",
+    "sce_discmap_patch.plt",
+    // "sce_sys/about/right.sprx", // Cannot be included for official PKG tools
+    "sce_sys/icon0.dds",
+    "sce_sys/license.dat",
+    "sce_sys/license.info",
+    "sce_sys/pic0.dds",
+    "sce_sys/pic1.dds",
+    "sce_sys/playgo-chunk.dat",
+    "sce_sys/playgo-chunk.sha",
+    "sce_sys/playgo-manifest.xml",
+    "sce_sys/psreserved.dat",
+    "sce_sys/origin-deltainfo.dat"
+  };
+
+  for (uint64_t i = 0; i < 100; i++) {
+    std::stringstream ss_image;
+    ss_image << "sce_sys/icon0_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
+    skip_files.push_back(ss_image.str());
+    ss_image.str(std::string());
+    ss_image << "sce_sys/pic0_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
+    skip_files.push_back(ss_image.str());
+    ss_image.str(std::string());
+    ss_image << "sce_sys/pic1_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
+    skip_files.push_back(ss_image.str());
+  }
+
   for (auto &&p : std::filesystem::recursive_directory_iterator(path)) {
+    // Skip files/directories contained in the `skip_files` vector
+    if(std::count(skip_files.begin(), skip_files.end(), p.path())) {
+      continue;
+    }
+
     if (std::filesystem::is_regular_file(p.path())) {
       bool self;
       if ((self = elf::is_self(p.path()))) {
