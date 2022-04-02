@@ -16,13 +16,15 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
 
 ## Known Issues
 
-- sc0 entry decryption (Like `npbind.dat`)
-- "Missing" trophy files in patches can cause issues
-- "New" binary decryption function crashes
+- sc0 entry decryption (Like `npbind.dat`)*
+- "Missing" trophy files in patches can cause issues*
+- "New" binary decryption function crashes*
 - Games that have multiple supported languages or multiple discs may not "install" all the files and the dumper will hang trying to copy it
   - Can also apparently happen if the disc is dirty and not installing correctly when you start the dump
   - Current workaround is to make sure you have all the languages and all the discs completely installed prior to dumping
   - Thoughts: Is there a PFS flag that mark these files? Or is there some other way to detect "optional" files?
+
+\* These currently have work arounds in th dumper built into the homebrew store
 
 ## TODO
 
