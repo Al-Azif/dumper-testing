@@ -15,11 +15,13 @@
 
 namespace pkg {
 bool is_pkg(const std::string &path) {
+  (void)path;
   // TODO
   return true;
 }
 
 bool is_fpkg(const std::string &path) {
+  (void)path;
   // TODO
   return true;
 }
@@ -27,7 +29,23 @@ bool is_fpkg(const std::string &path) {
 std::string get_entry_name_by_type(uint32_t type) {
   std::stringstream ss;
 
-  if (type == 0x0400) {
+  if (type == 0x0001) {
+    ss << ".digests";
+  } else if (type == 0x0010) {
+    ss << ".entry_keys";
+  } else if (type == 0x0020) {
+    ss << ".image_key";
+  } else if (type == 0x0021) {
+    ss << ".unknown_0x21";
+  } else if (type == 0x0080) {
+    ss << ".general_digests";
+  } else if (type == 0x00C0) {
+    ss << ".unknown_0xC0";
+  } else if (type == 0x0100) {
+    ss << ".metas";
+  } else if (type == 0x0200) {
+    ss << ".entry_names";
+  } else if (type == 0x0400) {
     ss << "license.dat";
   } else if (type == 0x0401) {
     ss << "license.info";

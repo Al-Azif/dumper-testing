@@ -30,12 +30,12 @@ void recursive_directory(const std::string &path, pugi::xml_node &node) {
   }
 
   std::vector<std::string> skip_directories = {
-    // "sce_sys/about" // Cannot be included for official PKG tools
+      // "sce_sys/about" // Cannot be included for official PKG tools
   };
 
   for (auto &&p : std::filesystem::directory_iterator(path)) {
     // Skip files/directories contained in the `skip_directories` vector
-    if(std::count(skip_directories.begin(), skip_directories.end(), std::filesystem::relative(p.path(), path))) {
+    if (std::count(skip_directories.begin(), skip_directories.end(), std::filesystem::relative(p.path(), path))) {
       continue;
     }
 
@@ -184,27 +184,38 @@ pugi::xml_document make_files(const std::string &path, std::vector<std::string> 
 
   // Files to skip when making GP4
   std::vector<std::string> skip_files = {
-    "sce_discmap.plt",
-    "sce_discmap_patch.plt",
-    // "sce_sys/about/right.sprx", // Cannot be included for official PKG tools
-    "sce_sys/icon0.dds",
-    "sce_sys/license.dat",
-    "sce_sys/license.info",
-    "sce_sys/pic0.dds",
-    "sce_sys/pic1.dds",
-    "sce_sys/playgo-chunk.dat",
-    "sce_sys/playgo-chunk.sha",
-    "sce_sys/playgo-manifest.xml",
-    "sce_sys/psreserved.dat",
-    "sce_sys/origin-deltainfo.dat"
-  };
+      // "sce_sys/about/right.sprx", // Cannot be included for official PKG tools
+      "sce_sys/.digests",
+      "sce_sys/.entry_keys",
+      "sce_sys/.image_key",
+      "sce_sys/.unknown_0x21",
+      "sce_sys/.general_digests",
+      "sce_sys/.unknown_0xC0",
+      "sce_sys/.metas",
+      "sce_sys/.entry_names",
+      "sce_sys/license.dat",
+      "sce_sys/license.info",
+      "sce_sys/selfinfo.dat",         // ?
+      "sce_sys/imageinfo.dat",        // ?
+      "sce_sys/target-deltainfo.dat", // ?
+      "sce_sys/origin-deltainfo.dat",
+      "sce_sys/psreserved.dat",
+      "sce_sys/playgo-chunk.dat",
+      "sce_sys/playgo-chunk.sha",
+      "sce_sys/playgo-manifest.xml",
+      "sce_sys/pubtoolinfo.dat", // ?
+      "sce_sys/app/playgo-chunk.dat",
+      "sce_sys/app/playgo-chunk.sha",
+      "sce_sys/app/playgo-manifest.xml",
+      "sce_sys/icon0.dds",
+      "sce_sys/pic0.dds",
+      "sce_sys/pic1.dds",
+      "sce_sys/icon0_*.dds",
+      "sce_sys/pic1_*.dds"};
 
-  for (uint64_t i = 0; i < 100; i++) {
+  for (uint64_t i = 0; i < 31; i++) {
     std::stringstream ss_image;
     ss_image << "sce_sys/icon0_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
-    skip_files.push_back(ss_image.str());
-    ss_image.str(std::string());
-    ss_image << "sce_sys/pic0_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
     skip_files.push_back(ss_image.str());
     ss_image.str(std::string());
     ss_image << "sce_sys/pic1_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
@@ -213,7 +224,7 @@ pugi::xml_document make_files(const std::string &path, std::vector<std::string> 
 
   for (auto &&p : std::filesystem::recursive_directory_iterator(path)) {
     // Skip files/directories contained in the `skip_files` vector
-    if(std::count(skip_files.begin(), skip_files.end(), std::filesystem::relative(p.path(), path))) {
+    if (std::count(skip_files.begin(), skip_files.end(), std::filesystem::relative(p.path(), path))) {
       continue;
     }
 

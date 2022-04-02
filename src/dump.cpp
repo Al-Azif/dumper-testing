@@ -239,6 +239,8 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
     }
   }
 
+  // TODO: Generate verification file
+
   // Delete .dumping semaphore
   if (!std::filesystem::remove(dumping_semaphore)) {
     FATAL_ERROR("Unable to delete dumping semaphore");
