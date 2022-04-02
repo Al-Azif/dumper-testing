@@ -211,7 +211,7 @@ pugi::xml_document make_files(const std::string &path, std::vector<std::string> 
       "sce_sys/pic0.dds",
       "sce_sys/pic1.dds"};
 
-  for (uint64_t i = 0; i < 31; i++) {
+  for (uint8_t i = 0; i < 31; i++) {
     std::stringstream ss_image;
     ss_image << "sce_sys/icon0_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
     skip_files.push_back(ss_image.str());
