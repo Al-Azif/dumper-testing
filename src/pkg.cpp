@@ -14,6 +14,16 @@
 #include "common.h"
 
 namespace pkg {
+bool is_pkg(const std::string &path) {
+  // TODO
+  return true;
+}
+
+bool is_fpkg(const std::string &path) {
+  // TODO
+  return true;
+}
+
 std::string get_entry_name_by_type(uint32_t type) {
   std::stringstream ss;
 

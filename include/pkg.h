@@ -71,6 +71,8 @@ typedef struct {
   uint64_t padding;
 } PkgTableEntry;
 
+bool is_pkg(const std::string &path);
+bool is_fpkg(const std::string &path);
 std::string get_entry_name_by_type(uint32_t type);
 void extract_sc0(const std::string &pkg_path, const std::string &output_path);
 } // namespace pkg

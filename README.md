@@ -44,6 +44,7 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
 - [ ] PKG
   - [ ] Implementation
     - [X] Basic
+    - [ ] `is_pkg` and `is_fpkg` functions
     - [ ] Decrypt encrypted Sc0 entries
   - [ ] Tests
 - [ ] PFS
