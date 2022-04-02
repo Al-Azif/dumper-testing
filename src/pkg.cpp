@@ -13,16 +13,22 @@
 
 #include "common.h"
 
+#include <iostream>
+
 namespace pkg {
 bool is_pkg(const std::string &path) {
-  (void)path;
   // TODO
+
+  (void)path;
+
   return true;
 }
 
 bool is_fpkg(const std::string &path) {
-  (void)path;
   // TODO
+
+  (void)path;
+
   return true;
 }
 
@@ -191,6 +197,9 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
   for (auto &&entry : entries) {
     std::string entry_name = get_entry_name_by_type(__builtin_bswap32(entry.id));
     if (!entry_name.empty()) {
+      bool entry_encrpyted((__builtin_bswap32(entry.flags1) & 0x80000000) != 0);
+      uint32_t entry_key_index = ((__builtin_bswap32(entry.flags2) & 0xF000) >> 12);
+
       std::filesystem::path temp_output_path(output_path);
       temp_output_path /= entry_name;
 
