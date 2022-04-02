@@ -17,7 +17,6 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
 ## Known Issues
 
 - sc0 entry decryption (Like `npbind.dat`)*
-- "Missing" trophy files in patches can cause issues*
 - "New" binary decryption function crashes*
 - Games that have multiple supported languages or multiple discs may not "install" all the files and the dumper will hang trying to copy it
   - Can also apparently happen if the disc is dirty and not installing correctly when you start the dump

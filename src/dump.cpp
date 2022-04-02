@@ -166,8 +166,10 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
         }
         dst /= "trophy" + std::string(zerofill, '0') + std::string(entry.trophy_number.data) + ".trp";
 
-        if (!std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing)) {
-          FATAL_ERROR("Unable to copy" + std::string(src) + " to " + std::string(dst));
+        if (std::filesystem::is_regular_file(src)) {
+          if (!std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing)) {
+            FATAL_ERROR("Unable to copy" + std::string(src) + " to " + std::string(dst));
+          }
         }
       }
     }
