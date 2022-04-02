@@ -24,7 +24,7 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
   - Current workaround is to make sure you have all the languages and all the discs completely installed prior to dumping
   - Thoughts: Is there a PFS flag that mark these files? Or is there some other way to detect "optional" files?
 
-\* These currently have work arounds in th dumper built into the homebrew store
+\* These currently have work arounds in the dumper built into the homebrew store
 
 ## TODO
 
