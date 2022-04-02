@@ -35,7 +35,7 @@ void recursive_directory(const std::string &path, pugi::xml_node &node) {
 
   for (auto &&p : std::filesystem::directory_iterator(path)) {
     // Skip files/directories contained in the `skip_directories` vector
-    if(std::count(skip_directories.begin(), skip_directories.end(), p.path())) {
+    if(std::count(skip_directories.begin(), skip_directories.end(), std::filesystem::relative(p.path(), path))) {
       continue;
     }
 
@@ -213,7 +213,7 @@ pugi::xml_document make_files(const std::string &path, std::vector<std::string> 
 
   for (auto &&p : std::filesystem::recursive_directory_iterator(path)) {
     // Skip files/directories contained in the `skip_files` vector
-    if(std::count(skip_files.begin(), skip_files.end(), p.path())) {
+    if(std::count(skip_files.begin(), skip_files.end(), std::filesystem::relative(p.path(), path))) {
       continue;
     }
 
