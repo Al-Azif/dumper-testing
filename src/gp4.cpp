@@ -89,7 +89,7 @@ pugi::xml_document make_volume(const std::string &content_id, const std::string 
   std::time_t t = std::time(0);
   std::tm *timeinfo = std::localtime(&t);
 
-  char buffer[20];
+  char buffer[20]; // Flawfinder: ignore // Only used within these 4 lines
   std::memset(buffer, '\0', sizeof(buffer));
   std::strftime(buffer, 20, "%Y-%m-%d %H:%M:%S", timeinfo);
   volume_ts_node.append_child(pugi::node_pcdata).set_value(buffer);
