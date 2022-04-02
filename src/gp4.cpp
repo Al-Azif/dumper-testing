@@ -209,9 +209,7 @@ pugi::xml_document make_files(const std::string &path, std::vector<std::string> 
       "sce_sys/app/playgo-manifest.xml",
       "sce_sys/icon0.dds",
       "sce_sys/pic0.dds",
-      "sce_sys/pic1.dds",
-      "sce_sys/icon0_*.dds",
-      "sce_sys/pic1_*.dds"};
+      "sce_sys/pic1.dds"};
 
   for (uint64_t i = 0; i < 31; i++) {
     std::stringstream ss_image;
