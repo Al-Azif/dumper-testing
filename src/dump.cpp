@@ -137,8 +137,8 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
 
     // Detect if on extended storage and make pkg_path
     std::filesystem::path pkg_path;
-    std::filesystem::path ext_path("/mnt/ext0/");
-    ext_path /= pkg_directory_path;
+    std::filesystem::path ext_path("/mnt/ext0");
+    ext_path += pkg_directory_path;
     if (std::filesystem::exists(ext_path) && std::filesystem::is_regular_file(ext_path)) {
       pkg_path = ext_path;
     } else {
