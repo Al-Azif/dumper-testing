@@ -189,9 +189,6 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
     pfs::extract(pfs_path, output_path);
   }
 
-  // Vector of strings for locations of SELF files for decryption
-  std::vector<std::string> self_files;
-
   // Generate GP4
   std::filesystem::path sfo_path(sce_sys_path);
   sfo_path /= "param.sfo";
@@ -199,7 +196,15 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
   std::filesystem::path gp4_path(output_path);
   gp4_path /= output_directory + ".gp4";
 
-  gp4::generate(sfo_path, output_path, gp4_path, self_files, type);
+  gp4::generate(sfo_path, output_path, gp4_path, type);
+
+  // Vector of strings for locations of SELF files for decryption
+  std::vector<std::string> self_files;
+  for (auto &&p : std::filesystem::recursive_directory_iterator(output_path)) {
+    if (elf::is_self(p.path())) {
+      self_files.push_back(p.path());
+    }
+  }
 
   // Decrypt ELF files and make into FSELFs
   for (auto &&entry : self_files) {

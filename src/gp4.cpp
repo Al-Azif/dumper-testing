@@ -170,7 +170,7 @@ pugi::xml_document make_playgo(const std::string &playgo_xml) {
   return doc;
 }
 
-pugi::xml_document make_files(const std::string &path, std::vector<std::string> &elf_files) {
+pugi::xml_document make_files(const std::string &path) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
     FATAL_ERROR("Empty path argument!");
@@ -227,16 +227,11 @@ pugi::xml_document make_files(const std::string &path, std::vector<std::string> 
     }
 
     if (std::filesystem::is_regular_file(p.path())) {
-      bool self;
-      if ((self = elf::is_self(p.path()))) {
-        elf_files.push_back(p.path());
-      }
-
       std::filesystem::path targ_path = std::filesystem::relative(p.path(), path);
       std::filesystem::path orig_path = std::filesystem::relative(p.path(), path);
 
       // If SELF redirect to .fself
-      if (self) {
+      if (elf::is_self(p.path())) {
         orig_path.replace_extension(".fself");
       }
 
@@ -344,7 +339,7 @@ void write(const pugi::xml_document &xml, const std::string &path) {
   output_file.close();
 }
 
-void generate(const std::string &sfo_path, const std::string &output_path, const std::string &gp4_path, std::vector<std::string> &self_files, const std::string &type) {
+void generate(const std::string &sfo_path, const std::string &output_path, const std::string &gp4_path, const std::string &type) {
   if (type != "base" && type != "patch" && type != "remaster" && type != "theme" && type != "theme-unlock" && type != "additional-content-data" && type != "additional-content-no-data") {
     FATAL_ERROR("Unknown asset type");
   }
@@ -401,7 +396,7 @@ void generate(const std::string &sfo_path, const std::string &output_path, const
 
   // Generate actual GP4 file
   pugi::xml_document volume_xml = make_volume(content_id, content_type, c_date, c_time);
-  pugi::xml_document files_xml = make_files(output_path, self_files);
+  pugi::xml_document files_xml = make_files(output_path);
   pugi::xml_document directories_xml = make_directories(output_path);
   pugi::xml_document playgo_xml;
   pugi::xml_document assembled_xml;
