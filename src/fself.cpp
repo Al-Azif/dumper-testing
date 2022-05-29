@@ -85,4 +85,11 @@ void make_fself(const std::string &input, const std::string &output, uint64_t pa
   UNUSED(app_version);
   UNUSED(fw_version);
 }
+
+void un_fself(const std::string &input, const std::string &output) {
+  // TODO
+
+  UNUSED(input);
+  UNUSED(output);
+}
 } // namespace fself

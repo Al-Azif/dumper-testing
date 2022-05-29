@@ -17,7 +17,7 @@ namespace pkg {
 bool is_pkg(const std::string &path) {
   // TODO
 
-  (void)path;
+  UNUSED(path);
 
   return true;
 }
@@ -25,7 +25,7 @@ bool is_pkg(const std::string &path) {
 bool is_fpkg(const std::string &path) {
   // TODO
 
-  (void)path;
+  UNUSED(path);
 
   return true;
 }
@@ -216,6 +216,10 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
         pkg_input.close();
         FATAL_ERROR("Unable to open/create output subdirectory");
       }
+
+      // TODO: If encrypted save encrypted as `FILENAME.EXT.encrypted` and decrypted as `FILENAME.EXT`
+      UNUSED(entry_encrpyted);
+      UNUSED(entry_key_index);
 
       // Open path
       std::ofstream output_file(temp_output_path, std::ios::out | std::ios::trunc | std::ios::binary);

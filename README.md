@@ -70,11 +70,20 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
   - [ ] Multi-Disc (Does it just work without changes?)
 - [ ] Verification
   - [ ] Save encrypted/modified files within another directory for backup/preservation purposes
+    - Encrypted Binary (FILENAME.EXT.encrypted)
+    - Decrypted Binary (FILENAME.EXT)
+    - FSELF (FILENAME.fself)
+      - Zero'd ELF header(?)
+    - Encrypted sc0 entries (FILENAME.EXT.encrypted)
+    - Decrypted sc0 entries (FILENAME.EXT)
   - [X] Check decrypted binaries vs hash in encrypted header
   - [ ] SFV-like file to compare vs known good rips
   - [ ] External service to verify/submit rip data
     - [ ] Optional submission to database
     - [ ] No actual data downloaded/uploaded, only metadata
+- [ ] Remove extra/unnecessary checks
+  - ex. Calling `std::filesystem::is_regular_file` and `elf::is_self` together. Because `elf::is_self` calls `std::filesystem::is_regular_file` on the input itself
+- [ ] Split into self contained, read/write, individual libraries to be used in other applications
 - [ ] UI integration
   - Dump via dump options in main menu
   - Progress shown within notifications
