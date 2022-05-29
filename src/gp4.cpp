@@ -260,6 +260,10 @@ pugi::xml_document make_files(const std::string &path, bool validation) {
 
       if (validation) {
         // TODO: Get filesize, crc, md5, and sha1
+        file_node.append_attribute("size") = std::filesystem::file_size(p);
+        file_node.append_attribute("crc") = "";
+        file_node.append_attribute("md5") = "";
+        file_node.append_attribute("sha1") = "";
       }
     }
   }
