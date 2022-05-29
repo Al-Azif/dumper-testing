@@ -244,7 +244,10 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
     }
   }
 
-  // TODO: Generate verification file
+  // Generate verification file
+  std::filesystem::path validation_path(output_path);
+  validation_path /= output_directory + ".gp4fv";
+  gp4::generate(sfo_path, output_path, validation_path, type, true);
 
   // Delete .dumping semaphore
   if (!std::filesystem::remove(dumping_semaphore)) {

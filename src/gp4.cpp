@@ -23,15 +23,18 @@
 #include "sfo.h"
 
 namespace gp4 {
-void recursive_directory(const std::string &path, pugi::xml_node &node) {
+void recursive_directory(const std::string &path, pugi::xml_node &node, bool validation) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
     FATAL_ERROR("Empty path argument!");
   }
 
-  std::vector<std::string> skip_directories = {
-      // "sce_sys/about" // Cannot be included for official PKG tools
-  };
+  std::vector<std::string> skip_directories = {};
+  if (!validation) {
+    skip_directories = {
+        // "sce_sys/about" // Cannot be included for official PKG tools
+    };
+  }
 
   for (auto &&p : std::filesystem::directory_iterator(path)) {
     // Skip files/directories contained in the `skip_directories` vector
@@ -52,7 +55,7 @@ void recursive_directory(const std::string &path, pugi::xml_node &node) {
       }
       dir_node.append_attribute("targ_name") = temp_path.c_str();
 
-      recursive_directory(p.path(), dir_node);
+      recursive_directory(p.path(), dir_node, validation);
     }
   }
 }
@@ -170,7 +173,7 @@ pugi::xml_document make_playgo(const std::string &playgo_xml) {
   return doc;
 }
 
-pugi::xml_document make_files(const std::string &path) {
+pugi::xml_document make_files(const std::string &path, bool validation) {
   // Check for empty or pure whitespace path
   if (path.empty() || std::all_of(path.begin(), path.end(), [](char c) { return std::isspace(c); })) {
     FATAL_ERROR("Empty path argument!");
@@ -182,48 +185,51 @@ pugi::xml_document make_files(const std::string &path) {
   pugi::xml_node files_node = doc.append_child("files");
   files_node.append_attribute("img_no") = "0"; // TODO: PlayGo
 
-  // Files to skip when making GP4
-  std::vector<std::string> skip_files = {
-      // "sce_sys/about/right.sprx", // Cannot be included for official PKG tools
-      "sce_sys/.digests",
-      "sce_sys/.entry_keys",
-      "sce_sys/.image_key",
-      "sce_sys/.unknown_0x21",
-      "sce_sys/.general_digests",
-      "sce_sys/.unknown_0xC0",
-      "sce_sys/.metas",
-      "sce_sys/.entry_names",
-      "sce_sys/license.dat",
-      "sce_sys/license.info",
-      "sce_sys/selfinfo.dat",         // ?
-      "sce_sys/imageinfo.dat",        // ?
-      "sce_sys/target-deltainfo.dat", // ?
-      "sce_sys/origin-deltainfo.dat",
-      "sce_sys/psreserved.dat",
-      "sce_sys/playgo-chunk.dat",
-      "sce_sys/playgo-chunk.sha",
-      "sce_sys/playgo-manifest.xml",
-      "sce_sys/pubtoolinfo.dat", // ?
-      "sce_sys/app/playgo-chunk.dat",
-      "sce_sys/app/playgo-chunk.sha",
-      "sce_sys/app/playgo-manifest.xml",
-      "sce_sys/icon0.dds",
-      "sce_sys/pic0.dds",
-      "sce_sys/pic1.dds"};
+  // Files to skip when making GP4, but not the GP4FV
+  std::vector<std::string> skip_files = {};
+  if (!validation) {
+    skip_files = {
+        // "sce_sys/about/right.sprx", // Cannot be included for official PKG tools
+        "sce_sys/.digests",
+        "sce_sys/.entry_keys",
+        "sce_sys/.image_key",
+        "sce_sys/.unknown_0x21",
+        "sce_sys/.general_digests",
+        "sce_sys/.unknown_0xC0",
+        "sce_sys/.metas",
+        "sce_sys/.entry_names",
+        "sce_sys/license.dat",
+        "sce_sys/license.info",
+        "sce_sys/selfinfo.dat",         // ?
+        "sce_sys/imageinfo.dat",        // ?
+        "sce_sys/target-deltainfo.dat", // ?
+        "sce_sys/origin-deltainfo.dat",
+        "sce_sys/psreserved.dat",
+        "sce_sys/playgo-chunk.dat",
+        "sce_sys/playgo-chunk.sha",
+        "sce_sys/playgo-manifest.xml",
+        "sce_sys/pubtoolinfo.dat", // ?
+        "sce_sys/app/playgo-chunk.dat",
+        "sce_sys/app/playgo-chunk.sha",
+        "sce_sys/app/playgo-manifest.xml",
+        "sce_sys/icon0.dds",
+        "sce_sys/pic0.dds",
+        "sce_sys/pic1.dds"};
 
-  for (auto &&f : skip_files) {
-    std::stringstream ss_encrypted;
-    ss_encrypted << f << ".encrypted";
-    skip_files.push_back(ss_encrypted.str());
-  }
+    for (auto &&f : skip_files) {
+      std::stringstream ss_encrypted;
+      ss_encrypted << f << ".encrypted";
+      skip_files.push_back(ss_encrypted.str());
+    }
 
-  for (uint8_t i = 0; i < 31; i++) {
-    std::stringstream ss_image;
-    ss_image << "sce_sys/icon0_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
-    skip_files.push_back(ss_image.str());
-    ss_image.str(std::string());
-    ss_image << "sce_sys/pic1_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
-    skip_files.push_back(ss_image.str());
+    for (uint8_t i = 0; i < 31; i++) {
+      std::stringstream ss_image;
+      ss_image << "sce_sys/icon0_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
+      skip_files.push_back(ss_image.str());
+      ss_image.str(std::string());
+      ss_image << "sce_sys/pic1_" << std::dec << std::setfill('0') << std::setw(2) << i << ".dds";
+      skip_files.push_back(ss_image.str());
+    }
   }
 
   for (auto &&p : std::filesystem::recursive_directory_iterator(path)) {
@@ -237,7 +243,7 @@ pugi::xml_document make_files(const std::string &path) {
       std::filesystem::path orig_path = std::filesystem::relative(p.path(), path);
 
       // If SELF redirect to .fself
-      if (elf::is_self(p.path())) {
+      if (!validation && elf::is_self(p.path())) {
         orig_path.replace_extension(".fself");
       }
 
@@ -251,19 +257,23 @@ pugi::xml_document make_files(const std::string &path) {
       std::string orig_path_mod = orig_path.c_str();
       std::replace(orig_path_mod.begin(), orig_path_mod.end(), '/', '\\');
       file_node.append_attribute("orig_path") = orig_path_mod.c_str();
+
+      if (validation) {
+        // TODO: Get filesize, crc, md5, and sha1
+      }
     }
   }
 
   return doc;
 }
 
-pugi::xml_document make_directories(const std::string &path) {
+pugi::xml_document make_directories(const std::string &path, bool validation) {
   // Generate XML
   pugi::xml_document doc;
 
   pugi::xml_node rootdir_node = doc.append_child("rootdir");
 
-  recursive_directory(path, rootdir_node);
+  recursive_directory(path, rootdir_node, validation);
 
   return doc;
 }
@@ -345,7 +355,7 @@ void write(const pugi::xml_document &xml, const std::string &path) {
   output_file.close();
 }
 
-void generate(const std::string &sfo_path, const std::string &output_path, const std::string &gp4_path, const std::string &type) {
+void generate(const std::string &sfo_path, const std::string &output_path, const std::string &gp4_path, const std::string &type, bool validation) {
   if (type != "base" && type != "patch" && type != "remaster" && type != "theme" && type != "theme-unlock" && type != "additional-content-data" && type != "additional-content-no-data") {
     FATAL_ERROR("Unknown asset type");
   }
@@ -402,8 +412,8 @@ void generate(const std::string &sfo_path, const std::string &output_path, const
 
   // Generate actual GP4 file
   pugi::xml_document volume_xml = make_volume(content_id, content_type, c_date, c_time);
-  pugi::xml_document files_xml = make_files(output_path);
-  pugi::xml_document directories_xml = make_directories(output_path);
+  pugi::xml_document files_xml = make_files(output_path, validation);
+  pugi::xml_document directories_xml = make_directories(output_path, validation);
   pugi::xml_document playgo_xml;
   pugi::xml_document assembled_xml;
 
