@@ -22,6 +22,10 @@
 #include "elf.h" // `bool is_self(const std::string &path);`
 #include "sfo.h"
 
+#include <crc32.h>
+#include <md5.h>
+#include <sha1.h>
+
 namespace gp4 {
 void recursive_directory(const std::string &path, pugi::xml_node &node, bool validation) {
   // Check for empty or pure whitespace path
@@ -259,11 +263,31 @@ pugi::xml_document make_files(const std::string &path, bool validation) {
       file_node.append_attribute("orig_path") = orig_path_mod.c_str();
 
       if (validation) {
-        // TODO: Get filesize, crc, md5, and sha1
-        file_node.append_attribute("size") = std::filesystem::file_size(p);
-        file_node.append_attribute("crc") = "";
-        file_node.append_attribute("md5") = "";
-        file_node.append_attribute("sha1") = "";
+        // Get filesize, crc32, md5, and sha1
+        file_node.append_attribute("size") = std::filesystem::file_size(p.path());
+
+        CRC32 crc32;
+        MD5 md5;
+        SHA1 sha1;
+
+        std::ifstream hash_data(p.path(), std::ios::in | std::ios::binary);
+        if (!hash_data || !hash_data.good()) {
+          hash_data.close();
+          FATAL_ERROR("Cannot open file: " + std::string(p.path()));
+        }
+
+        while (hash_data.good()) {
+          std::vector<unsigned char> buffer(PAGE_SIZE);
+          hash_data.read(reinterpret_cast<char *>(&buffer[0]), buffer.size()); // Flawfinder: ignore
+          crc32.add(&buffer[0], hash_data.gcount());
+          md5.add(&buffer[0], hash_data.gcount());
+          sha1.add(&buffer[0], hash_data.gcount());
+        }
+        hash_data.close();
+
+        file_node.append_attribute("crc") = &crc32.getHash()[0];
+        file_node.append_attribute("md5") = &md5.getHash()[0];
+        file_node.append_attribute("sha1") = &sha1.getHash()[0];
       }
     }
   }
