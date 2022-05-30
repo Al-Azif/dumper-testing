@@ -132,7 +132,6 @@ std::string get_entry_name_by_type(uint32_t type) {
   return ss.str();
 }
 
-// TODO: Decrypt encrypted entries (if possible)
 void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
   // Check for empty or pure whitespace path
   if (pkg_path.empty() || std::all_of(pkg_path.begin(), pkg_path.end(), [](char c) { return std::isspace(c); })) {
