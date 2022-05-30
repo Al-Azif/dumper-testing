@@ -217,10 +217,11 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
         FATAL_ERROR("Unable to open/create output subdirectory");
       }
 
-      // TODO: If encrypted save encrypted as `FILENAME.EXT.encrypted` and decrypted as `FILENAME.EXT`
-      UNUSED(entry_key_index);
       if (entry_encrpyted) {
-        // TODO: Decrypt and save as `temp_output_path`
+        // Only have key at index 3
+        if (entry_key_index == 3) {
+          // TODO: Decrypt and save as `temp_output_path`
+        }
         temp_output_path += ".encrypted";
       }
 
