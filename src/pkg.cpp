@@ -218,8 +218,11 @@ void extract_sc0(const std::string &pkg_path, const std::string &output_path) {
       }
 
       // TODO: If encrypted save encrypted as `FILENAME.EXT.encrypted` and decrypted as `FILENAME.EXT`
-      UNUSED(entry_encrpyted);
       UNUSED(entry_key_index);
+      if (entry_encrpyted) {
+        // TODO: Decrypt and save as `temp_output_path`
+        temp_output_path += ".encrypted";
+      }
 
       // Open path
       std::ofstream output_file(temp_output_path, std::ios::out | std::ios::trunc | std::ios::binary);
