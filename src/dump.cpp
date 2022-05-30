@@ -208,40 +208,57 @@ void __dump(const std::string &usb_device, const std::string &title_id, const st
 
   // Decrypt ELF files and make into FSELFs
   for (auto &&entry : self_files) {
-    std::filesystem::path encrypted_path("/mnt/sandbox/pfsmnt");
+    std::filesystem::path original_path("/mnt/sandbox/pfsmnt");
     if (type == "base") {
-      encrypted_path /= title_id + "-app0";
+      original_path /= title_id + "-app0";
     } else if (type == "patch") {
-      encrypted_path /= title_id + "-patch0";
+      original_path /= title_id + "-patch0";
     } else if (type == "theme-unlock") {
-      encrypted_path /= title_id + "-ac";
+      original_path /= title_id + "-ac";
+    }
+    original_path /= entry;
+
+    std::filesystem::path encrypted_path(output_path);
+    encrypted_path /= entry;
+    encrypted_path += ".encrypted";
+
+    // Copy original_path to encrypted_path
+    if (!std::filesystem::copy_file(original_path, encrypted_path, std::filesystem::copy_options::overwrite_existing)) {
+      FATAL_ERROR("Unable to copy" + std::string(original_path) + " to " + std::string(encrypted_path));
     }
 
     std::filesystem::path decrypted_path(output_path);
     decrypted_path /= entry;
 
-    std::filesystem::path fself_path(decrypted_path);
-    fself_path.replace_extension(".fself");
+    // Get proper Program Authority ID, App Version, Firmware Version, and Auth Info from `encrypted_path`
+    uint64_t program_authority_id = elf::get_paid(encrypted_path);
+    std::string ptype = "fake"; // elf::get_ptype(encrypted_path);
+    uint64_t app_version = elf::get_app_version(encrypted_path);
+    uint64_t fw_version = elf::get_fw_version(encrypted_path);
+    std::vector<unsigned char> auth_info = elf::get_auth_info(encrypted_path);
 
     if (fself::is_fself(encrypted_path)) {
-      if (!std::filesystem::copy_file(encrypted_path, fself_path, std::filesystem::copy_options::overwrite_existing)) {
-        FATAL_ERROR("Unable to copy" + std::string(encrypted_path) + " to " + std::string(fself_path));
+      // SELF is actually already an FSELF, un_fself it and delete the original, we'll make a new FSELF later
+      // We cannot get the original SELF in this case, we can't truely verify the decrypted ELF, and the various options for make_fself may be wrong because it's based off an FSELF someone made previously
+      fself::un_fself(encrypted_path, decrypted_path);
+      if (!elf::is_valid_decrypt(encrypted_path, decrypted_path)) {
+        FATAL_ERROR("Invalid ELF decryption!");
+      }
+      if (!std::filesystem::remove(encrypted_path)) {
+        FATAL_ERROR("Unable to delete original FSELF");
       }
     } else {
-      // Get proper Program Authority ID, App Version, Firmware Version, and Auth Info
-      uint64_t program_authority_id = elf::get_paid(encrypted_path);
-      std::string ptype = "fake"; // elf::get_ptype(encrypted_path);
-      uint64_t app_version = elf::get_app_version(encrypted_path);
-      uint64_t fw_version = elf::get_fw_version(encrypted_path);
-      std::vector<unsigned char> auth_info = elf::get_auth_info(encrypted_path);
-
+      // Decrypt and verify SELF
       elf::decrypt(encrypted_path, decrypted_path);
       if (!elf::is_valid_decrypt(encrypted_path, decrypted_path)) {
         FATAL_ERROR("Invalid ELF decryption!");
       }
-      elf::zero_section_header(decrypted_path);
-      fself::make_fself(decrypted_path, fself_path, program_authority_id, ptype, app_version, fw_version, auth_info);
     }
+
+    std::filesystem::path fself_path(decrypted_path);
+    fself_path.replace_extension(".fself");
+
+    fself::make_fself(decrypted_path, fself_path, program_authority_id, ptype, app_version, fw_version, auth_info);
   }
 
   // Generate verification file
