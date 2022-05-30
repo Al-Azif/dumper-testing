@@ -17,11 +17,7 @@
 
 #include "common.h"
 
-#if defined(__ORBIS__)
-#include <libsha256.h>
-#else
-#include <openssl/sha.h>
-#endif // __ORBIS__
+#include <sha256.h>
 
 namespace elf {
 uint64_t get_sce_header_offset(const std::string &path) {
@@ -588,30 +584,14 @@ bool is_valid_decrypt(const std::string &original_path, const std::string &decry
   std::vector<unsigned char> digest = get_digest(original_path);
   std::vector<unsigned char> calculated_digest(digest.size());
 
-#if defined(__ORBIS__)
-  SceSha256Context context;
-  sceSha256BlockInit(&context);
-#else
-  SHA256_CTX context;
-  SHA256_Init(&context);
-#endif // __ORBIS__
-
+  SHA256 sha256;
   while (decrypted_elf.good()) {
     std::vector<unsigned char> buffer(PAGE_SIZE);
     decrypted_elf.read(reinterpret_cast<char *>(&buffer[0]), buffer.size()); // Flawfinder: ignore
-#if defined(__ORBIS__)
-    sceSha256BlockUpdate(&context, &buffer[0], decrypted_elf.gcount());
-#else
-    SHA256_Update(&context, &buffer[0], decrypted_elf.gcount());
-#endif // __ORBIS__
+    sha256.add(&buffer[0], decrypted_elf.gcount());
   }
   decrypted_elf.close();
-
-#if defined(__ORBIS__)
-  sceSha256BlockResult(calculated_digest, &context));
-#else
-  SHA256_Final(&calculated_digest[0], &context);
-#endif // __ORBIS__
+  sha256.getHash(&calculated_digest[0]);
 
   if (std::memcmp(&calculated_digest[0], &digest[0], digest.size()) != 0) {
     return false;

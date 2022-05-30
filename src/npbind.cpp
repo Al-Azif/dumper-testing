@@ -14,11 +14,7 @@
 
 #include "common.h"
 
-#if defined(__ORBIS__)
-#include <libsha1.h>
-#else
-#include <openssl/sha.h>
-#endif // __ORBIS__
+#include <sha1.h>
 
 namespace npbind {
 std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: ignore
@@ -68,7 +64,7 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
   }
 
   // Read digest
-  std::vector<unsigned char> digest(SHA_DIGEST_LENGTH);
+  std::vector<unsigned char> digest(SHA1::HashBytes);
   npbind_input.seekg(-digest.size(), npbind_input.end);                   // Make sure we are in the right place
   npbind_input.read(reinterpret_cast<char *>(&digest[0]), digest.size()); // Flawfinder: ignore
   if (!npbind_input.good()) {
@@ -93,17 +89,9 @@ std::vector<npbind::NpBindEntry> read(const std::string &path) { // Flawfinder: 
 
   std::vector<unsigned char> calculated_digest(digest.size());
 
-#if defined(__ORBIS__)
-  SceSha1Context context;
-  sceSha1BlockInit(&context);
-  sceSha1BlockUpdate(&context, &data_to_hash[0], ss.str().size());
-  sceSha1BlockResult(&context, &calculated_digest[0]));
-#else
-  SHA_CTX context;
-  SHA1_Init(&context);
-  SHA1_Update(&context, &data_to_hash[0], ss.str().size());
-  SHA1_Final(&calculated_digest[0], &context);
-#endif // __ORBIS__
+  SHA1 sha1;
+  sha1(&data_to_hash[0], ss.str().size());
+  sha1.getHash(&calculated_digest[0]);
 
   if (std::memcmp(&calculated_digest[0], &digest[0], digest.size()) != 0) {
     FATAL_ERROR("Digests do not match! Aborting...");
