@@ -43,8 +43,8 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
 - [ ] PKG
   - [ ] Implementation
     - [X] Basic
-    - [ ] `is_pkg` and `is_fpkg` functions
     - [ ] Decrypt encrypted Sc0 entries
+    - [ ] `is_pkg` and `is_fpkg` functions
   - [ ] Tests
 - [ ] PFS
   - [X] Implementation
@@ -54,6 +54,7 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
   - [ ] Tests
 - [ ] FSELF
   - [ ] Implementation
+    - Zero'd ELF header(?)
   - [ ] Tests
 - [ ] RIF (For Additional Content w/o Data & Entitlement Keys)
   - [ ] Implementation
@@ -69,15 +70,14 @@ Rewriting PS4 application dumper from scratch in C++. This repo will be deleted 
   - [ ] Additional Content w/o Data
   - [ ] Multi-Disc (Does it just work without changes?)
 - [ ] Verification
-  - [ ] Save encrypted/modified files within another directory for backup/preservation purposes
-    - Encrypted Binary (FILENAME.EXT.encrypted)
-    - Decrypted Binary (FILENAME.EXT)
-    - FSELF (FILENAME.fself)
-      - Zero'd ELF header(?)
-    - Encrypted sc0 entries (FILENAME.EXT.encrypted)
-    - Decrypted sc0 entries (FILENAME.EXT)
+  - [ ] Save encrypted/modified files for backup/preservation purposes
+    - [X] Encrypted Binary (FILENAME.EXT.encrypted)
+    - [X] Decrypted Binary (FILENAME.EXT)
+    - [X] FSELF (FILENAME.fself)
+    - [X] Encrypted sc0 entries (FILENAME.EXT.encrypted)
+    - [ ] Decrypted sc0 entries (FILENAME.EXT)
   - [X] Check decrypted binaries vs hash in encrypted header
-  - [ ] SFV-like file to compare vs known good rips
+  - [X] SFV-like file to compare vs known good rips
   - [ ] External service to verify/submit rip data
     - [ ] Optional submission to database
     - [ ] No actual data downloaded/uploaded, only metadata
